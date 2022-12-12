@@ -1,8 +1,3 @@
 export { OpenAIClient } from './openai-client';
-
-export type {
-  CompletionParams,
-  CompletionResponse,
-  EmbeddingParams,
-  EmbeddingResponse,
-} from './types';
+export { CompletionParams, EmbeddingParams } from './schema';
+export type { EmbeddingResponse, CompletionResponse } from './schema';

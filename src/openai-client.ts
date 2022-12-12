@@ -1,19 +1,7 @@
+import type { z } from 'zod';
 import { createApiInstance } from './fetch-api';
-import type {
-  CompletionParams,
-  CompletionParamsMulti,
-  CompletionParamsSingle,
-  CompletionResponse,
-  CompletionResponseMulti,
-  CompletionResponseSingle,
-  EmbeddingParams,
-  EmbeddingParamsSingle,
-  EmbeddingParamsMulti,
-  EmbeddingResponse,
-  EmbeddingResponseSingle,
-  EmbeddingResponseMulti,
-  EmbeddingRequest,
-} from './types';
+import { CompletionParams, EmbeddingParams } from './schema';
+import type { EmbeddingResponse, CompletionResponse } from './schema';
 
 type ConfigOpts = {
   /**
@@ -48,66 +36,56 @@ export class OpenAIClient {
     });
   }
 
-  async createCompletion(
-    params: CompletionParamsSingle
-  ): Promise<CompletionResponseSingle>;
-  async createCompletion(
-    params: CompletionParamsMulti
-  ): Promise<CompletionResponseMulti>;
-  async createCompletion(
-    params: CompletionParams
-  ): Promise<CompletionResponseSingle | CompletionResponseMulti> {
-    const data: CompletionResponse = await this.api
-      .post('completions', { json: params })
-      .json();
-    if (typeof params.prompt === 'string') {
-      const completion = data.choices[0].text || '';
-      return { completion, data };
-    } else {
-      const completions = data.choices.map((choice) => choice.text || '');
-      return { completions, data };
-    }
-  }
-
-  async createEmbedding(
-    params: EmbeddingParamsSingle
-  ): Promise<EmbeddingResponseSingle>;
-  async createEmbedding(
-    params: EmbeddingParamsMulti
-  ): Promise<EmbeddingResponseMulti>;
-  async createEmbedding(
-    params: EmbeddingParams
-  ): Promise<EmbeddingResponseSingle | EmbeddingResponseMulti> {
-    const { dontRemoveNewlines, input, ...rest } = params;
-    let processedInput = input;
-    // Remove newlines from the input unless the user explicitly asks us not to, or code is being embedded.
-    // @see https://beta.openai.com/docs/api-reference/embeddings/create#embeddings/create-input
-    if (dontRemoveNewlines !== true && !params.model.startsWith('code-')) {
-      processedInput = removeNewlines(input);
-    }
-    const reqBody: EmbeddingRequest = { input: processedInput, ...rest };
-    const data: EmbeddingResponse = await this.api
+  /**
+   * Create an embedding for a single input string.
+   * @param params.input The string to embed.
+   * @param params.model The model to use for the embedding.
+   * @param params.user A unique identifier representing the end-user.
+   */
+  async createEmbedding(params: z.input<typeof EmbeddingParams>): Promise<{
+    /** The embedding for the input string. */
+    embedding: number[];
+    /** The raw response from the API. */
+    response: EmbeddingResponse;
+  }> {
+    const parsedParams = EmbeddingParams.parse(params);
+    const reqBody: z.output<typeof EmbeddingParams> = {
+      input: preprocessInput(parsedParams),
+      model: parsedParams.model,
+      user: parsedParams.user,
+    };
+    const response: EmbeddingResponse = await this.api
       .post('embeddings', { json: reqBody })
       .json();
-    if (typeof input === 'string') {
-      const embedding = data.data[0].embedding;
-      return { embedding, data };
-    } else {
-      const embeddings = data.data.map((item) => item.embedding);
-      return { embeddings, data };
-    }
+    const embedding = response.data[0].embedding;
+    return { embedding, response };
+  }
+
+  /**
+   * Create a completion for a single prompt string.
+   */
+  async createCompletion(params: z.input<typeof CompletionParams>): Promise<{
+    /** The completion string. */
+    completion: string;
+    /** The raw response from the API. */
+    response: CompletionResponse;
+  }> {
+    const reqBody = CompletionParams.parse(params);
+    const response: CompletionResponse = await this.api
+      .post('completions', { json: reqBody })
+      .json();
+    const completion = response.choices[0].text || '';
+    return { completion, response };
   }
 }
 
-const newlineRegex = /\r?\n|\r/g;
-
-/**
- * Replace all newline characters in a string with a single space.
- */
-function removeNewlines(input: string | string[]): string | string[] {
-  if (typeof input === 'string') {
-    return input.replace(newlineRegex, ' ');
-  } else {
-    return input.map((str) => str.replace(newlineRegex, ' '));
+function preprocessInput(params: z.input<typeof EmbeddingParams>): string {
+  const newlineRegex = /\r?\n|\r/g;
+  let processedInput = params.input;
+  // Remove newlines from the input unless the user explicitly asks us not to, or code is being embedded.
+  // @see https://beta.openai.com/docs/api-reference/embeddings/create#embeddings/create-input
+  if (params.dontRemoveNewlines !== true && !params.model.startsWith('code-')) {
+    processedInput = params.input.replace(newlineRegex, ' ');
   }
+  return processedInput;
 }
