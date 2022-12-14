@@ -1,10 +1,23 @@
 import { z } from 'zod';
 
+const CompletionModel = z.union([
+  z.literal('text-davinci-003'),
+  z.literal('text-davinci-002'),
+  z.literal('text-curie-001'),
+  z.literal('text-babbage-001'),
+  z.literal('text-ada-001'),
+  z.literal('code-davinci-002'),
+  z.literal('code-cushman-001'),
+  z.literal('content-filter-alpha'),
+  // For fine-tuned models
+  z.string(),
+]);
+
 export const CompletionParams = z.object({
   /**
    * ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
    */
-  model: z.string(),
+  model: CompletionModel,
   /**
    * The string prompt to generate a completion for.
    */
