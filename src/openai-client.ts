@@ -1,7 +1,9 @@
 import type { z } from 'zod';
 import { createApiInstance } from './fetch-api';
-import { CompletionParams, EmbeddingParams } from './schema';
-import type { EmbeddingResponse, CompletionResponse } from './schema';
+import { CompletionParams } from './schemas/completion';
+import { EmbeddingParams } from './schemas/embedding';
+import type { CompletionResponse } from './schemas/completion';
+import type { EmbeddingResponse } from './schemas/embedding';
 
 type ConfigOpts = {
   /**
