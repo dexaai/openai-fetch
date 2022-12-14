@@ -1,21 +1,15 @@
 import { createApiInstance } from './fetch-api';
+import { CompletionParamsSchema } from './schemas/completion';
+import { EditParamsSchema } from './schemas/edit';
+import { EmbeddingParamsSchema } from './schemas/embedding';
 import type {
   CompletionParams,
-  CompletionParamsMulti,
-  CompletionParamsSingle,
   CompletionResponse,
-  CompletionResponseMulti,
-  CompletionResponseSingle,
-  EmbeddingParams,
-  EmbeddingParamsSingle,
-  EmbeddingParamsMulti,
-  EmbeddingResponse,
-  EmbeddingResponseSingle,
-  EmbeddingResponseMulti,
-  EmbeddingRequest,
-} from './types';
+} from './schemas/completion';
+import type { EditParams, EditResponse } from './schemas/edit';
+import type { EmbeddingParams, EmbeddingResponse } from './schemas/embedding';
 
-type ConfigOpts = {
+export type ConfigOpts = {
   /**
    * The API key used to authenticate with the OpenAI API.
    * @see https://beta.openai.com/account/api-keys
@@ -48,66 +42,74 @@ export class OpenAIClient {
     });
   }
 
-  async createCompletion(
-    params: CompletionParamsSingle
-  ): Promise<CompletionResponseSingle>;
-  async createCompletion(
-    params: CompletionParamsMulti
-  ): Promise<CompletionResponseMulti>;
-  async createCompletion(
-    params: CompletionParams
-  ): Promise<CompletionResponseSingle | CompletionResponseMulti> {
-    const data: CompletionResponse = await this.api
-      .post('completions', { json: params })
+  /**
+   * Create an embedding for a single input string.
+   * @param params.input The string to embed.
+   * @param params.model The model to use for the embedding.
+   * @param params.user A unique identifier representing the end-user.
+   */
+  async createEmbedding(params: EmbeddingParams): Promise<{
+    /** The embedding for the input string. */
+    embedding: number[];
+    /** The raw response from the API. */
+    response: EmbeddingResponse;
+  }> {
+    const parsedParams = EmbeddingParamsSchema.parse(params);
+    const response: EmbeddingResponse = await this.api
+      .post('embeddings', {
+        json: {
+          input: preprocessInput(parsedParams),
+          model: parsedParams.model,
+          user: parsedParams.user,
+        },
+      })
       .json();
-    if (typeof params.prompt === 'string') {
-      const completion = data.choices[0].text || '';
-      return { completion, data };
-    } else {
-      const completions = data.choices.map((choice) => choice.text || '');
-      return { completions, data };
-    }
+    const embedding = response.data[0].embedding;
+    return { embedding, response };
   }
 
-  async createEmbedding(
-    params: EmbeddingParamsSingle
-  ): Promise<EmbeddingResponseSingle>;
-  async createEmbedding(
-    params: EmbeddingParamsMulti
-  ): Promise<EmbeddingResponseMulti>;
-  async createEmbedding(
-    params: EmbeddingParams
-  ): Promise<EmbeddingResponseSingle | EmbeddingResponseMulti> {
-    const { dontRemoveNewlines, input, ...rest } = params;
-    let processedInput = input;
-    // Remove newlines from the input unless the user explicitly asks us not to, or code is being embedded.
-    // @see https://beta.openai.com/docs/api-reference/embeddings/create#embeddings/create-input
-    if (dontRemoveNewlines !== true && !params.model.startsWith('code-')) {
-      processedInput = removeNewlines(input);
-    }
-    const reqBody: EmbeddingRequest = { input: processedInput, ...rest };
-    const data: EmbeddingResponse = await this.api
-      .post('embeddings', { json: reqBody })
+  /**
+   * Create a completion for a single prompt string.
+   */
+  async createCompletion(params: CompletionParams): Promise<{
+    /** The completion string. */
+    completion: string;
+    /** The raw response from the API. */
+    response: CompletionResponse;
+  }> {
+    const reqBody = CompletionParamsSchema.parse(params);
+    const response: CompletionResponse = await this.api
+      .post('completions', { json: reqBody })
       .json();
-    if (typeof input === 'string') {
-      const embedding = data.data[0].embedding;
-      return { embedding, data };
-    } else {
-      const embeddings = data.data.map((item) => item.embedding);
-      return { embeddings, data };
-    }
+    const completion = response.choices[0].text || '';
+    return { completion, response };
+  }
+
+  /**
+   * Create an edit for a single input string.
+   */
+  async createEdit(params: EditParams): Promise<{
+    /** The edited input string. */
+    completion: string;
+    /** The raw response from the API. */
+    response: EditResponse;
+  }> {
+    const reqBody = EditParamsSchema.parse(params);
+    const response: EditResponse = await this.api
+      .post('edits', { json: reqBody })
+      .json();
+    const completion = response.choices[0].text || '';
+    return { completion, response };
   }
 }
 
-const newlineRegex = /\r?\n|\r/g;
-
-/**
- * Replace all newline characters in a string with a single space.
- */
-function removeNewlines(input: string | string[]): string | string[] {
-  if (typeof input === 'string') {
-    return input.replace(newlineRegex, ' ');
-  } else {
-    return input.map((str) => str.replace(newlineRegex, ' '));
+function preprocessInput(params: EmbeddingParams): string {
+  const newlineRegex = /\r?\n|\r/g;
+  let processedInput = params.input;
+  // Remove newlines from the input unless the user explicitly asks us not to, or code is being embedded.
+  // @see https://beta.openai.com/docs/api-reference/embeddings/create#embeddings/create-input
+  if (params.dontRemoveNewlines !== true && !params.model.startsWith('code-')) {
+    processedInput = params.input.replace(newlineRegex, ' ');
   }
+  return processedInput;
 }

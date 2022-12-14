@@ -1,8 +1,19 @@
+// The OpenAI client class
 export { OpenAIClient } from './openai-client';
 
+// Zod schemas
+export { CompletionParamsSchema } from './schemas/completion';
+export { EmbeddingParamsSchema } from './schemas/embedding';
+export { EditParamsSchema } from './schemas/edit';
+
+// Custom OpenAI error
+export { OpenAIApiError } from './errors';
+
+// Types
 export type {
   CompletionParams,
   CompletionResponse,
-  EmbeddingParams,
-  EmbeddingResponse,
-} from './types';
+} from './schemas/completion';
+export type { EmbeddingParams, EmbeddingResponse } from './schemas/embedding';
+export type { EditParams, EditResponse } from './schemas/edit';
+export type { ConfigOpts } from './openai-client';
