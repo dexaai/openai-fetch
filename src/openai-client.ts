@@ -1,8 +1,10 @@
 import type { z } from 'zod';
 import { createApiInstance } from './fetch-api';
 import { CompletionParams } from './schemas/completion';
+import { EditParams } from './schemas/edit';
 import { EmbeddingParams } from './schemas/embedding';
 import type { CompletionResponse } from './schemas/completion';
+import type { EditResponse } from './schemas/edit';
 import type { EmbeddingResponse } from './schemas/embedding';
 
 type ConfigOpts = {
@@ -75,6 +77,23 @@ export class OpenAIClient {
     const reqBody = CompletionParams.parse(params);
     const response: CompletionResponse = await this.api
       .post('completions', { json: reqBody })
+      .json();
+    const completion = response.choices[0].text || '';
+    return { completion, response };
+  }
+
+  /**
+   * Create an edit for a single input string.
+   */
+  async createEdit(params: z.input<typeof EditParams>): Promise<{
+    /** The edited input string. */
+    completion: string;
+    /** The raw response from the API. */
+    response: EditResponse;
+  }> {
+    const reqBody = EditParams.parse(params);
+    const response: EditResponse = await this.api
+      .post('edits', { json: reqBody })
       .json();
     const completion = response.choices[0].text || '';
     return { completion, response };

@@ -75,20 +75,24 @@ export type CompletionResponse = {
   object: string;
   created: number;
   model: string;
-  choices: {
-    text?: string;
-    index?: number;
-    logprobs?: {
-      tokens?: Array<string>;
-      token_logprobs?: Array<number>;
-      top_logprobs?: Array<object>;
-      text_offset?: Array<number>;
-    } | null;
-    finish_reason?: string;
-  }[];
-  usage?: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
+  choices: CompletionResponseChoices;
+  usage?: CompletionResponseUsage;
+};
+
+export type CompletionResponseChoices = {
+  text?: string;
+  index?: number;
+  logprobs?: {
+    tokens?: Array<string>;
+    token_logprobs?: Array<number>;
+    top_logprobs?: Array<object>;
+    text_offset?: Array<number>;
+  } | null;
+  finish_reason?: string;
+}[];
+
+export type CompletionResponseUsage = {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
 };
