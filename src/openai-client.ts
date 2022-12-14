@@ -1,13 +1,15 @@
-import type { z } from 'zod';
 import { createApiInstance } from './fetch-api';
-import { CompletionParams } from './schemas/completion';
-import { EditParams } from './schemas/edit';
-import { EmbeddingParams } from './schemas/embedding';
-import type { CompletionResponse } from './schemas/completion';
-import type { EditResponse } from './schemas/edit';
-import type { EmbeddingResponse } from './schemas/embedding';
+import { CompletionParamsSchema } from './schemas/completion';
+import { EditParamsSchema } from './schemas/edit';
+import { EmbeddingParamsSchema } from './schemas/embedding';
+import type {
+  CompletionParams,
+  CompletionResponse,
+} from './schemas/completion';
+import type { EditParams, EditResponse } from './schemas/edit';
+import type { EmbeddingParams, EmbeddingResponse } from './schemas/embedding';
 
-type ConfigOpts = {
+export type ConfigOpts = {
   /**
    * The API key used to authenticate with the OpenAI API.
    * @see https://beta.openai.com/account/api-keys
@@ -46,20 +48,21 @@ export class OpenAIClient {
    * @param params.model The model to use for the embedding.
    * @param params.user A unique identifier representing the end-user.
    */
-  async createEmbedding(params: z.input<typeof EmbeddingParams>): Promise<{
+  async createEmbedding(params: EmbeddingParams): Promise<{
     /** The embedding for the input string. */
     embedding: number[];
     /** The raw response from the API. */
     response: EmbeddingResponse;
   }> {
-    const parsedParams = EmbeddingParams.parse(params);
-    const reqBody: z.output<typeof EmbeddingParams> = {
-      input: preprocessInput(parsedParams),
-      model: parsedParams.model,
-      user: parsedParams.user,
-    };
+    const parsedParams = EmbeddingParamsSchema.parse(params);
     const response: EmbeddingResponse = await this.api
-      .post('embeddings', { json: reqBody })
+      .post('embeddings', {
+        json: {
+          input: preprocessInput(parsedParams),
+          model: parsedParams.model,
+          user: parsedParams.user,
+        },
+      })
       .json();
     const embedding = response.data[0].embedding;
     return { embedding, response };
@@ -68,13 +71,13 @@ export class OpenAIClient {
   /**
    * Create a completion for a single prompt string.
    */
-  async createCompletion(params: z.input<typeof CompletionParams>): Promise<{
+  async createCompletion(params: CompletionParams): Promise<{
     /** The completion string. */
     completion: string;
     /** The raw response from the API. */
     response: CompletionResponse;
   }> {
-    const reqBody = CompletionParams.parse(params);
+    const reqBody = CompletionParamsSchema.parse(params);
     const response: CompletionResponse = await this.api
       .post('completions', { json: reqBody })
       .json();
@@ -85,13 +88,13 @@ export class OpenAIClient {
   /**
    * Create an edit for a single input string.
    */
-  async createEdit(params: z.input<typeof EditParams>): Promise<{
+  async createEdit(params: EditParams): Promise<{
     /** The edited input string. */
     completion: string;
     /** The raw response from the API. */
     response: EditResponse;
   }> {
-    const reqBody = EditParams.parse(params);
+    const reqBody = EditParamsSchema.parse(params);
     const response: EditResponse = await this.api
       .post('edits', { json: reqBody })
       .json();
@@ -100,7 +103,7 @@ export class OpenAIClient {
   }
 }
 
-function preprocessInput(params: z.input<typeof EmbeddingParams>): string {
+function preprocessInput(params: EmbeddingParams): string {
   const newlineRegex = /\r?\n|\r/g;
   let processedInput = params.input;
   // Remove newlines from the input unless the user explicitly asks us not to, or code is being embedded.
