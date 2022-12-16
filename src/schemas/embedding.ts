@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const EmbeddingModel = z.union([
+  z.literal('text-embedding-ada-002'),
   z.literal('text-similarity-ada-001'),
   z.literal('text-similarity-babbage-001'),
   z.literal('text-similarity-curie-001'),
