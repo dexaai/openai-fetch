@@ -13,6 +13,7 @@ export function createApiInstance(opts: {
 }) {
   return ky.extend({
     prefixUrl: opts.baseUrl || DEFAULT_BASE_URL,
+    timeout: 1000 * 60,
     headers: {
       'User-Agent': 'openai-fetch',
       Authorization: `Bearer ${opts.apiKey}`,
