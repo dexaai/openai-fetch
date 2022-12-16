@@ -54,15 +54,9 @@ export class OpenAIClient {
     /** The raw response from the API. */
     response: EmbeddingResponse;
   }> {
-    const parsedParams = EmbeddingParamsSchema.parse(params);
+    const reqBody = EmbeddingParamsSchema.parse(params);
     const response: EmbeddingResponse = await this.api
-      .post('embeddings', {
-        json: {
-          input: preprocessInput(parsedParams),
-          model: parsedParams.model,
-          user: parsedParams.user,
-        },
-      })
+      .post('embeddings', { json: reqBody })
       .json();
     const embedding = response.data[0].embedding;
     return { embedding, response };
@@ -101,15 +95,4 @@ export class OpenAIClient {
     const completion = response.choices[0].text || '';
     return { completion, response };
   }
-}
-
-function preprocessInput(params: EmbeddingParams): string {
-  const newlineRegex = /\r?\n|\r/g;
-  let processedInput = params.input;
-  // Remove newlines from the input unless the user explicitly asks us not to, or code is being embedded.
-  // @see https://beta.openai.com/docs/api-reference/embeddings/create#embeddings/create-input
-  if (params.dontRemoveNewlines !== true && !params.model.startsWith('code-')) {
-    processedInput = params.input.replace(newlineRegex, ' ');
-  }
-  return processedInput;
 }
