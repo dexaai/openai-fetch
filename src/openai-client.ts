@@ -8,6 +8,7 @@ import type {
 } from './schemas/completion';
 import type { EditParams, EditResponse } from './schemas/edit';
 import type { EmbeddingParams, EmbeddingResponse } from './schemas/embedding';
+import type { Options } from 'ky';
 
 export type ConfigOpts = {
   /**
@@ -25,6 +26,8 @@ export type ConfigOpts = {
    * @see https://beta.openai.com/docs/api-reference/requesting-organization
    */
   organizationId?: string;
+
+  options?: Options;
 };
 
 export class OpenAIClient {
@@ -39,6 +42,7 @@ export class OpenAIClient {
     this.api = createApiInstance({
       apiKey,
       organizationId: opts.organizationId,
+      options: opts.options,
     });
   }
 
