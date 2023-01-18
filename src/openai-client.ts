@@ -8,7 +8,7 @@ import type {
 } from './schemas/completion';
 import type { EditParams, EditResponse } from './schemas/edit';
 import type { EmbeddingParams, EmbeddingResponse } from './schemas/embedding';
-import type { Options } from 'ky';
+import type { FetchOptions } from './fetch-api';
 
 export type ConfigOpts = {
   /**
@@ -27,7 +27,7 @@ export type ConfigOpts = {
    */
   organizationId?: string;
 
-  options?: Options;
+  fetchOptions?: FetchOptions;
 };
 
 export class OpenAIClient {
@@ -42,7 +42,7 @@ export class OpenAIClient {
     this.api = createApiInstance({
       apiKey,
       organizationId: opts.organizationId,
-      options: opts.options,
+      fetchOptions: opts.fetchOptions,
     });
   }
 
