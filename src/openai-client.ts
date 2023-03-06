@@ -9,6 +9,13 @@ import type {
 import type { EditParams, EditResponse } from './schemas/edit';
 import type { EmbeddingParams, EmbeddingResponse } from './schemas/embedding';
 import type { FetchOptions } from './fetch-api';
+import type {
+  ChatCompletionParams,
+  ChatCompletionResponse,
+  ChatResponseMessage} from './schemas/chat-completion';
+import {
+  ChatCompletionParamsSchema
+} from './schemas/chat-completion';
 
 export type ConfigOpts = {
   /**
@@ -81,6 +88,26 @@ export class OpenAIClient {
       .json();
     const completion = response.choices[0].text || '';
     return { completion, response };
+  }
+
+  /**
+   * Create a completion for a chat message.
+   */
+  async createChatCompletion(params: ChatCompletionParams): Promise<{
+    /** The completion message. */
+    message: ChatResponseMessage;
+    /** The raw response from the API. */
+    response: ChatCompletionResponse;
+  }> {
+    const reqBody = ChatCompletionParamsSchema.parse(params);
+    const response: ChatCompletionResponse = await this.api
+      .post('chat/completions', { json: reqBody })
+      .json();
+    const message = response.choices[0].message || {
+      role: 'assistant',
+      content: '',
+    };
+    return { message, response };
   }
 
   /**
