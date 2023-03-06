@@ -28,7 +28,7 @@ export function createApiInstance(opts: {
           const { response } = error;
           if (response && response.body) {
             try {
-              const body = await response.json();
+              const body = await response.clone().json();
               if (body.error) {
                 return new OpenAIApiError(body.error.message, {
                   status: response.status,
