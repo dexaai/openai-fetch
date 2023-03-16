@@ -34,7 +34,11 @@ The `apiKey` is optional and will be read from `process.env.OPENAI_API_KEY` if p
 
 ## API
 
+The API follows OpenAI very closely, so their [reference documentation](https://beta.openai.com/docs/api-reference) can generally be used. Everything is strongly typed, so you will know if anything is different as soon as TypeScript parses your code.
+
 ### Create Completion
+
+See: [OpenAI docs](https://beta.openai.com/docs/api-reference/completions) | [Type definitions](/src/schemas/completion.ts)
 
 ```ts
 client.createCompletion(params: CompletionParams): Promise<{
@@ -45,9 +49,22 @@ client.createCompletion(params: CompletionParams): Promise<{
 }>
 ```
 
-See: [OpenAI docs](https://beta.openai.com/docs/api-reference/completions) | [source code](/src/openai-client.ts)
+### Create Chat Completion
+
+See: [OpenAI docs](https://beta.openai.com/docs/api-reference/chat) | [Type definitions](/src/schemas/chat-completion.ts)
+
+```ts
+client.createChatCompletion(params: ChatCompletionParams): Promise<{
+  /** The completion message. */
+  message: ChatResponseMessage;
+  /** The raw response from the API. */
+  response: ChatCompletionResponse;
+}>
+```
 
 ### Create Embedding
+
+See: [OpenAI docs](https://beta.openai.com/docs/api-reference/embeddings) | [Type definitions](/src/schemas/embedding.ts)
 
 ```ts
 client.createEmbedding(params: EmbeddingParams): Promise<{
@@ -58,9 +75,9 @@ client.createEmbedding(params: EmbeddingParams): Promise<{
 }>
 ```
 
-See: [OpenAI docs](https://beta.openai.com/docs/api-reference/embeddings) | [source code](/src/openai-client.ts)
-
 ### Create Edit
+
+See: [OpenAI docs](https://beta.openai.com/docs/api-reference/edits) | [Type definitions](/src/schemas/edit.ts)
 
 ```ts
 client.createEdit(params: EditParams): Promise<{
@@ -70,5 +87,3 @@ client.createEdit(params: EditParams): Promise<{
   response: EditResponse;
 }>
 ```
-
-See: [OpenAI docs](https://beta.openai.com/docs/api-reference/edits) | [source code](/src/openai-client.ts)
