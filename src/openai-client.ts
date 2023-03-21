@@ -48,6 +48,7 @@ export class OpenAIClient {
       );
     this.api = createApiInstance({
       apiKey,
+      baseUrl: opts.baseUrl,
       organizationId: opts.organizationId,
       fetchOptions: opts.fetchOptions,
     });
