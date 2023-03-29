@@ -34,10 +34,6 @@ export const EmbeddingParamsSchema = z.object({
    * A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse. [Learn more](/docs/usage-policies/end-user-ids).
    */
   user: z.string().optional(),
-  /**
-   * Opt out of automatic newline removal of the input string.
-   */
-  dontRemoveNewlines: z.boolean().optional(),
 });
 
 export type EmbeddingParams = z.input<typeof EmbeddingParamsSchema>;
