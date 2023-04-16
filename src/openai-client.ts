@@ -15,6 +15,7 @@ import type {
   ChatResponseMessage,
 } from './schemas/chat-completion';
 import { ChatCompletionParamsSchema } from './schemas/chat-completion';
+import { StreamCompletionChunker } from './streaming';
 
 export type ConfigOpts = {
   /**
@@ -35,59 +36,6 @@ export type ConfigOpts = {
 
   fetchOptions?: FetchOptions;
 };
-
-type StreamedCompletionResponse = {
-  completion: string;
-  response: CompletionResponse;
-};
-
-class OpenAIStreamParser {
-  onchunk?: (chunk: StreamedCompletionResponse) => void;
-  onend?: () => void;
-
-  write(chunk: Uint8Array): void {
-    const decoder = new TextDecoder();
-    const s = decoder.decode(chunk);
-    s.split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0)
-      .forEach((line) => {
-        const pos = line.indexOf(':');
-        const name = line.substring(0, pos);
-        if (name !== 'data') return;
-        const content = line.substring(pos + 1).trim();
-        if (content.length == 0) return;
-        if (content === '[DONE]') {
-          this.onend?.();
-          return;
-        }
-        const parsed = JSON.parse(content);
-        this.onchunk?.({
-          completion: parsed.choices[0].text || '',
-          response: parsed,
-        });
-      });
-  }
-}
-
-class CompletionChunker
-  implements TransformStream<Uint8Array, StreamedCompletionResponse>
-{
-  writable: WritableStream<Uint8Array>;
-  readable: ReadableStream<StreamedCompletionResponse>;
-
-  constructor() {
-    const parser = new OpenAIStreamParser();
-    this.writable = new WritableStream(parser);
-    this.readable = new ReadableStream({
-      start(controller) {
-        parser.onchunk = (chunk: StreamedCompletionResponse) =>
-          controller.enqueue(chunk);
-        parser.onend = () => controller.close();
-      },
-    });
-  }
-}
 
 export class OpenAIClient {
   api: ReturnType<typeof createApiInstance>;
@@ -143,14 +91,42 @@ export class OpenAIClient {
     return { completion, response };
   }
 
-  async streamCompletion(params: CompletionParams) {
+  /**
+   * Create a completion for a single prompt string and stream back partial progress.
+   * @param params typipcal standard OpenAI completion parameters
+   * @returns A stream of completion chunks.
+   *
+   * @example
+   *
+   * ```ts
+   * const client = new OpenAIClient(process.env.OPENAI_API_KEY);
+   * const stream = await client.streamCompletion({
+   *   model: "text-davinci-003",
+   *   prompt: "Give me some lyrics, make it up.",
+   *   max_tokens: 256,
+   *   temperature: 0,
+   * });
+   *
+   * for await (const chunk of stream) {
+   *   process.stdout.write(chunk.completion);
+   * }
+   * ```
+   */
+  async streamCompletion(params: CompletionParams): Promise<
+    ReadableStream<{
+      /** The completion string. */
+      completion: string;
+      /** The raw response from the API. */
+      response: CompletionResponse;
+    }>
+  > {
     const reqBody = CompletionParamsSchema.parse(params);
     const response = await this.api.post('completions', {
       json: { ...reqBody, stream: true },
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
     });
     const stream = response.body as ReadableStream;
-    return stream.pipeThrough(new CompletionChunker());
+    return stream.pipeThrough(new StreamCompletionChunker());
   }
 
   /**

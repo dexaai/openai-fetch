@@ -49,6 +49,19 @@ client.createCompletion(params: CompletionParams): Promise<{
 }>
 ```
 
+To get a streaming response, use the `streamCompletion` method.
+
+```ts
+client.streamCompletion(params: CompletionParams): Promise<
+    ReadableStream<{
+      /** The completion string. */
+      completion: string;
+      /** The raw response from the API. */
+      response: CompletionResponse;
+    }>
+  >
+```
+
 ### Create Chat Completion
 
 See: [OpenAI docs](https://beta.openai.com/docs/api-reference/chat) | [Type definitions](/src/schemas/chat-completion.ts)
