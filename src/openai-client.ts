@@ -36,39 +36,58 @@ export type ConfigOpts = {
   fetchOptions?: FetchOptions;
 };
 
-export type ProgressHandler = (chunk: string) => void;
-
-// Returns true if the chunk is the last chunk.
-const parseChunk = (
-  chunk: Uint8Array,
-  handlers: ProgressHandler[]
-): boolean => {
-  const decoder = new TextDecoder();
-  const s = decoder.decode(chunk);
-  let lastChunk = false;
-  s.split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
-    .forEach((line) => {
-      const pos = line.indexOf(':');
-      const name = line.substring(0, pos);
-      if (name !== 'data') return;
-      const content = line.substring(pos + 1).trim();
-      if (content.length == 0) return;
-      if (content === '[DONE]') {
-        lastChunk = true;
-        return;
-      }
-      try {
-        const parsed = JSON.parse(content);
-        handlers.forEach((h) => h(parsed.choices[0].text));
-      } catch (e) {
-        console.log('error parsing json', content);
-        console.log('error', e);
-      }
-    });
-  return lastChunk;
+type StreamedCompletionResponse = {
+  completion: string;
+  response: CompletionResponse;
 };
+
+class OpenAIStreamParser {
+  onchunk?: (chunk: StreamedCompletionResponse) => void;
+  onend?: () => void;
+
+  write(chunk: Uint8Array): void {
+    const decoder = new TextDecoder();
+    const s = decoder.decode(chunk);
+    s.split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
+      .forEach((line) => {
+        const pos = line.indexOf(':');
+        const name = line.substring(0, pos);
+        if (name !== 'data') return;
+        const content = line.substring(pos + 1).trim();
+        if (content.length == 0) return;
+        if (content === '[DONE]') {
+          this.onend?.();
+          return;
+        }
+        const parsed = JSON.parse(content);
+        this.onchunk?.({
+          completion: parsed.choices[0].text || '',
+          response: parsed,
+        });
+      });
+  }
+}
+
+class CompletionChunker
+  implements TransformStream<Uint8Array, StreamedCompletionResponse>
+{
+  writable: WritableStream<Uint8Array>;
+  readable: ReadableStream<StreamedCompletionResponse>;
+
+  constructor() {
+    const parser = new OpenAIStreamParser();
+    this.writable = new WritableStream(parser);
+    this.readable = new ReadableStream({
+      start(controller) {
+        parser.onchunk = (chunk: StreamedCompletionResponse) =>
+          controller.enqueue(chunk);
+        parser.onend = () => controller.close();
+      },
+    });
+  }
+}
 
 export class OpenAIClient {
   api: ReturnType<typeof createApiInstance>;
@@ -110,53 +129,28 @@ export class OpenAIClient {
   /**
    * Create a completion for a single prompt string.
    */
-  async createCompletion(
-    params: CompletionParams,
-    onprogress?: ProgressHandler
-  ): Promise<{
+  async createCompletion(params: CompletionParams): Promise<{
     /** The completion string. */
     completion: string;
     /** The raw response from the API. */
     response: CompletionResponse;
   }> {
     const reqBody = CompletionParamsSchema.parse(params);
-    if (reqBody.stream) {
-      const fullResponse: string[] = [];
-      const completionResponseParts = {
-        id: '',
-        object: '',
-        created: 0,
-        model: '',
-      };
-      const handlers: ProgressHandler[] = [
-        (c) => {
-          fullResponse.push(c);
-        },
-      ];
-      if (onprogress) handlers.push(onprogress);
-      return new Promise((resolve) => {
-        this.api.post('completions', {
-          json: reqBody,
-          onDownloadProgress: (_, chunk) => {
-            if (parseChunk(chunk, handlers)) {
-              const completion = fullResponse.join('');
-              resolve({
-                completion,
-                response: {
-                  ...completionResponseParts,
-                  choices: [{ text: fullResponse.join('') }],
-                },
-              });
-            }
-          },
-        });
-      });
-    }
     const response: CompletionResponse = await this.api
       .post('completions', { json: reqBody })
       .json();
     const completion = response.choices[0].text || '';
     return { completion, response };
+  }
+
+  async streamCompletion(params: CompletionParams) {
+    const reqBody = CompletionParamsSchema.parse(params);
+    const response = await this.api.post('completions', {
+      json: { ...reqBody, stream: true },
+      onDownloadProgress: () => {}, // trick ky to return ReadableStream.
+    });
+    const stream = response.body as ReadableStream;
+    return stream.pipeThrough(new CompletionChunker());
   }
 
   /**

@@ -10,7 +10,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "lib": ["es2021"],
+    "lib": ["es2021", "DOM"],
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "dist",
