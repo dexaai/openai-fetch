@@ -38,11 +38,15 @@ class OpenAIStreamParser {
           this.onend?.();
           return;
         }
-        const parsed = JSON.parse(content);
-        this.onchunk?.({
-          completion: parsed.choices[0].text || '',
-          response: parsed,
-        });
+        try {
+          const parsed = JSON.parse(content);
+          this.onchunk?.({
+            completion: parsed.choices[0].text || '',
+            response: parsed,
+          });
+        } catch (e) {
+          console.error('Failed parsing streamed JSON chunk', e);
+        }
       });
   }
 }
