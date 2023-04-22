@@ -126,7 +126,12 @@ export class OpenAIClient {
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
     });
     const stream = response.body as ReadableStream;
-    return stream.pipeThrough(new StreamCompletionChunker());
+    return stream.pipeThrough(
+      new StreamCompletionChunker((response: CompletionResponse) => {
+        const completion = response.choices[0].text || '';
+        return { completion, response };
+      })
+    );
   }
 
   /**
@@ -147,6 +152,31 @@ export class OpenAIClient {
       content: '',
     };
     return { message, response };
+  }
+
+  async streamChatCompletion(params: ChatCompletionParams): Promise<
+    ReadableStream<{
+      /** The completion message. */
+      message: ChatResponseMessage;
+      /** The raw response from the API. */
+      response: ChatCompletionResponse;
+    }>
+  > {
+    const reqBody = ChatCompletionParamsSchema.parse(params);
+    const response = await this.api.post('chat/completions', {
+      json: { ...reqBody, stream: true },
+      onDownloadProgress: () => {}, // trick ky to return ReadableStream.
+    });
+    const stream = response.body as ReadableStream;
+    return stream.pipeThrough(
+      new StreamCompletionChunker((response: ChatCompletionResponse) => {
+        const message = response.choices[0].delta || {
+          role: 'assistant',
+          content: '',
+        };
+        return { message, response };
+      })
+    );
   }
 
   /**

@@ -1,21 +1,21 @@
-import type { CompletionResponse } from './schemas/completion';
-
-/**
- * Convenience type for brevity in declarations.
+/** A function that converts from raw Completion response from OpenAI
+ * into a nicer object which includes the first choice in response from OpenAI.
  */
-type AugmentedCompletionResponse = {
-  completion: string;
-  response: CompletionResponse;
-};
+type ResponseFactory<Raw, Nice> = (response: Raw) => Nice;
 
 /**
  * A parser for the streaming responses from the OpenAI API.
  *
  * Conveniently shaped like an argument for WritableStream constructor.
  */
-class OpenAIStreamParser {
-  onchunk?: (chunk: AugmentedCompletionResponse) => void;
+class OpenAIStreamParser<Raw, Nice> {
+  private responseFactory: ResponseFactory<Raw, Nice>;
+  onchunk?: (chunk: Nice) => void;
   onend?: () => void;
+
+  constructor(responseFactory: ResponseFactory<Raw, Nice>) {
+    this.responseFactory = responseFactory;
+  }
 
   /**
    * Takes the ReadableStream chunks, produced by `fetch` and turns them into
@@ -40,10 +40,7 @@ class OpenAIStreamParser {
         }
         try {
           const parsed = JSON.parse(content);
-          this.onchunk?.({
-            completion: parsed.choices[0].text || '',
-            response: parsed,
-          });
+          this.onchunk?.(this.responseFactory(parsed));
         } catch (e) {
           console.error('Failed parsing streamed JSON chunk', e);
         }
@@ -53,21 +50,20 @@ class OpenAIStreamParser {
 
 /**
  * A transform stream that takes the streaming responses from the OpenAI API
- * and turns them into `AugmentedCompletionResponse` objects.
+ * and turns them into useful response objects.
  */
-export class StreamCompletionChunker
-  implements TransformStream<Uint8Array, AugmentedCompletionResponse>
+export class StreamCompletionChunker<Raw, Nice>
+  implements TransformStream<Uint8Array, Nice>
 {
   writable: WritableStream<Uint8Array>;
-  readable: ReadableStream<AugmentedCompletionResponse>;
+  readable: ReadableStream<Nice>;
 
-  constructor() {
-    const parser = new OpenAIStreamParser();
+  constructor(responseFactory: ResponseFactory<Raw, Nice>) {
+    const parser = new OpenAIStreamParser(responseFactory);
     this.writable = new WritableStream(parser);
     this.readable = new ReadableStream({
       start(controller) {
-        parser.onchunk = (chunk: AugmentedCompletionResponse) =>
-          controller.enqueue(chunk);
+        parser.onchunk = (chunk: Nice) => controller.enqueue(chunk);
         parser.onend = () => controller.close();
       },
     });
