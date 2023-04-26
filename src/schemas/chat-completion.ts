@@ -76,4 +76,6 @@ export type ChatCompletionResponseChoices = {
   index?: number;
   finish_reason?: string;
   message?: ChatResponseMessage;
+  /** Used instead of `message` when streaming */
+  delta?: ChatResponseMessage;
 }[];

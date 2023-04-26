@@ -4,7 +4,7 @@ import { OpenAIApiError } from './errors';
 
 const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
 
-export interface FetchOptions extends Options {
+export interface FetchOptions extends Omit<Options, 'credentials'> {
   credentials?: string;
 }
 

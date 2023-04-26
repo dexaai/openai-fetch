@@ -12,10 +12,10 @@ import type { FetchOptions } from './fetch-api';
 import type {
   ChatCompletionParams,
   ChatCompletionResponse,
-  ChatResponseMessage} from './schemas/chat-completion';
-import {
-  ChatCompletionParamsSchema
+  ChatResponseMessage,
 } from './schemas/chat-completion';
+import { ChatCompletionParamsSchema } from './schemas/chat-completion';
+import { StreamCompletionChunker } from './streaming';
 
 export type ConfigOpts = {
   /**
@@ -92,6 +92,49 @@ export class OpenAIClient {
   }
 
   /**
+   * Create a completion for a single prompt string and stream back partial progress.
+   * @param params typipcal standard OpenAI completion parameters
+   * @returns A stream of completion chunks.
+   *
+   * @example
+   *
+   * ```ts
+   * const client = new OpenAIClient(process.env.OPENAI_API_KEY);
+   * const stream = await client.streamCompletion({
+   *   model: "text-davinci-003",
+   *   prompt: "Give me some lyrics, make it up.",
+   *   max_tokens: 256,
+   *   temperature: 0,
+   * });
+   *
+   * for await (const chunk of stream) {
+   *   process.stdout.write(chunk.completion);
+   * }
+   * ```
+   */
+  async streamCompletion(params: CompletionParams): Promise<
+    ReadableStream<{
+      /** The completion string. */
+      completion: string;
+      /** The raw response from the API. */
+      response: CompletionResponse;
+    }>
+  > {
+    const reqBody = CompletionParamsSchema.parse(params);
+    const response = await this.api.post('completions', {
+      json: { ...reqBody, stream: true },
+      onDownloadProgress: () => {}, // trick ky to return ReadableStream.
+    });
+    const stream = response.body as ReadableStream;
+    return stream.pipeThrough(
+      new StreamCompletionChunker((response: CompletionResponse) => {
+        const completion = response.choices[0].text || '';
+        return { completion, response };
+      })
+    );
+  }
+
+  /**
    * Create a completion for a chat message.
    */
   async createChatCompletion(params: ChatCompletionParams): Promise<{
@@ -109,6 +152,31 @@ export class OpenAIClient {
       content: '',
     };
     return { message, response };
+  }
+
+  async streamChatCompletion(params: ChatCompletionParams): Promise<
+    ReadableStream<{
+      /** The completion message. */
+      message: ChatResponseMessage;
+      /** The raw response from the API. */
+      response: ChatCompletionResponse;
+    }>
+  > {
+    const reqBody = ChatCompletionParamsSchema.parse(params);
+    const response = await this.api.post('chat/completions', {
+      json: { ...reqBody, stream: true },
+      onDownloadProgress: () => {}, // trick ky to return ReadableStream.
+    });
+    const stream = response.body as ReadableStream;
+    return stream.pipeThrough(
+      new StreamCompletionChunker((response: ChatCompletionResponse) => {
+        const message = response.choices[0].delta || {
+          role: 'assistant',
+          content: '',
+        };
+        return { message, response };
+      })
+    );
   }
 
   /**
