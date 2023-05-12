@@ -33,8 +33,14 @@ export type ConfigOpts = {
    * @see https://beta.openai.com/docs/api-reference/requesting-organization
    */
   organizationId?: string;
-
+  /**
+   * Fetch options that will be added to all requests (like credentials, etc.).
+   */
   fetchOptions?: FetchOptions;
+  /**
+   * HTTP headers that will be added to all requests.
+   */
+  headers?: Record<string, string> | Headers;
 };
 
 export class OpenAIClient {
@@ -51,6 +57,7 @@ export class OpenAIClient {
       baseUrl: opts.baseUrl,
       organizationId: opts.organizationId,
       fetchOptions: opts.fetchOptions,
+      headers: opts.headers,
     });
   }
 

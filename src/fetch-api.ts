@@ -16,6 +16,7 @@ export function createApiInstance(opts: {
   baseUrl?: string;
   organizationId?: string;
   fetchOptions?: FetchOptions;
+  headers?: Record<string, string> | Headers;
 }) {
   return ky.extend({
     prefixUrl: opts.baseUrl || DEFAULT_BASE_URL,
@@ -26,6 +27,7 @@ export function createApiInstance(opts: {
       ...(opts.organizationId && {
         'OpenAI-Organization': opts.organizationId,
       }),
+      ...opts.headers,
     },
     ...opts.fetchOptions,
     hooks: {
