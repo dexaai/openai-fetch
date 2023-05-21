@@ -4,7 +4,7 @@ import { OpenAIApiError } from './errors';
 
 const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
 
-export interface FetchOptions extends Omit<Options, 'credentials'> {
+export interface FetchOptions extends Omit<Options, 'credentials' | 'headers'> {
   credentials?: string;
 }
 
@@ -20,7 +20,7 @@ export function createApiInstance(opts: {
 }) {
   return ky.extend({
     prefixUrl: opts.baseUrl || DEFAULT_BASE_URL,
-    timeout: 1000 * 60,
+    timeout: 1000 * 60 * 10,
     headers: {
       'User-Agent': 'openai-fetch',
       Authorization: `Bearer ${opts.apiKey}`,
@@ -28,6 +28,8 @@ export function createApiInstance(opts: {
         'OpenAI-Organization': opts.organizationId,
       }),
       ...opts.headers,
+      // @ts-expect-error: here for backwards compatibility
+      ...opts?.fetchOptions?.headers,
     },
     ...opts.fetchOptions,
     hooks: {
