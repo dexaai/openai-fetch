@@ -1,13 +1,24 @@
 import { createApiInstance } from './fetch-api';
-import { CompletionParamsSchema } from './schemas/completion';
+import {
+  BulkCompletionParamsSchema,
+  CompletionParamsSchema,
+} from './schemas/completion';
 import { EditParamsSchema } from './schemas/edit';
-import { EmbeddingParamsSchema } from './schemas/embedding';
+import {
+  BulkEmbeddingParamsSchema,
+  EmbeddingParamsSchema,
+} from './schemas/embedding';
 import type {
+  BulkCompletionParams,
   CompletionParams,
   CompletionResponse,
 } from './schemas/completion';
 import type { EditParams, EditResponse } from './schemas/edit';
-import type { EmbeddingParams, EmbeddingResponse } from './schemas/embedding';
+import type {
+  EmbeddingParams,
+  EmbeddingResponse,
+  BulkEmbeddingParams,
+} from './schemas/embedding';
 import type { FetchOptions } from './fetch-api';
 import type {
   ChatCompletionParams,
@@ -82,6 +93,28 @@ export class OpenAIClient {
   }
 
   /**
+   * Create embeddings for an array of input strings.
+   * @param params.input The strings to embed.
+   * @param params.model The model to use for the embedding.
+   * @param params.user A unique identifier representing the end-user.
+   */
+  async createEmbeddings(params: BulkEmbeddingParams): Promise<{
+    /** The embeddings for the input strings. */
+    embeddings: number[][];
+    /** The raw response from the API. */
+    response: EmbeddingResponse;
+  }> {
+    const reqBody = BulkEmbeddingParamsSchema.parse(params);
+    const response: EmbeddingResponse = await this.api
+      .post('embeddings', { json: reqBody })
+      .json();
+    // Sort ascending by index to be safe.
+    const items = response.data.sort((a, b) => a.index - b.index);
+    const embeddings = items.map((item) => item.embedding);
+    return { embeddings, response };
+  }
+
+  /**
    * Create a completion for a single prompt string.
    */
   async createCompletion(params: CompletionParams): Promise<{
@@ -96,6 +129,27 @@ export class OpenAIClient {
       .json();
     const completion = response.choices[0].text || '';
     return { completion, response };
+  }
+
+  /**
+   * Create completions for an array of prompt strings.
+   */
+  async createCompletions(params: BulkCompletionParams): Promise<{
+    /** The completion strings. */
+    completions: string[];
+    /** The raw response from the API. */
+    response: CompletionResponse;
+  }> {
+    const reqBody = BulkCompletionParamsSchema.parse(params);
+    const response: CompletionResponse = await this.api
+      .post('completions', { json: reqBody })
+      .json();
+    // Sort ascending by index to be safe.
+    const choices = response.choices.sort(
+      (a, b) => (a.index ?? 0) - (b.index ?? 0)
+    );
+    const completions = choices.map((choice) => choice.text || '');
+    return { completions, response };
   }
 
   /**

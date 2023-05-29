@@ -38,6 +38,23 @@ export const EmbeddingParamsSchema = z.object({
 
 export type EmbeddingParams = z.input<typeof EmbeddingParamsSchema>;
 
+export const BulkEmbeddingParamsSchema = z.object({
+  /**
+   * ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.
+   */
+  model: EmbeddingModel,
+  /**
+   * The strings to embed.
+   */
+  input: z.array(z.string()),
+  /**
+   * A unique identifier representing your end-user, which will help OpenAI to monitor and detect abuse. [Learn more](/docs/usage-policies/end-user-ids).
+   */
+  user: z.string().optional(),
+});
+
+export type BulkEmbeddingParams = z.input<typeof BulkEmbeddingParamsSchema>;
+
 export type EmbeddingResponse = {
   data: {
     embedding: number[];

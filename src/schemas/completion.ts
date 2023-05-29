@@ -85,6 +85,15 @@ export const CompletionParamsSchema = z.object({
 
 export type CompletionParams = z.input<typeof CompletionParamsSchema>;
 
+export const BulkCompletionParamsSchema = CompletionParamsSchema.extend({
+  /**
+   * The array of string prompts to generate completions for.
+   */
+  prompt: z.array(z.string()),
+});
+
+export type BulkCompletionParams = z.input<typeof BulkCompletionParamsSchema>;
+
 export type CompletionResponse = {
   id: string;
   object: string;
