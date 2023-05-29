@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.14.6",
+    "dotenv": "^16.0.3",
     "esbuild": "^0.17.11",
     "eslint": "^8.35.0",
     "eslint-config-hckrs": "^0.0.3",
