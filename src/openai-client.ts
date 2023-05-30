@@ -59,6 +59,7 @@ export class OpenAIClient {
 
   constructor(opts: ConfigOpts = {}) {
     const apiKey = opts.apiKey || process.env.OPENAI_API_KEY;
+    const organizationId = opts.organizationId || process.env.OPENAI_ORG_ID;
     if (!apiKey)
       throw new Error(
         'Missing OpenAI API key. Please provide one in the config or set the OPENAI_API_KEY environment variable.'
@@ -66,7 +67,7 @@ export class OpenAIClient {
     this.api = createApiInstance({
       apiKey,
       baseUrl: opts.baseUrl,
-      organizationId: opts.organizationId,
+      organizationId,
       fetchOptions: opts.fetchOptions,
       headers: opts.headers,
     });
