@@ -40,20 +40,16 @@ export function createApiInstance(opts: {
         }
       );
       if (!response.ok && response.body) {
-        try {
-          const body = await response.clone().json();
-          if (body.error) {
-            throw new OpenAIApiError(body.error.message, {
-              status: response.status,
-              context: {
-                type: body.error.type,
-                code: body.error.code,
-                param: body.error.param,
-              },
-            });
-          }
-        } catch (e) {
-          console.error('Failed reading HTTPError response body', e);
+        const body = await response.clone().json();
+        if (body?.error) {
+          throw new OpenAIApiError(body.error?.message, {
+            status: response.status,
+            context: {
+              type: body.error?.type,
+              code: body.error?.code,
+              param: body.error?.param,
+            },
+          });
         }
       }
       return response;
