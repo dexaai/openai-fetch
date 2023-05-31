@@ -1,11 +1,13 @@
 const esbuild = require('esbuild');
 
+const external = ['native-fetch', 'undici', 'zod'];
+
 // ESM build
 esbuild
   .build({
     entryPoints: ['src/index.ts'],
     outdir: 'dist',
-    external: ['ky'],
+    external,
     bundle: true,
     sourcemap: true,
     minify: false,
@@ -20,6 +22,7 @@ esbuild
   .build({
     entryPoints: ['src/index.ts'],
     outfile: 'dist/index.cjs.js',
+    external,
     bundle: true,
     sourcemap: true,
     minify: false,

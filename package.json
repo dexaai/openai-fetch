@@ -25,7 +25,8 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "ky": "^0.33.3",
+    "native-fetch": "^4.0.2",
+    "undici": "^5.22.1",
     "zod": "^3.21.2"
   },
   "devDependencies": {

@@ -88,7 +88,7 @@ export class OpenAIClient {
     const reqBody = EmbeddingParamsSchema.parse(params);
     const response: EmbeddingResponse = await this.api
       .post('embeddings', { json: reqBody })
-      .json();
+      .then((x) => x.json());
     const embedding = response.data[0].embedding;
     return { embedding, response };
   }
@@ -108,7 +108,7 @@ export class OpenAIClient {
     const reqBody = BulkEmbeddingParamsSchema.parse(params);
     const response: EmbeddingResponse = await this.api
       .post('embeddings', { json: reqBody })
-      .json();
+      .then((res) => res.json());
     // Sort ascending by index to be safe.
     const items = response.data.sort((a, b) => a.index - b.index);
     const embeddings = items.map((item) => item.embedding);
@@ -127,7 +127,7 @@ export class OpenAIClient {
     const reqBody = CompletionParamsSchema.parse(params);
     const response: CompletionResponse = await this.api
       .post('completions', { json: reqBody })
-      .json();
+      .then((res) => res.json());
     const completion = response.choices[0].text || '';
     return { completion, response };
   }
@@ -144,7 +144,7 @@ export class OpenAIClient {
     const reqBody = BulkCompletionParamsSchema.parse(params);
     const response: CompletionResponse = await this.api
       .post('completions', { json: reqBody })
-      .json();
+      .then((res) => res.json());
     // Sort ascending by index to be safe.
     const choices = response.choices.sort(
       (a, b) => (a.index ?? 0) - (b.index ?? 0)
@@ -185,9 +185,8 @@ export class OpenAIClient {
     const reqBody = CompletionParamsSchema.parse(params);
     const response = await this.api.post('completions', {
       json: { ...reqBody, stream: true },
-      onDownloadProgress: () => {}, // trick ky to return ReadableStream.
     });
-    const stream = response.body as ReadableStream;
+    const stream = response.body!;
     return stream.pipeThrough(
       new StreamCompletionChunker((response: CompletionResponse) => {
         const completion = response.choices[0].text || '';
@@ -208,7 +207,7 @@ export class OpenAIClient {
     const reqBody = ChatCompletionParamsSchema.parse(params);
     const response: ChatCompletionResponse = await this.api
       .post('chat/completions', { json: reqBody })
-      .json();
+      .then((res) => res.json());
     const message = response.choices[0].message || {
       role: 'assistant',
       content: '',
@@ -227,9 +226,8 @@ export class OpenAIClient {
     const reqBody = ChatCompletionParamsSchema.parse(params);
     const response = await this.api.post('chat/completions', {
       json: { ...reqBody, stream: true },
-      onDownloadProgress: () => {}, // trick ky to return ReadableStream.
     });
-    const stream = response.body as ReadableStream;
+    const stream = response.body!;
     return stream.pipeThrough(
       new StreamCompletionChunker((response: ChatCompletionResponse) => {
         const message = response.choices[0].delta || {
@@ -253,7 +251,7 @@ export class OpenAIClient {
     const reqBody = EditParamsSchema.parse(params);
     const response: EditResponse = await this.api
       .post('edits', { json: reqBody })
-      .json();
+      .then((res) => res.json());
     const completion = response.choices[0].text || '';
     return { completion, response };
   }
