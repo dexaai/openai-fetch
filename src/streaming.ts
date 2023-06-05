@@ -12,9 +12,11 @@ class OpenAIStreamParser<Raw, Nice> {
   private responseFactory: ResponseFactory<Raw, Nice>;
   onchunk?: (chunk: Nice) => void;
   onend?: () => void;
+  buffer: string;
 
   constructor(responseFactory: ResponseFactory<Raw, Nice>) {
     this.responseFactory = responseFactory;
+    this.buffer = '';
   }
 
   /**
@@ -25,7 +27,21 @@ class OpenAIStreamParser<Raw, Nice> {
   write(chunk: Uint8Array): void {
     const decoder = new TextDecoder();
     const s = decoder.decode(chunk);
-    s.split('\n')
+    let parts = s.split('\n');
+
+    if (parts.length === 1) {
+      // If we didn't get a full line, then we need to buffer it.
+      this.buffer += parts[0];
+      return;
+    }
+
+    // If we have a buffer, then we need to prepend it to the first line.
+    if (this.buffer.length > 0) {
+      parts[0] = this.buffer + parts[0];
+      this.buffer = '';
+    }
+
+    parts
       .map((line) => line.trim())
       .filter((line) => line.length > 0)
       .forEach((line) => {
