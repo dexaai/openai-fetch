@@ -9,7 +9,7 @@ const ChatCompletionModel = z.union([
 ]);
 
 /** Chat message role */
-const ChatMessageRoleSchema = z.union([
+export const ChatMessageRoleSchema = z.union([
   z.literal('system'),
   z.literal('user'),
   z.literal('assistant'),
@@ -17,7 +17,7 @@ const ChatMessageRoleSchema = z.union([
 export type ChatMessageRole = z.infer<typeof ChatMessageRoleSchema>;
 
 /** Chat completion request message */
-const ChatCompletionRequestMessage = z.object({
+export const ChatMessageSchema = z.object({
   /** The role of the author of this message. */
   role: ChatMessageRoleSchema,
   /** The contents of the message */
@@ -25,12 +25,13 @@ const ChatCompletionRequestMessage = z.object({
   /** The name of the user in a multi-user chat */
   name: z.string().nullish(),
 });
+export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
 export const ChatCompletionParamsSchema = z.object({
   /** ID of the model to use. Currently, only `gpt-3.5-turbo` and `gpt-3.5-turbo-0301` are supported. */
   model: ChatCompletionModel,
   /** The messages to generate chat completions for, in the [chat format](/docs/guides/chat/introduction). */
-  messages: z.array(ChatCompletionRequestMessage),
+  messages: z.array(ChatMessageSchema),
   /** What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. We generally recommend altering this or `top_p` but not both. */
   temperature: z.number().nullish(),
   /** An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. We generally recommend altering this or `temperature` but not both. */

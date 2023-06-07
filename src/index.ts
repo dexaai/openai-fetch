@@ -2,7 +2,11 @@
 export { OpenAIClient } from './openai-client';
 
 // Zod schemas
-export { ChatCompletionParamsSchema } from './schemas/chat-completion';
+export {
+  ChatCompletionParamsSchema,
+  ChatMessageRoleSchema,
+  ChatMessageSchema,
+} from './schemas/chat-completion';
 export { CompletionParamsSchema } from './schemas/completion';
 export { EmbeddingParamsSchema } from './schemas/embedding';
 export { EditParamsSchema } from './schemas/edit';
@@ -14,6 +18,7 @@ export { OpenAIApiError } from './errors';
 export type {
   ChatCompletionParams,
   ChatCompletionResponse,
+  ChatMessage,
   ChatMessageRole,
   ChatResponseMessage,
 } from './schemas/chat-completion';
