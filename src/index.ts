@@ -7,8 +7,14 @@ export {
   ChatMessageRoleSchema,
   ChatMessageSchema,
 } from './schemas/chat-completion';
-export { CompletionParamsSchema } from './schemas/completion';
-export { EmbeddingParamsSchema } from './schemas/embedding';
+export {
+  BulkCompletionParamsSchema,
+  CompletionParamsSchema,
+} from './schemas/completion';
+export {
+  BulkEmbeddingParamsSchema,
+  EmbeddingParamsSchema,
+} from './schemas/embedding';
 export { EditParamsSchema } from './schemas/edit';
 
 // Custom OpenAI error
@@ -23,9 +29,14 @@ export type {
   ChatResponseMessage,
 } from './schemas/chat-completion';
 export type {
+  BulkCompletionParams,
   CompletionParams,
   CompletionResponse,
 } from './schemas/completion';
-export type { EmbeddingParams, EmbeddingResponse } from './schemas/embedding';
+export type {
+  BulkEmbeddingParams,
+  EmbeddingParams,
+  EmbeddingResponse,
+} from './schemas/embedding';
 export type { EditParams, EditResponse } from './schemas/edit';
 export type { ConfigOpts } from './openai-client';
