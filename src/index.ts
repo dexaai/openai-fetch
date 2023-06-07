@@ -2,9 +2,19 @@
 export { OpenAIClient } from './openai-client';
 
 // Zod schemas
-export { ChatCompletionParamsSchema } from './schemas/chat-completion';
-export { CompletionParamsSchema } from './schemas/completion';
-export { EmbeddingParamsSchema } from './schemas/embedding';
+export {
+  ChatCompletionParamsSchema,
+  ChatMessageRoleSchema,
+  ChatMessageSchema,
+} from './schemas/chat-completion';
+export {
+  BulkCompletionParamsSchema,
+  CompletionParamsSchema,
+} from './schemas/completion';
+export {
+  BulkEmbeddingParamsSchema,
+  EmbeddingParamsSchema,
+} from './schemas/embedding';
 export { EditParamsSchema } from './schemas/edit';
 
 // Custom OpenAI error
@@ -14,13 +24,19 @@ export { OpenAIApiError } from './errors';
 export type {
   ChatCompletionParams,
   ChatCompletionResponse,
+  ChatMessage,
   ChatMessageRole,
   ChatResponseMessage,
 } from './schemas/chat-completion';
 export type {
+  BulkCompletionParams,
   CompletionParams,
   CompletionResponse,
 } from './schemas/completion';
-export type { EmbeddingParams, EmbeddingResponse } from './schemas/embedding';
+export type {
+  BulkEmbeddingParams,
+  EmbeddingParams,
+  EmbeddingResponse,
+} from './schemas/embedding';
 export type { EditParams, EditResponse } from './schemas/edit';
 export type { ConfigOpts } from './openai-client';
