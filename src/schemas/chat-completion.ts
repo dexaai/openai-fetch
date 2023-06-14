@@ -35,7 +35,7 @@ export const ChatMessageSchema = z.object({
   /** The role of the author of this message. */
   role: ChatMessageRoleSchema,
   /** The contents of the message */
-  content: z.string(),
+  content: z.string().nullish(),
   /** The name of the user in a multi-user chat */
   name: z.string().nullish(),
   /** The name and arguments of a function that should be called */
