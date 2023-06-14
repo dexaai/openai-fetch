@@ -30,6 +30,9 @@ export const AssistantContentChatMessageSchema = z.object({
   /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
   name: z.string().optional(),
 });
+export type AssistantContentChatMessage = z.infer<
+  typeof AssistantContentChatMessageSchema
+>;
 
 /** An assistant message with a function call (and no content) */
 export const AssistantFunctionChatMessageSchema = z.object({
@@ -42,6 +45,16 @@ export const AssistantFunctionChatMessageSchema = z.object({
   /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
   name: z.string().optional(),
 });
+export type AssistantFunctionChatMessage = z.infer<
+  typeof AssistantFunctionChatMessageSchema
+>;
+
+/** An assistant message with content or a function call */
+export const AssistantChatMessageSchema = z.union([
+  AssistantContentChatMessageSchema,
+  AssistantFunctionChatMessageSchema,
+]);
+export type AssistantChatMessage = z.infer<typeof AssistantChatMessageSchema>;
 
 export const FunctionChatMessageSchema = z.object({
   /** The role of the messages author. */
@@ -51,6 +64,7 @@ export const FunctionChatMessageSchema = z.object({
   /** The name of the function whose response is in the `content`. */
   name: z.string(),
 });
+export type FunctionChatMessage = z.infer<typeof FunctionChatMessageSchema>;
 
 export const SystemChatMessageSchema = z.object({
   /** The role of the messages author. */
@@ -60,6 +74,7 @@ export const SystemChatMessageSchema = z.object({
   /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
   name: z.string().optional(),
 });
+export type SystemChatMessage = z.infer<typeof SystemChatMessageSchema>;
 
 export const UserChatMessageSchema = z.object({
   /** The role of the messages author. */
@@ -69,6 +84,7 @@ export const UserChatMessageSchema = z.object({
   /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
   name: z.string().optional(),
 });
+export type UserChatMessage = z.infer<typeof UserChatMessageSchema>;
 
 /** Chat completion request message */
 export const ChatMessageSchema = z.union([

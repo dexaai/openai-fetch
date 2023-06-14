@@ -3,11 +3,17 @@ export { OpenAIClient } from './openai-client';
 
 // Zod schemas
 export {
+  AssistantChatMessageSchema,
+  AssistantContentChatMessageSchema,
+  AssistantFunctionChatMessageSchema,
   ChatCompletionParamsSchema,
   ChatMessageFunctionCallSchema,
   ChatMessageFunctionSchema,
   ChatMessageRoleSchema,
   ChatMessageSchema,
+  FunctionChatMessageSchema,
+  SystemChatMessageSchema,
+  UserChatMessageSchema,
 } from './schemas/chat-completion';
 export {
   BulkCompletionParamsSchema,
@@ -24,13 +30,19 @@ export { OpenAIApiError } from './errors';
 
 // Types
 export type {
+  AssistantChatMessage,
+  AssistantContentChatMessage,
+  AssistantFunctionChatMessage,
   ChatCompletionParams,
   ChatCompletionResponse,
   ChatMessage,
-  ChatMessageRole,
-  ChatResponseMessage,
   ChatMessageFunction,
   ChatMessageFunctionCall,
+  ChatMessageRole,
+  ChatResponseMessage,
+  FunctionChatMessage,
+  SystemChatMessage,
+  UserChatMessage,
 } from './schemas/chat-completion';
 export type {
   BulkCompletionParams,
