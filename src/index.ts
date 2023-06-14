@@ -4,6 +4,8 @@ export { OpenAIClient } from './openai-client';
 // Zod schemas
 export {
   ChatCompletionParamsSchema,
+  ChatMessageFunctionCallSchema,
+  ChatMessageFunctionSchema,
   ChatMessageRoleSchema,
   ChatMessageSchema,
 } from './schemas/chat-completion';
@@ -27,6 +29,8 @@ export type {
   ChatMessage,
   ChatMessageRole,
   ChatResponseMessage,
+  ChatMessageFunction,
+  ChatMessageFunctionCall,
 } from './schemas/chat-completion';
 export type {
   BulkCompletionParams,

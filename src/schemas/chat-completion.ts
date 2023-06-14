@@ -44,7 +44,7 @@ export const ChatMessageSchema = z.object({
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
 /** Chat completion function definition */
-export const ChatMessageFunctionchema = z.object({
+export const ChatMessageFunctionSchema = z.object({
   /** The name of the function to be called. Must be a-z, A-Z, 0-9, or contain underscores and dashes, with a maximum length of 64. */
   name: z.string(),
   /** The description of what the function does. */
@@ -52,7 +52,7 @@ export const ChatMessageFunctionchema = z.object({
   /** The parameters the functions accepts, described as a JSON Schema object. See the [guide](/docs/guides/gpt/function-calling) for examples, and the [JSON Schema reference](https://json-schema.org/understanding-json-schema/) for documentation about the format. */
   parameters: z.record(z.string(), z.any()).optional(),
 });
-export type ChatMessageFunction = z.infer<typeof ChatMessageFunctionchema>;
+export type ChatMessageFunction = z.infer<typeof ChatMessageFunctionSchema>;
 
 export const ChatCompletionParamsSchema = z.object({
   /** ID of the model to use. */
@@ -60,7 +60,7 @@ export const ChatCompletionParamsSchema = z.object({
   /** The messages to generate chat completions for, in the [chat format](/docs/guides/chat/introduction). */
   messages: z.array(ChatMessageSchema),
   /** A list of functions the model may generate JSON inputs for. */
-  functions: z.array(ChatMessageFunctionchema).optional(),
+  functions: z.array(ChatMessageFunctionSchema).optional(),
   /** Controls how the model responds to function calls. "none" means the model does not call a function, and responds to the end-user. "auto" means the model can pick between an end-user or calling a function. Specifying a particular function via `{"name":\ "my_function"}` forces the model to call that function. "none" is the default when no functions are present. "auto" is the default if functions are present. */
   function_call: z
     .union([
