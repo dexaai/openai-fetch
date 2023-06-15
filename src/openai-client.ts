@@ -85,7 +85,7 @@ export class OpenAIClient {
     /** The raw response from the API. */
     response: EmbeddingResponse;
   }> {
-    const reqBody = EmbeddingParamsSchema.parse(params);
+    const reqBody = EmbeddingParamsSchema.passthrough().parse(params);
     const response: EmbeddingResponse = await this.api
       .post('embeddings', { json: reqBody })
       .json();
@@ -105,7 +105,7 @@ export class OpenAIClient {
     /** The raw response from the API. */
     response: EmbeddingResponse;
   }> {
-    const reqBody = BulkEmbeddingParamsSchema.parse(params);
+    const reqBody = BulkEmbeddingParamsSchema.passthrough().parse(params);
     const response: EmbeddingResponse = await this.api
       .post('embeddings', { json: reqBody })
       .json();
@@ -124,7 +124,7 @@ export class OpenAIClient {
     /** The raw response from the API. */
     response: CompletionResponse;
   }> {
-    const reqBody = CompletionParamsSchema.parse(params);
+    const reqBody = CompletionParamsSchema.passthrough().parse(params);
     const response: CompletionResponse = await this.api
       .post('completions', { json: reqBody })
       .json();
@@ -141,7 +141,7 @@ export class OpenAIClient {
     /** The raw response from the API. */
     response: CompletionResponse;
   }> {
-    const reqBody = BulkCompletionParamsSchema.parse(params);
+    const reqBody = BulkCompletionParamsSchema.passthrough().parse(params);
     const response: CompletionResponse = await this.api
       .post('completions', { json: reqBody })
       .json();
@@ -182,7 +182,7 @@ export class OpenAIClient {
       response: CompletionResponse;
     }>
   > {
-    const reqBody = CompletionParamsSchema.parse(params);
+    const reqBody = CompletionParamsSchema.passthrough().parse(params);
     const response = await this.api.post('completions', {
       json: { ...reqBody, stream: true },
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
@@ -205,7 +205,7 @@ export class OpenAIClient {
     /** The raw response from the API. */
     response: ChatCompletionResponse;
   }> {
-    const reqBody = ChatCompletionParamsSchema.parse(params);
+    const reqBody = ChatCompletionParamsSchema.passthrough().parse(params);
     const response: ChatCompletionResponse = await this.api
       .post('chat/completions', { json: reqBody })
       .json();
@@ -224,7 +224,7 @@ export class OpenAIClient {
       response: ChatCompletionResponse;
     }>
   > {
-    const reqBody = ChatCompletionParamsSchema.parse(params);
+    const reqBody = ChatCompletionParamsSchema.passthrough().parse(params);
     const response = await this.api.post('chat/completions', {
       json: { ...reqBody, stream: true },
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
@@ -250,7 +250,7 @@ export class OpenAIClient {
     /** The raw response from the API. */
     response: EditResponse;
   }> {
-    const reqBody = EditParamsSchema.parse(params);
+    const reqBody = EditParamsSchema.passthrough().parse(params);
     const response: EditResponse = await this.api
       .post('edits', { json: reqBody })
       .json();
