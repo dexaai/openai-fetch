@@ -27,6 +27,8 @@ export const AssistantContentChatMessageSchema = z.object({
   role: z.literal('assistant'),
   /** The contents of the message */
   content: z.string(),
+  /** function_call is undefined when content is present */
+  function_call: z.never().optional(),
   /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
   name: z.string().optional(),
 });
@@ -164,13 +166,15 @@ export type ChatResponseMessage =
       role: 'assistant';
       /** The contents of the message */
       content: string;
+      /** There is no function_call when content is present */
+      function_call?: undefined;
     }
   | {
       role: 'assistant';
-      /** The name and arguments of a function to call */
-      function_call: ChatMessageFunctionCall;
       /** Contents are null when function_call is present */
       content: null;
+      /** The name and arguments of a function to call */
+      function_call: ChatMessageFunctionCall;
     };
 
 export type ChatCompletionResponseChoices = {
