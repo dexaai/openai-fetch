@@ -58,6 +58,7 @@ export class OpenAIClient {
   api: ReturnType<typeof createApiInstance>;
 
   constructor(opts: ConfigOpts = {}) {
+    const process = globalThis.process || { env: {} };
     const apiKey = opts.apiKey || process.env.OPENAI_API_KEY;
     const organizationId = opts.organizationId || process.env.OPENAI_ORG_ID;
     if (!apiKey)
