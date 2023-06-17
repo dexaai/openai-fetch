@@ -25,12 +25,12 @@ export type ChatMessageFunctionCall = z.infer<
 export const AssistantContentChatMessageSchema = z.object({
   /** The role of the messages author. */
   role: z.literal('assistant'),
+  /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
+  name: z.string().optional(),
   /** The contents of the message */
   content: z.string(),
   /** function_call is undefined when content is present */
   function_call: z.never().optional(),
-  /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
-  name: z.string().optional(),
 });
 export type AssistantContentChatMessage = z.infer<
   typeof AssistantContentChatMessageSchema
@@ -40,12 +40,12 @@ export type AssistantContentChatMessage = z.infer<
 export const AssistantFunctionChatMessageSchema = z.object({
   /** The role of the messages author. */
   role: z.literal('assistant'),
+  /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
+  name: z.string().optional(),
   /** Contents are null when function_call is present */
   content: z.literal(null),
   /** The name and arguments of a function that should be called */
   function_call: ChatMessageFunctionCallSchema,
-  /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
-  name: z.string().optional(),
 });
 export type AssistantFunctionChatMessage = z.infer<
   typeof AssistantFunctionChatMessageSchema
@@ -61,30 +61,39 @@ export type AssistantChatMessage = z.infer<typeof AssistantChatMessageSchema>;
 export const FunctionChatMessageSchema = z.object({
   /** The role of the messages author. */
   role: z.literal('function'),
+  /**
+   * The name of the function whose response is in the `content`.
+   * This is required for function messages.
+   */
+  name: z.string(),
   /** The contents of the message */
   content: z.string(),
-  /** The name of the function whose response is in the `content`. */
-  name: z.string(),
+  /** Function messages don't support function_call */
+  function_call: z.never().optional(),
 });
 export type FunctionChatMessage = z.infer<typeof FunctionChatMessageSchema>;
 
 export const SystemChatMessageSchema = z.object({
   /** The role of the messages author. */
   role: z.literal('system'),
-  /** The contents of the message */
-  content: z.string(),
   /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
   name: z.string().optional(),
+  /** The contents of the message */
+  content: z.string(),
+  /** System messages don't support function_call */
+  function_call: z.never().optional(),
 });
 export type SystemChatMessage = z.infer<typeof SystemChatMessageSchema>;
 
 export const UserChatMessageSchema = z.object({
   /** The role of the messages author. */
   role: z.literal('user'),
-  /** The contents of the message */
-  content: z.string(),
   /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
   name: z.string().optional(),
+  /** The contents of the message */
+  content: z.string(),
+  /** User messages don't support function_call */
+  function_call: z.never().optional(),
 });
 export type UserChatMessage = z.infer<typeof UserChatMessageSchema>;
 
@@ -163,14 +172,14 @@ export type ChatCompletionResponse = {
 
 export type ChatResponseMessage =
   | {
-      role: 'assistant';
+      role: ChatMessageRole;
       /** The contents of the message */
       content: string;
       /** There is no function_call when content is present */
       function_call?: undefined;
     }
   | {
-      role: 'assistant';
+      role: ChatMessageRole;
       /** Contents are null when function_call is present */
       content: null;
       /** The name and arguments of a function to call */
