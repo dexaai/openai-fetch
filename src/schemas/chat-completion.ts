@@ -21,90 +21,16 @@ export type ChatMessageFunctionCall = z.infer<
   typeof ChatMessageFunctionCallSchema
 >;
 
-/** An assistant message with content (and no function call) */
-export const AssistantContentChatMessageSchema = z.object({
+export const ChatMessageSchema = z.object({
   /** The role of the messages author. */
-  role: z.literal('assistant'),
+  role: ChatMessageRoleSchema,
   /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
   name: z.string().optional(),
   /** The contents of the message */
-  content: z.string(),
-  /** function_call is undefined when content is present */
-  function_call: z.never().optional(),
-});
-export type AssistantContentChatMessage = z.infer<
-  typeof AssistantContentChatMessageSchema
->;
-
-/** An assistant message with a function call (and no content) */
-export const AssistantFunctionChatMessageSchema = z.object({
-  /** The role of the messages author. */
-  role: z.literal('assistant'),
-  /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
-  name: z.string().optional(),
-  /** Contents are null when function_call is present */
-  content: z.literal(null),
+  content: z.union([z.string(), z.literal(null)]),
   /** The name and arguments of a function that should be called */
-  function_call: ChatMessageFunctionCallSchema,
+  function_call: ChatMessageFunctionCallSchema.optional(),
 });
-export type AssistantFunctionChatMessage = z.infer<
-  typeof AssistantFunctionChatMessageSchema
->;
-
-/** An assistant message with content or a function call */
-export const AssistantChatMessageSchema = z.union([
-  AssistantContentChatMessageSchema,
-  AssistantFunctionChatMessageSchema,
-]);
-export type AssistantChatMessage = z.infer<typeof AssistantChatMessageSchema>;
-
-export const FunctionChatMessageSchema = z.object({
-  /** The role of the messages author. */
-  role: z.literal('function'),
-  /**
-   * The name of the function whose response is in the `content`.
-   * This is required for function messages.
-   */
-  name: z.string(),
-  /** The contents of the message */
-  content: z.string(),
-  /** Function messages don't support function_call */
-  function_call: z.never().optional(),
-});
-export type FunctionChatMessage = z.infer<typeof FunctionChatMessageSchema>;
-
-export const SystemChatMessageSchema = z.object({
-  /** The role of the messages author. */
-  role: z.literal('system'),
-  /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
-  name: z.string().optional(),
-  /** The contents of the message */
-  content: z.string(),
-  /** System messages don't support function_call */
-  function_call: z.never().optional(),
-});
-export type SystemChatMessage = z.infer<typeof SystemChatMessageSchema>;
-
-export const UserChatMessageSchema = z.object({
-  /** The role of the messages author. */
-  role: z.literal('user'),
-  /** The name of the author of this message. May contain a-z, A-Z, 0-9, and underscores, with a maximum length of 64 characters. */
-  name: z.string().optional(),
-  /** The contents of the message */
-  content: z.string(),
-  /** User messages don't support function_call */
-  function_call: z.never().optional(),
-});
-export type UserChatMessage = z.infer<typeof UserChatMessageSchema>;
-
-/** Chat completion request message */
-export const ChatMessageSchema = z.union([
-  AssistantContentChatMessageSchema,
-  AssistantFunctionChatMessageSchema,
-  FunctionChatMessageSchema,
-  SystemChatMessageSchema,
-  UserChatMessageSchema,
-]);
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
 /** Chat completion function definition */
@@ -170,23 +96,7 @@ export type ChatCompletionResponse = {
   usage?: CompletionResponseUsage;
 };
 
-export type ChatResponseMessage =
-  | {
-      role: ChatMessageRole;
-      name?: string;
-      /** The contents of the message */
-      content: string;
-      /** There is no function_call when content is present */
-      function_call?: undefined;
-    }
-  | {
-      role: ChatMessageRole;
-      name?: string;
-      /** Contents are null when function_call is present */
-      content: null;
-      /** The name and arguments of a function to call */
-      function_call: ChatMessageFunctionCall;
-    };
+export type ChatResponseMessage = ChatMessage;
 
 export type ChatCompletionResponseChoices = {
   index?: number;
