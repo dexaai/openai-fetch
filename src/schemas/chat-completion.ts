@@ -173,6 +173,7 @@ export type ChatCompletionResponse = {
 export type ChatResponseMessage =
   | {
       role: ChatMessageRole;
+      name?: string;
       /** The contents of the message */
       content: string;
       /** There is no function_call when content is present */
@@ -180,6 +181,7 @@ export type ChatResponseMessage =
     }
   | {
       role: ChatMessageRole;
+      name?: string;
       /** Contents are null when function_call is present */
       content: null;
       /** The name and arguments of a function to call */
