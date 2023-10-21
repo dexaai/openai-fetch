@@ -34,8 +34,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "ky": "^1.1.0",
-    "zod": "^3.22.4"
+    "ky": "^1.1.0"
   },
   "devDependencies": {
     "@dexaai/eslint-config": "^0.4.0",

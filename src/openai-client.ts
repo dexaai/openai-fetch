@@ -1,31 +1,6 @@
-import { createApiInstance } from './fetch-api.js';
-import {
-  BulkCompletionParamsSchema,
-  CompletionParamsSchema,
-} from './schemas/completion.js';
-import { EditParamsSchema } from './schemas/edit.js';
-import {
-  BulkEmbeddingParamsSchema,
-  EmbeddingParamsSchema,
-} from './schemas/embedding.js';
-import type {
-  BulkCompletionParams,
-  CompletionParams,
-  CompletionResponse,
-} from './schemas/completion.js';
-import type { EditParams, EditResponse } from './schemas/edit.js';
-import type {
-  EmbeddingParams,
-  EmbeddingResponse,
-  BulkEmbeddingParams,
-} from './schemas/embedding.js';
+import type { OpenAI } from 'openai';
 import type { KyOptions } from './fetch-api.js';
-import type {
-  ChatCompletionParams,
-  ChatCompletionResponse,
-  ChatResponseMessage,
-} from './schemas/chat-completion.js';
-import { ChatCompletionParamsSchema } from './schemas/chat-completion.js';
+import { createApiInstance } from './fetch-api.js';
 import { StreamCompletionChunker } from './streaming.js';
 
 export type ConfigOpts = {
@@ -52,6 +27,20 @@ export type ConfigOpts = {
   kyOptions?: KyOptions;
 };
 
+type EmbeddingParams = Omit<OpenAI.EmbeddingCreateParams, 'input'> & {
+  input: string | number[];
+};
+type BulkEmbeddingParams = Omit<OpenAI.EmbeddingCreateParams, 'input'> & {
+  input: string[] | number[][];
+};
+
+type CompletionParams = Omit<OpenAI.CompletionCreateParams, 'prompt'> & {
+  prompt: string;
+};
+type BulkCompletionParams = Omit<OpenAI.CompletionCreateParams, 'prompt'> & {
+  prompt: string[];
+};
+
 export class OpenAIClient {
   api: ReturnType<typeof createApiInstance>;
 
@@ -71,41 +60,28 @@ export class OpenAIClient {
     });
   }
 
-  /**
-   * Create an embedding for a single input string.
-   * @param params.input The string to embed.
-   * @param params.model The model to use for the embedding.
-   * @param params.user A unique identifier representing the end-user.
-   */
+  /** Creates an embedding vector representing the input text. */
   async createEmbedding(params: EmbeddingParams): Promise<{
-    /** The embedding for the input string. */
     embedding: number[];
     /** The raw response from the API. */
-    response: EmbeddingResponse;
+    response: OpenAI.CreateEmbeddingResponse;
   }> {
-    const reqBody = EmbeddingParamsSchema.passthrough().parse(params);
-    const response: EmbeddingResponse = await this.api
-      .post('embeddings', { json: reqBody })
+    const response: OpenAI.CreateEmbeddingResponse = await this.api
+      .post('embeddings', { json: params })
       .json();
     const embedding = response.data[0]?.embedding || [];
     return { embedding, response };
   }
 
-  /**
-   * Create embeddings for an array of input strings.
-   * @param params.input The strings to embed.
-   * @param params.model The model to use for the embedding.
-   * @param params.user A unique identifier representing the end-user.
-   */
+  /** Creates embedding vectors representing the input texts. */
   async createEmbeddings(params: BulkEmbeddingParams): Promise<{
     /** The embeddings for the input strings. */
     embeddings: number[][];
     /** The raw response from the API. */
-    response: EmbeddingResponse;
+    response: OpenAI.CreateEmbeddingResponse;
   }> {
-    const reqBody = BulkEmbeddingParamsSchema.passthrough().parse(params);
-    const response: EmbeddingResponse = await this.api
-      .post('embeddings', { json: reqBody })
+    const response: OpenAI.CreateEmbeddingResponse = await this.api
+      .post('embeddings', { json: params })
       .json();
     // Sort ascending by index to be safe.
     const items = response.data.sort((a, b) => a.index - b.index);
@@ -113,35 +89,29 @@ export class OpenAIClient {
     return { embeddings, response };
   }
 
-  /**
-   * Create a completion for a single prompt string.
-   */
+  /** Create a completion for a single prompt string. */
   async createCompletion(params: CompletionParams): Promise<{
     /** The completion string. */
     completion: string;
     /** The raw response from the API. */
-    response: CompletionResponse;
+    response: OpenAI.Completion;
   }> {
-    const reqBody = CompletionParamsSchema.passthrough().parse(params);
-    const response: CompletionResponse = await this.api
-      .post('completions', { json: reqBody })
+    const response: OpenAI.Completion = await this.api
+      .post('completions', { json: params })
       .json();
     const completion = response.choices[0]?.text || '';
     return { completion, response };
   }
 
-  /**
-   * Create completions for an array of prompt strings.
-   */
+  /** Create completions for an array of prompt strings. */
   async createCompletions(params: BulkCompletionParams): Promise<{
     /** The completion strings. */
     completions: string[];
     /** The raw response from the API. */
-    response: CompletionResponse;
+    response: OpenAI.Completion;
   }> {
-    const reqBody = BulkCompletionParamsSchema.passthrough().parse(params);
-    const response: CompletionResponse = await this.api
-      .post('completions', { json: reqBody })
+    const response: OpenAI.Completion = await this.api
+      .post('completions', { json: params })
       .json();
     // Sort ascending by index to be safe.
     const choices = response.choices.sort(
@@ -177,17 +147,16 @@ export class OpenAIClient {
       /** The completion string. */
       completion: string;
       /** The raw response from the API. */
-      response: CompletionResponse;
+      response: OpenAI.Completion;
     }>
   > {
-    const reqBody = CompletionParamsSchema.passthrough().parse(params);
     const response = await this.api.post('completions', {
-      json: { ...reqBody, stream: true },
+      json: { ...params, stream: true },
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
     });
     const stream = response.body as ReadableStream;
     return stream.pipeThrough(
-      new StreamCompletionChunker((response: CompletionResponse) => {
+      new StreamCompletionChunker((response: OpenAI.Completion) => {
         const completion = response.choices[0]?.text || '';
         return { completion, response };
       }),
@@ -197,15 +166,16 @@ export class OpenAIClient {
   /**
    * Create a completion for a chat message.
    */
-  async createChatCompletion(params: ChatCompletionParams): Promise<{
+  async createChatCompletion(
+    params: Omit<OpenAI.ChatCompletionCreateParams, 'stream'>,
+  ): Promise<{
     /** The completion message. */
-    message: ChatResponseMessage;
+    message: OpenAI.ChatCompletionMessage;
     /** The raw response from the API. */
-    response: ChatCompletionResponse;
+    response: OpenAI.ChatCompletion;
   }> {
-    const reqBody = ChatCompletionParamsSchema.passthrough().parse(params);
-    const response: ChatCompletionResponse = await this.api
-      .post('chat/completions', { json: reqBody })
+    const response: OpenAI.ChatCompletion = await this.api
+      .post('chat/completions', { json: params })
       .json();
     const message = response.choices[0]?.message || {
       role: 'assistant',
@@ -214,22 +184,24 @@ export class OpenAIClient {
     return { message, response };
   }
 
-  async streamChatCompletion(params: ChatCompletionParams): Promise<
+  async streamChatCompletion(
+    params: Omit<OpenAI.ChatCompletionCreateParams, 'stream'>,
+  ): Promise<
     ReadableStream<{
       /** The completion message. */
-      message: ChatResponseMessage;
+      message: OpenAI.ChatCompletionMessage;
       /** The raw response from the API. */
-      response: ChatCompletionResponse;
+      response: OpenAI.ChatCompletion;
     }>
   > {
-    const reqBody = ChatCompletionParamsSchema.passthrough().parse(params);
     const response = await this.api.post('chat/completions', {
-      json: { ...reqBody, stream: true },
+      json: { ...params, stream: true },
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
     });
     const stream = response.body as ReadableStream;
     return stream.pipeThrough(
-      new StreamCompletionChunker((response: ChatCompletionResponse) => {
+      new StreamCompletionChunker((response: OpenAI.ChatCompletion) => {
+        // @ts-ignore
         const message = response.choices[0]?.delta || {
           role: 'assistant',
           content: '',
