@@ -48,5 +48,8 @@
   },
   "prettier": {
     "singleQuote": true
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
