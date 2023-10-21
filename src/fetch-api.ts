@@ -4,62 +4,66 @@ import { OpenAIApiError } from './errors.js';
 
 const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
 
-export interface FetchOptions extends Omit<Options, 'credentials' | 'headers'> {
-  credentials?: string;
-}
-
 type KyInstance = ReturnType<typeof ky.extend>;
+export interface KyOptions extends Omit<Options, 'credentials'> {
+  credentials?: 'include' | 'omit' | 'same-origin';
+}
 
 /**
  * Create an instance of Ky with options shared by all requests.
  */
-export function createApiInstance(opts: {
+export function createApiInstance(args: {
   apiKey: string;
   baseUrl?: string;
   organizationId?: string;
-  fetchOptions?: FetchOptions;
-  headers?: Record<string, string> | Headers;
+  kyOptions?: KyOptions;
 }): KyInstance {
+  const { apiKey, baseUrl, organizationId, kyOptions = {} } = args;
+  const { headers, hooks = {}, prefixUrl, retry, timeout, ...rest } = kyOptions;
+
+  // Add a hook to handle OpenAI API errors
+  if (!hooks.beforeError) {
+    hooks.beforeError = [];
+  }
+  // @ts-ignore
+  hooks.beforeError.push(async (error) => {
+    const { response } = error;
+    if (response && response.body) {
+      try {
+        const body = await response.clone().json();
+        if (body.error) {
+          return new OpenAIApiError(body.error.message, {
+            status: response.status,
+            cause: error,
+            context: {
+              type: body.error.type,
+              code: body.error.code,
+              param: body.error.param,
+            },
+          });
+        }
+      } catch (e) {
+        console.error('Failed reading HTTPError response body', e);
+      }
+    }
+    return error;
+  });
+
   return ky.extend({
-    prefixUrl: opts.baseUrl || DEFAULT_BASE_URL,
-    timeout: 1000 * 60 * 10,
+    prefixUrl: baseUrl || prefixUrl || DEFAULT_BASE_URL,
     headers: {
       'User-Agent': 'openai-fetch',
-      Authorization: `Bearer ${opts.apiKey}`,
-      ...(opts.organizationId && {
-        'OpenAI-Organization': opts.organizationId,
+      ...(apiKey && {
+        Authorization: `Bearer ${apiKey}`,
       }),
-      ...opts.headers,
-      // @ts-expect-error: here for backwards compatibility
-      ...opts?.fetchOptions?.headers,
+      ...(organizationId && {
+        'OpenAI-Organization': organizationId,
+      }),
+      ...headers,
     },
-    ...opts.fetchOptions,
-    hooks: {
-      beforeError: [
-        // @ts-ignore
-        async (error) => {
-          const { response } = error;
-          if (response && response.body) {
-            try {
-              const body = await response.clone().json();
-              if (body.error) {
-                return new OpenAIApiError(body.error.message, {
-                  status: response.status,
-                  cause: error,
-                  context: {
-                    type: body.error.type,
-                    code: body.error.code,
-                    param: body.error.param,
-                  },
-                });
-              }
-            } catch (e) {
-              console.error('Failed reading HTTPError response body', e);
-            }
-          }
-          return error;
-        },
-      ],
-    },
+    ...(retry && { retry }),
+    timeout: timeout ?? 1000 * 60 * 10,
+    hooks,
+    ...rest,
   });
 }

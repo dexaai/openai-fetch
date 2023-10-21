@@ -19,7 +19,7 @@ import type {
   EmbeddingResponse,
   BulkEmbeddingParams,
 } from './schemas/embedding.js';
-import type { FetchOptions } from './fetch-api.js';
+import type { KyOptions } from './fetch-api.js';
 import type {
   ChatCompletionParams,
   ChatCompletionResponse,
@@ -31,27 +31,25 @@ import { StreamCompletionChunker } from './streaming.js';
 export type ConfigOpts = {
   /**
    * The API key used to authenticate with the OpenAI API.
-   * @see https://beta.openai.com/account/api-keys
+   * @see https://platform.openai.com/account/api-keys
    */
   apiKey?: string;
   /**
-   * The HTTP endpoint for the OpenAI API. You probably don't want to change this.
-   */
-  baseUrl?: string;
-  /**
    * The organization ID that should be billed for API requests.
    * This is only necessary if your API key is scoped to multiple organizations.
-   * @see https://beta.openai.com/docs/api-reference/requesting-organization
+   * @see https://platform.openai.com/docs/api-reference/organization-optional
    */
   organizationId?: string;
   /**
-   * Fetch options that will be added to all requests (like credentials, etc.).
+   * The HTTP endpoint for the OpenAI API. You probably don't want to change this.
+   * @default https://api.openai.com/v1
    */
-  fetchOptions?: FetchOptions;
+  baseUrl?: string;
   /**
-   * HTTP headers that will be added to all requests.
+   * Options to pass to the underlying fetch library (Ky).
+   * @see https://github.com/sindresorhus/ky/tree/main#options
    */
-  headers?: Record<string, string> | Headers;
+  kyOptions?: KyOptions;
 };
 
 export class OpenAIClient {
@@ -69,8 +67,7 @@ export class OpenAIClient {
       apiKey,
       baseUrl: opts.baseUrl,
       organizationId,
-      fetchOptions: opts.fetchOptions,
-      headers: opts.headers,
+      kyOptions: opts.kyOptions,
     });
   }
 
