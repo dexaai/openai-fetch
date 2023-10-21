@@ -1,17 +1,15 @@
-import type { JsonObject } from 'type-fest';
-
 export type ErrorOptions = {
   /** HTTP status code for the error. */
   status?: number;
   /** The original error that caused this error. */
   cause?: unknown;
   /** Additional context to be added to the error. */
-  context?: JsonObject;
+  context?: object;
 };
 
 class BaseError extends Error {
   status?: number;
-  context?: JsonObject;
+  context?: object;
 
   constructor(message: string, opts: ErrorOptions = {}) {
     if (opts.cause) {
