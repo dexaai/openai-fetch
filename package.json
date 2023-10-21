@@ -34,8 +34,8 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "ky": "^0.33.3",
-    "zod": "^3.21.2"
+    "ky": "^1.1.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@dexaai/eslint-config": "^0.4.0",
@@ -43,7 +43,7 @@
     "dotenv": "^16.3.1",
     "eslint": "^8.52.0",
     "np": "^8.0.4",
-    "openai": "^3.2.1",
+    "openai": "^4.12.4",
     "prettier": "^3.0.3",
     "tsx": "^3.14.0",
     "type-fest": "^4.5.0",
