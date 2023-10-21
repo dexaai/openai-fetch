@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type {
   CompletionResponseChoices,
   CompletionResponseUsage,
-} from './completion';
+} from './completion.js';
 
 export const EditParamsSchema = z.object({
   /**

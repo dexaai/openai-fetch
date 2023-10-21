@@ -1,5 +1,5 @@
 // The OpenAI client class
-export { OpenAIClient } from './openai-client';
+export { OpenAIClient } from './openai-client.js';
 
 // Zod schemas
 export {
@@ -8,19 +8,19 @@ export {
   ChatMessageFunctionSchema,
   ChatMessageRoleSchema,
   ChatMessageSchema,
-} from './schemas/chat-completion';
+} from './schemas/chat-completion.js';
 export {
   BulkCompletionParamsSchema,
   CompletionParamsSchema,
-} from './schemas/completion';
+} from './schemas/completion.js';
 export {
   BulkEmbeddingParamsSchema,
   EmbeddingParamsSchema,
-} from './schemas/embedding';
-export { EditParamsSchema } from './schemas/edit';
+} from './schemas/embedding.js';
+export { EditParamsSchema } from './schemas/edit.js';
 
 // Custom OpenAI error
-export { OpenAIApiError } from './errors';
+export { OpenAIApiError } from './errors.js';
 
 // Types
 export type {
@@ -31,16 +31,16 @@ export type {
   ChatMessageFunctionCall,
   ChatMessageRole,
   ChatResponseMessage,
-} from './schemas/chat-completion';
+} from './schemas/chat-completion.js';
 export type {
   BulkCompletionParams,
   CompletionParams,
   CompletionResponse,
-} from './schemas/completion';
+} from './schemas/completion.js';
 export type {
   BulkEmbeddingParams,
   EmbeddingParams,
   EmbeddingResponse,
-} from './schemas/embedding';
-export type { EditParams, EditResponse } from './schemas/edit';
-export type { ConfigOpts } from './openai-client';
+} from './schemas/embedding.js';
+export type { EditParams, EditResponse } from './schemas/edit.js';
+export type { ConfigOpts } from './openai-client.js';

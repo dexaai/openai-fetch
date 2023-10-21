@@ -1,32 +1,32 @@
-import { createApiInstance } from './fetch-api';
+import { createApiInstance } from './fetch-api.js';
 import {
   BulkCompletionParamsSchema,
   CompletionParamsSchema,
-} from './schemas/completion';
-import { EditParamsSchema } from './schemas/edit';
+} from './schemas/completion.js';
+import { EditParamsSchema } from './schemas/edit.js';
 import {
   BulkEmbeddingParamsSchema,
   EmbeddingParamsSchema,
-} from './schemas/embedding';
+} from './schemas/embedding.js';
 import type {
   BulkCompletionParams,
   CompletionParams,
   CompletionResponse,
-} from './schemas/completion';
-import type { EditParams, EditResponse } from './schemas/edit';
+} from './schemas/completion.js';
+import type { EditParams, EditResponse } from './schemas/edit.js';
 import type {
   EmbeddingParams,
   EmbeddingResponse,
   BulkEmbeddingParams,
-} from './schemas/embedding';
-import type { FetchOptions } from './fetch-api';
+} from './schemas/embedding.js';
+import type { FetchOptions } from './fetch-api.js';
 import type {
   ChatCompletionParams,
   ChatCompletionResponse,
   ChatResponseMessage,
-} from './schemas/chat-completion';
-import { ChatCompletionParamsSchema } from './schemas/chat-completion';
-import { StreamCompletionChunker } from './streaming';
+} from './schemas/chat-completion.js';
+import { ChatCompletionParamsSchema } from './schemas/chat-completion.js';
+import { StreamCompletionChunker } from './streaming.js';
 
 export type ConfigOpts = {
   /**
@@ -59,8 +59,8 @@ export class OpenAIClient {
 
   constructor(opts: ConfigOpts = {}) {
     const process = globalThis.process || { env: {} };
-    const apiKey = opts.apiKey || process.env.OPENAI_API_KEY;
-    const organizationId = opts.organizationId || process.env.OPENAI_ORG_ID;
+    const apiKey = opts.apiKey || process.env['OPENAI_API_KEY'];
+    const organizationId = opts.organizationId || process.env['OPENAI_ORG_ID'];
     if (!apiKey)
       throw new Error(
         'Missing OpenAI API key. Please provide one in the config or set the OPENAI_API_KEY environment variable.',
@@ -90,7 +90,7 @@ export class OpenAIClient {
     const response: EmbeddingResponse = await this.api
       .post('embeddings', { json: reqBody })
       .json();
-    const embedding = response.data[0].embedding;
+    const embedding = response.data[0]?.embedding || [];
     return { embedding, response };
   }
 
@@ -129,7 +129,7 @@ export class OpenAIClient {
     const response: CompletionResponse = await this.api
       .post('completions', { json: reqBody })
       .json();
-    const completion = response.choices[0].text || '';
+    const completion = response.choices[0]?.text || '';
     return { completion, response };
   }
 
@@ -191,7 +191,7 @@ export class OpenAIClient {
     const stream = response.body as ReadableStream;
     return stream.pipeThrough(
       new StreamCompletionChunker((response: CompletionResponse) => {
-        const completion = response.choices[0].text || '';
+        const completion = response.choices[0]?.text || '';
         return { completion, response };
       }),
     );
@@ -210,7 +210,7 @@ export class OpenAIClient {
     const response: ChatCompletionResponse = await this.api
       .post('chat/completions', { json: reqBody })
       .json();
-    const message = response.choices[0].message || {
+    const message = response.choices[0]?.message || {
       role: 'assistant',
       content: '',
     };
@@ -233,7 +233,7 @@ export class OpenAIClient {
     const stream = response.body as ReadableStream;
     return stream.pipeThrough(
       new StreamCompletionChunker((response: ChatCompletionResponse) => {
-        const message = response.choices[0].delta || {
+        const message = response.choices[0]?.delta || {
           role: 'assistant',
           content: '',
         };
@@ -255,7 +255,7 @@ export class OpenAIClient {
     const response: EditResponse = await this.api
       .post('edits', { json: reqBody })
       .json();
-    const completion = response.choices[0].text || '';
+    const completion = response.choices[0]?.text || '';
     return { completion, response };
   }
 }

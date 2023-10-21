@@ -1,12 +1,14 @@
 import ky from 'ky';
 import type { Options } from 'ky';
-import { OpenAIApiError } from './errors';
+import { OpenAIApiError } from './errors.js';
 
 const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
 
 export interface FetchOptions extends Omit<Options, 'credentials' | 'headers'> {
   credentials?: string;
 }
+
+type KyInstance = ReturnType<typeof ky.extend>;
 
 /**
  * Create an instance of Ky with options shared by all requests.
@@ -17,7 +19,7 @@ export function createApiInstance(opts: {
   organizationId?: string;
   fetchOptions?: FetchOptions;
   headers?: Record<string, string> | Headers;
-}) {
+}): KyInstance {
   return ky.extend({
     prefixUrl: opts.baseUrl || DEFAULT_BASE_URL,
     timeout: 1000 * 60 * 10,

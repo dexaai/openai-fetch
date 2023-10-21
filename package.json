@@ -2,27 +2,34 @@
   "name": "openai-fetch",
   "version": "1.6.4",
   "description": "OpenAI client powered by fetch",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "types": "dist/index.d.ts",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
   "files": [
     "dist"
   ],
-  "repository": "rileytomasek/openai-fetch",
+  "repository": "dexaai/openai-fetch",
   "author": {
     "name": "Riley Tomasek",
     "email": "hi@rile.yt",
     "url": "https://rile.yt"
   },
   "scripts": {
-    "build": "rm -rf dist && node build.js && tsc -b",
+    "build": "rm -rf dist && tsc --project tsconfig.dist.json",
     "clean": "rm -rf dist node_modules",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint src",
     "prepare": "yarn build",
     "prepublishOnly": "yarn lint && yarn typecheck",
     "release": "np",
-    "typecheck": "tsc"
+    "typecheck": "tsc --noEmit"
   },
   "license": "MIT",
   "private": false,
@@ -34,7 +41,6 @@
     "@dexaai/eslint-config": "^0.4.0",
     "@types/node": "^20.8.7",
     "dotenv": "^16.3.1",
-    "esbuild": "^0.19.5",
     "eslint": "^8.52.0",
     "np": "^8.0.4",
     "openai": "^3.2.1",
