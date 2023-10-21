@@ -63,7 +63,7 @@ export class OpenAIClient {
     const organizationId = opts.organizationId || process.env.OPENAI_ORG_ID;
     if (!apiKey)
       throw new Error(
-        'Missing OpenAI API key. Please provide one in the config or set the OPENAI_API_KEY environment variable.'
+        'Missing OpenAI API key. Please provide one in the config or set the OPENAI_API_KEY environment variable.',
       );
     this.api = createApiInstance({
       apiKey,
@@ -148,7 +148,7 @@ export class OpenAIClient {
       .json();
     // Sort ascending by index to be safe.
     const choices = response.choices.sort(
-      (a, b) => (a.index ?? 0) - (b.index ?? 0)
+      (a, b) => (a.index ?? 0) - (b.index ?? 0),
     );
     const completions = choices.map((choice) => choice.text || '');
     return { completions, response };
@@ -193,7 +193,7 @@ export class OpenAIClient {
       new StreamCompletionChunker((response: CompletionResponse) => {
         const completion = response.choices[0].text || '';
         return { completion, response };
-      })
+      }),
     );
   }
 
@@ -238,7 +238,7 @@ export class OpenAIClient {
           content: '',
         };
         return { message, response };
-      })
+      }),
     );
   }
 

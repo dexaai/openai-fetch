@@ -17,6 +17,7 @@
   "scripts": {
     "build": "rm -rf dist && node build.js && tsc -b",
     "clean": "rm -rf dist node_modules",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint src",
     "prepare": "yarn build",
     "prepublishOnly": "yarn lint && yarn typecheck",
