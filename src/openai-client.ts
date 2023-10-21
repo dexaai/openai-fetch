@@ -238,21 +238,4 @@ export class OpenAIClient {
       }),
     );
   }
-
-  /**
-   * Create an edit for a single input string.
-   */
-  async createEdit(params: EditParams): Promise<{
-    /** The edited input string. */
-    completion: string;
-    /** The raw response from the API. */
-    response: EditResponse;
-  }> {
-    const reqBody = EditParamsSchema.passthrough().parse(params);
-    const response: EditResponse = await this.api
-      .post('edits', { json: reqBody })
-      .json();
-    const completion = response.choices[0]?.text || '';
-    return { completion, response };
-  }
 }
