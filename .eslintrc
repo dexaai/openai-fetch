@@ -1,4 +1,7 @@
 {
-  "root": true,
-  "extends": ["hckrs"]
+  "extends": ["@dexaai/eslint-config", "@dexaai/eslint-config/node"],
+  "rules": {
+    "no-console": "off",
+    "no-process-env": "off"
+  }
 }

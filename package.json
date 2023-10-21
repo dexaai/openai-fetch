@@ -16,6 +16,7 @@
   },
   "scripts": {
     "build": "rm -rf dist && node build.js && tsc -b",
+    "clean": "rm -rf dist node_modules",
     "lint": "eslint src",
     "prepare": "yarn build",
     "prepublishOnly": "yarn lint && yarn typecheck",
@@ -29,11 +30,11 @@
     "zod": "^3.21.2"
   },
   "devDependencies": {
+    "@dexaai/eslint-config": "^0.4.0",
     "@types/node": "^18.14.6",
     "dotenv": "^16.0.3",
     "esbuild": "^0.17.11",
-    "eslint": "^8.35.0",
-    "eslint-config-hckrs": "^0.0.3",
+    "eslint": "^8.52.0",
     "np": "^7.6.3",
     "openai": "^3.2.1",
     "prettier": "^2.8.4",

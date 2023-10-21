@@ -1,5 +1,5 @@
-import type { CompletionResponseUsage } from './completion';
 import { z } from 'zod';
+import type { CompletionResponseUsage } from './completion';
 
 /** Chat message role */
 export const ChatMessageRoleSchema = z.union([
