@@ -2,6 +2,18 @@ import type { OpenAI } from 'openai';
 import type { KyOptions } from './fetch-api.js';
 import { createApiInstance } from './fetch-api.js';
 import { StreamCompletionChunker } from './streaming.js';
+import type {
+  ChatParams,
+  ChatResponse,
+  ChatStreamParams,
+  ChatStreamResponse,
+  CompletionParams,
+  CompletionResponse,
+  CompletionStreamParams,
+  CompletionStreamResponse,
+  EmbeddingParams,
+  EmbeddingResponse,
+} from './types.js';
 
 export type ConfigOpts = {
   /**
@@ -46,54 +58,18 @@ export class OpenAIClient {
     });
   }
 
-  /** Create an embedding vector representing the input text. */
-  async createEmbeddings(
-    params: OpenAI.EmbeddingCreateParams,
-  ): Promise<OpenAI.CreateEmbeddingResponse> {
-    const response: OpenAI.CreateEmbeddingResponse = await this.api
-      .post('embeddings', { json: params })
-      .json();
-    return response;
-  }
-
-  /** Create completions for an array of prompt strings. */
-  async createCompletions(
-    params: Omit<OpenAI.CompletionCreateParams, 'stream'>,
-  ): Promise<OpenAI.Completion> {
-    const response: OpenAI.Completion = await this.api
-      .post('completions', { json: params })
-      .json();
-    return response;
-  }
-
   /** Create a completion for a chat message. */
-  async createChatCompletion(
-    params: Omit<OpenAI.ChatCompletionCreateParams, 'stream'>,
-  ): Promise<OpenAI.ChatCompletion> {
+  async createChatCompletion(params: ChatParams): Promise<ChatResponse> {
     const response: OpenAI.ChatCompletion = await this.api
       .post('chat/completions', { json: params })
       .json();
     return response;
   }
 
-  /** Create a completion for a single prompt string and stream back partial progress. */
-  async streamCompletion(
-    params: Omit<OpenAI.CompletionCreateParams, 'prompt'> & { prompt: string },
-  ): Promise<ReadableStream<OpenAI.Completion>> {
-    const response = await this.api.post('completions', {
-      json: { ...params, stream: true },
-      onDownloadProgress: () => {}, // trick ky to return ReadableStream.
-    });
-    const stream = response.body as ReadableStream;
-    return stream.pipeThrough(
-      new StreamCompletionChunker((response: OpenAI.Completion) => response),
-    );
-  }
-
   /** Create a chat completion and stream back partial progress. */
   async streamChatCompletion(
-    params: Omit<OpenAI.ChatCompletionCreateParams, 'stream'>,
-  ): Promise<ReadableStream<OpenAI.ChatCompletionChunk>> {
+    params: ChatStreamParams,
+  ): Promise<ChatStreamResponse> {
     const response = await this.api.post('chat/completions', {
       json: { ...params, stream: true },
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
@@ -104,5 +80,37 @@ export class OpenAIClient {
         (response: OpenAI.ChatCompletionChunk) => response,
       ),
     );
+  }
+
+  /** Create completions for an array of prompt strings. */
+  async createCompletions(
+    params: CompletionParams,
+  ): Promise<CompletionResponse> {
+    const response: OpenAI.Completion = await this.api
+      .post('completions', { json: params })
+      .json();
+    return response;
+  }
+
+  /** Create a completion for a single prompt string and stream back partial progress. */
+  async streamCompletion(
+    params: CompletionStreamParams,
+  ): Promise<CompletionStreamResponse> {
+    const response = await this.api.post('completions', {
+      json: { ...params, stream: true },
+      onDownloadProgress: () => {}, // trick ky to return ReadableStream.
+    });
+    const stream = response.body as ReadableStream;
+    return stream.pipeThrough(
+      new StreamCompletionChunker((response: OpenAI.Completion) => response),
+    );
+  }
+
+  /** Create an embedding vector representing the input text. */
+  async createEmbeddings(params: EmbeddingParams): Promise<EmbeddingResponse> {
+    const response: OpenAI.CreateEmbeddingResponse = await this.api
+      .post('embeddings', { json: params })
+      .json();
+    return response;
   }
 }
