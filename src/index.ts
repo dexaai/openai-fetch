@@ -14,3 +14,19 @@ export type {
   EmbeddingParams,
   EmbeddingResponse,
 } from './types.js';
+
+export {
+  APIConnectionError,
+  APIConnectionTimeoutError,
+  APIError,
+  APIUserAbortError,
+  AuthenticationError,
+  BadRequestError,
+  ConflictError,
+  InternalServerError,
+  NotFoundError,
+  OpenAIError,
+  PermissionDeniedError,
+  RateLimitError,
+  UnprocessableEntityError,
+} from './errors.js';
