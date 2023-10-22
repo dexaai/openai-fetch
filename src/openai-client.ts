@@ -27,20 +27,6 @@ export type ConfigOpts = {
   kyOptions?: KyOptions;
 };
 
-type EmbeddingParams = Omit<OpenAI.EmbeddingCreateParams, 'input'> & {
-  input: string | number[];
-};
-type BulkEmbeddingParams = Omit<OpenAI.EmbeddingCreateParams, 'input'> & {
-  input: string[] | number[][];
-};
-
-type CompletionParams = Omit<OpenAI.CompletionCreateParams, 'prompt'> & {
-  prompt: string;
-};
-type BulkCompletionParams = Omit<OpenAI.CompletionCreateParams, 'prompt'> & {
-  prompt: string[];
-};
-
 export class OpenAIClient {
   api: ReturnType<typeof createApiInstance>;
 
@@ -60,154 +46,63 @@ export class OpenAIClient {
     });
   }
 
-  /** Creates an embedding vector representing the input text. */
-  async createEmbedding(params: EmbeddingParams): Promise<{
-    embedding: number[];
-    /** The raw response from the API. */
-    response: OpenAI.CreateEmbeddingResponse;
-  }> {
+  /** Create an embedding vector representing the input text. */
+  async createEmbeddings(
+    params: OpenAI.EmbeddingCreateParams,
+  ): Promise<OpenAI.CreateEmbeddingResponse> {
     const response: OpenAI.CreateEmbeddingResponse = await this.api
       .post('embeddings', { json: params })
       .json();
-    const embedding = response.data[0]?.embedding || [];
-    return { embedding, response };
-  }
-
-  /** Creates embedding vectors representing the input texts. */
-  async createEmbeddings(params: BulkEmbeddingParams): Promise<{
-    /** The embeddings for the input strings. */
-    embeddings: number[][];
-    /** The raw response from the API. */
-    response: OpenAI.CreateEmbeddingResponse;
-  }> {
-    const response: OpenAI.CreateEmbeddingResponse = await this.api
-      .post('embeddings', { json: params })
-      .json();
-    // Sort ascending by index to be safe.
-    const items = response.data.sort((a, b) => a.index - b.index);
-    const embeddings = items.map((item) => item.embedding);
-    return { embeddings, response };
-  }
-
-  /** Create a completion for a single prompt string. */
-  async createCompletion(params: CompletionParams): Promise<{
-    /** The completion string. */
-    completion: string;
-    /** The raw response from the API. */
-    response: OpenAI.Completion;
-  }> {
-    const response: OpenAI.Completion = await this.api
-      .post('completions', { json: params })
-      .json();
-    const completion = response.choices[0]?.text || '';
-    return { completion, response };
+    return response;
   }
 
   /** Create completions for an array of prompt strings. */
-  async createCompletions(params: BulkCompletionParams): Promise<{
-    /** The completion strings. */
-    completions: string[];
-    /** The raw response from the API. */
-    response: OpenAI.Completion;
-  }> {
+  async createCompletions(
+    params: Omit<OpenAI.CompletionCreateParams, 'stream'>,
+  ): Promise<OpenAI.Completion> {
     const response: OpenAI.Completion = await this.api
       .post('completions', { json: params })
       .json();
-    // Sort ascending by index to be safe.
-    const choices = response.choices.sort(
-      (a, b) => (a.index ?? 0) - (b.index ?? 0),
-    );
-    const completions = choices.map((choice) => choice.text || '');
-    return { completions, response };
+    return response;
   }
 
-  /**
-   * Create a completion for a single prompt string and stream back partial progress.
-   * @param params typipcal standard OpenAI completion parameters
-   * @returns A stream of completion chunks.
-   *
-   * @example
-   *
-   * ```ts
-   * const client = new OpenAIClient(process.env.OPENAI_API_KEY);
-   * const stream = await client.streamCompletion({
-   *   model: "text-davinci-003",
-   *   prompt: "Give me some lyrics, make it up.",
-   *   max_tokens: 256,
-   *   temperature: 0,
-   * });
-   *
-   * for await (const chunk of stream) {
-   *   process.stdout.write(chunk.completion);
-   * }
-   * ```
-   */
-  async streamCompletion(params: CompletionParams): Promise<
-    ReadableStream<{
-      /** The completion string. */
-      completion: string;
-      /** The raw response from the API. */
-      response: OpenAI.Completion;
-    }>
-  > {
+  /** Create a completion for a chat message. */
+  async createChatCompletion(
+    params: Omit<OpenAI.ChatCompletionCreateParams, 'stream'>,
+  ): Promise<OpenAI.ChatCompletion> {
+    const response: OpenAI.ChatCompletion = await this.api
+      .post('chat/completions', { json: params })
+      .json();
+    return response;
+  }
+
+  /** Create a completion for a single prompt string and stream back partial progress. */
+  async streamCompletion(
+    params: Omit<OpenAI.CompletionCreateParams, 'prompt'> & { prompt: string },
+  ): Promise<ReadableStream<OpenAI.Completion>> {
     const response = await this.api.post('completions', {
       json: { ...params, stream: true },
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
     });
     const stream = response.body as ReadableStream;
     return stream.pipeThrough(
-      new StreamCompletionChunker((response: OpenAI.Completion) => {
-        const completion = response.choices[0]?.text || '';
-        return { completion, response };
-      }),
+      new StreamCompletionChunker((response: OpenAI.Completion) => response),
     );
   }
 
-  /**
-   * Create a completion for a chat message.
-   */
-  async createChatCompletion(
-    params: Omit<OpenAI.ChatCompletionCreateParams, 'stream'>,
-  ): Promise<{
-    /** The completion message. */
-    message: OpenAI.ChatCompletionMessage;
-    /** The raw response from the API. */
-    response: OpenAI.ChatCompletion;
-  }> {
-    const response: OpenAI.ChatCompletion = await this.api
-      .post('chat/completions', { json: params })
-      .json();
-    const message = response.choices[0]?.message || {
-      role: 'assistant',
-      content: '',
-    };
-    return { message, response };
-  }
-
+  /** Create a chat completion and stream back partial progress. */
   async streamChatCompletion(
     params: Omit<OpenAI.ChatCompletionCreateParams, 'stream'>,
-  ): Promise<
-    ReadableStream<{
-      /** The completion message. */
-      message: OpenAI.ChatCompletionMessage;
-      /** The raw response from the API. */
-      response: OpenAI.ChatCompletion;
-    }>
-  > {
+  ): Promise<ReadableStream<OpenAI.ChatCompletionChunk>> {
     const response = await this.api.post('chat/completions', {
       json: { ...params, stream: true },
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
     });
     const stream = response.body as ReadableStream;
     return stream.pipeThrough(
-      new StreamCompletionChunker((response: OpenAI.ChatCompletion) => {
-        // @ts-ignore
-        const message = response.choices[0]?.delta || {
-          role: 'assistant',
-          content: '',
-        };
-        return { message, response };
-      }),
+      new StreamCompletionChunker(
+        (response: OpenAI.ChatCompletionChunk) => response,
+      ),
     );
   }
 }
