@@ -1,6 +1,6 @@
 import ky from 'ky';
 import type { Options } from 'ky';
-import { OpenAIApiError } from './errors.js';
+import { APIError, castToError } from './errors.js';
 
 const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
 
@@ -28,25 +28,23 @@ export function createApiInstance(args: {
   // @ts-ignore
   hooks.beforeError.push(async (error) => {
     const { response } = error;
-    if (response && response.body) {
-      try {
-        const body = await response.clone().json();
-        if (body.error) {
-          return new OpenAIApiError(body.error.message, {
-            status: response.status,
-            cause: error,
-            context: {
-              type: body.error.type,
-              code: body.error.code,
-              param: body.error.param,
-            },
-          });
-        }
-      } catch (e) {
-        console.error('Failed reading HTTPError response body', e);
+    if (response) {
+      const status = response.status;
+      const headers = parseHeaders(response.headers);
+      let errorResponse: Object | undefined;
+      let message: string | undefined;
+      if (response.body) {
+        const errText = await response
+          .clone()
+          .text()
+          .catch((e) => castToError(e).message);
+        errorResponse = safeJson(errText)?.error;
+        message = errorResponse ? undefined : errText;
       }
+      return new APIError(status, errorResponse, message, headers);
+    } else {
+      return APIError.generate(undefined, error, undefined, undefined);
     }
-    return error;
   });
 
   return ky.extend({
@@ -66,4 +64,30 @@ export function createApiInstance(args: {
     hooks,
     ...rest,
   });
+}
+
+function parseHeaders(
+  headers: HeadersInit | null | undefined,
+): Record<string, string> {
+  try {
+    return !headers
+      ? {}
+      : Symbol.iterator in headers
+      ? Object.fromEntries(
+          Array.from(headers as Iterable<string[]>).map((header) => [
+            ...header,
+          ]),
+        )
+      : { ...headers };
+  } catch (e) {
+    return {};
+  }
+}
+
+function safeJson(text: string) {
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    return undefined;
+  }
 }
