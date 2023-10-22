@@ -39,8 +39,11 @@ export type ConfigOpts = {
   kyOptions?: KyOptions;
 };
 
+/** Override the default Ky options for a single request. */
+type RequestOpts = { headers?: KyOptions['headers'] };
+
 export class OpenAIClient {
-  api: ReturnType<typeof createApiInstance>;
+  private api: ReturnType<typeof createApiInstance>;
 
   constructor(opts: ConfigOpts = {}) {
     const process = globalThis.process || { env: {} };
@@ -58,9 +61,16 @@ export class OpenAIClient {
     });
   }
 
+  private getApi(opts?: RequestOpts) {
+    return opts ? this.api.extend(opts) : this.api;
+  }
+
   /** Create a completion for a chat message. */
-  async createChatCompletion(params: ChatParams): Promise<ChatResponse> {
-    const response: OpenAI.ChatCompletion = await this.api
+  async createChatCompletion(
+    params: ChatParams,
+    opts?: RequestOpts,
+  ): Promise<ChatResponse> {
+    const response: OpenAI.ChatCompletion = await this.getApi(opts)
       .post('chat/completions', { json: params })
       .json();
     return response;
@@ -69,8 +79,9 @@ export class OpenAIClient {
   /** Create a chat completion and stream back partial progress. */
   async streamChatCompletion(
     params: ChatStreamParams,
+    opts?: RequestOpts,
   ): Promise<ChatStreamResponse> {
-    const response = await this.api.post('chat/completions', {
+    const response = await this.getApi(opts).post('chat/completions', {
       json: { ...params, stream: true },
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
     });
@@ -85,8 +96,9 @@ export class OpenAIClient {
   /** Create completions for an array of prompt strings. */
   async createCompletions(
     params: CompletionParams,
+    opts?: RequestOpts,
   ): Promise<CompletionResponse> {
-    const response: OpenAI.Completion = await this.api
+    const response: OpenAI.Completion = await this.getApi(opts)
       .post('completions', { json: params })
       .json();
     return response;
@@ -95,8 +107,9 @@ export class OpenAIClient {
   /** Create a completion for a single prompt string and stream back partial progress. */
   async streamCompletion(
     params: CompletionStreamParams,
+    opts?: RequestOpts,
   ): Promise<CompletionStreamResponse> {
-    const response = await this.api.post('completions', {
+    const response = await this.getApi(opts).post('completions', {
       json: { ...params, stream: true },
       onDownloadProgress: () => {}, // trick ky to return ReadableStream.
     });
@@ -107,8 +120,11 @@ export class OpenAIClient {
   }
 
   /** Create an embedding vector representing the input text. */
-  async createEmbeddings(params: EmbeddingParams): Promise<EmbeddingResponse> {
-    const response: OpenAI.CreateEmbeddingResponse = await this.api
+  async createEmbeddings(
+    params: EmbeddingParams,
+    opts?: RequestOpts,
+  ): Promise<EmbeddingResponse> {
+    const response: OpenAI.CreateEmbeddingResponse = await this.getApi(opts)
       .post('embeddings', { json: params })
       .json();
     return response;
