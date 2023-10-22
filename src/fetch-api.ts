@@ -59,7 +59,14 @@ export function createApiInstance(args: {
       }),
       ...headers,
     },
-    ...(retry && { retry }),
+    retry: retry ?? {
+      delay: (attemptCount) => {
+        const INITIAL_DELAY = 0.3;
+        const jitter = numberBetween(-0.3, 0.3);
+        const sleep = INITIAL_DELAY * Math.pow(attemptCount - 1, 2);
+        return (sleep + jitter) * 1000;
+      },
+    },
     timeout: timeout ?? 1000 * 60 * 10,
     hooks,
     ...rest,
@@ -90,4 +97,9 @@ function safeJson(text: string) {
   } catch (err) {
     return undefined;
   }
+}
+
+/** Get a random number between the specified range [min, max]. */
+function numberBetween(min: number, max: number): number {
+  return Math.random() * (max - min) + min;
 }
