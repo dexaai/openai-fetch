@@ -1,6 +1,6 @@
 {
   "name": "openai-fetch",
-  "version": "2.0.0-beta.2",
+  "version": "2.0.0-beta.4",
   "description": "OpenAI client powered by fetch",
   "type": "module",
   "exports": {
@@ -13,7 +13,8 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "files": [
-    "dist"
+    "dist",
+    "openai-types"
   ],
   "repository": "dexaai/openai-fetch",
   "author": {
@@ -22,8 +23,11 @@
     "url": "https://rile.yt"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc --project tsconfig.dist.json",
-    "clean": "rm -rf dist node_modules",
+    "prebuild": "yarn clean:biuld && yarn extract-types",
+    "build": "tsc --project tsconfig.dist.json",
+    "clean": "rm -rf dist openai-types node_modules",
+    "clean:biuld": "rm -rf dist openai-types",
+    "extract-types": "node extract-types.mjs",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint src",
     "prepare": "yarn build",
@@ -39,8 +43,8 @@
   "devDependencies": {
     "@dexaai/eslint-config": "^0.4.0",
     "eslint": "^8.52.0",
-    "np": "^8.0.4",
     "openai": "^4.12.4",
+    "np": "^8.0.4",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },

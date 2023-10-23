@@ -1,5 +1,5 @@
 {
-  "include": ["src"],
+  "include": ["src", "openai-types"],
   "exclude": ["**/node_modules", "**/.*/"],
   "compilerOptions": {
     "outDir": "dist",

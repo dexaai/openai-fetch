@@ -1,4 +1,4 @@
-import type { OpenAI } from 'openai';
+import type { OpenAI } from '../openai-types/index.js';
 
 export type ChatMessage = OpenAI.ChatCompletionMessageParam;
 export type ChatParams = Omit<OpenAI.ChatCompletionCreateParams, 'stream'>;

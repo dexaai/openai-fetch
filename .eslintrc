@@ -1,5 +1,6 @@
 {
   "extends": ["@dexaai/eslint-config", "@dexaai/eslint-config/node"],
+  "ignorePatterns": ["node_modules/", "dist/", "openai-types/"],
   "rules": {
     "no-console": "off",
     "no-process-env": "off"
