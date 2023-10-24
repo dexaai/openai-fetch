@@ -8,7 +8,8 @@ export type ChatStreamParams = Omit<
   OpenAI.ChatCompletionCreateParams,
   'stream'
 >;
-export type ChatStreamResponse = ReadableStream<OpenAI.ChatCompletionChunk>;
+export type ChatStreamChunk = OpenAI.ChatCompletionChunk;
+export type ChatStreamResponse = ReadableStream<ChatStreamChunk>;
 
 export type CompletionParams = Omit<OpenAI.CompletionCreateParams, 'stream'>;
 export type CompletionResponse = OpenAI.Completion;
