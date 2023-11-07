@@ -1,8 +1,8 @@
                               
-import * as Core from 'openai/core';
-import { type CompletionUsage } from 'openai/resources/completions';
-import { type Completions, type ChatCompletion, type ChatCompletionMessage, type ChatCompletionMessageParam, type ChatCompletionCreateParams } from 'openai/resources/chat/completions';
-import { APIUserAbortError, OpenAIError } from 'openai/error';
+import * as Core from '~/openai-types/core.js';
+import { type CompletionUsage } from '~/openai-types/resources/completions.js';
+import { type Completions, type ChatCompletion, type ChatCompletionMessage, type ChatCompletionMessageParam, type ChatCompletionCreateParams } from '~/openai-types/resources/chat/completions.js';
+import { APIUserAbortError, OpenAIError } from '~/openai-types/error.js';
 import { type BaseFunctionsArgs } from "./RunnableFunction.js";
 import { ChatCompletionFunctionRunnerParams, ChatCompletionToolRunnerParams } from "./ChatCompletionRunner.js";
 import { ChatCompletionStreamingFunctionRunnerParams, ChatCompletionStreamingToolRunnerParams } from "./ChatCompletionStreamingRunner.js";

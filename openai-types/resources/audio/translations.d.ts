@@ -1,7 +1,7 @@
-import * as Core from 'openai/core';
-import { APIResource } from 'openai/resource';
-import * as TranslationsAPI from 'openai/resources/audio/translations';
-import { type Uploadable } from 'openai/core';
+import * as Core from '~/openai-types/core.js';
+import { APIResource } from '~/openai-types/resource.js';
+import * as TranslationsAPI from '~/openai-types/resources/audio/translations.js';
+import { type Uploadable } from '~/openai-types/core.js';
 export declare class Translations extends APIResource {
     /**
      * Translates audio into English.

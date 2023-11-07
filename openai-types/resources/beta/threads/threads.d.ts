@@ -1,8 +1,8 @@
-import * as Core from 'openai/core';
-import { APIResource } from 'openai/resource';
-import * as ThreadsAPI from 'openai/resources/beta/threads/threads';
-import * as MessagesAPI from 'openai/resources/beta/threads/messages/messages';
-import * as RunsAPI from 'openai/resources/beta/threads/runs/runs';
+import * as Core from '~/openai-types/core.js';
+import { APIResource } from '~/openai-types/resource.js';
+import * as ThreadsAPI from '~/openai-types/resources/beta/threads/threads.js';
+import * as MessagesAPI from '~/openai-types/resources/beta/threads/messages/messages.js';
+import * as RunsAPI from '~/openai-types/resources/beta/threads/runs/runs.js';
 export declare class Threads extends APIResource {
     runs: RunsAPI.Runs;
     messages: MessagesAPI.Messages;

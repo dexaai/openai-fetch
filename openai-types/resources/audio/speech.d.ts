@@ -1,7 +1,7 @@
-import * as Core from 'openai/core';
-import { APIResource } from 'openai/resource';
-import { type Response } from 'openai/_shims/index';
-import * as SpeechAPI from 'openai/resources/audio/speech';
+import * as Core from '~/openai-types/core.js';
+import { APIResource } from '~/openai-types/resource.js';
+import { type Response } from '~/openai-types/_shims/index.js';
+import * as SpeechAPI from '~/openai-types/resources/audio/speech.js';
 export declare class Speech extends APIResource {
     /**
      * Generates audio from the input text.

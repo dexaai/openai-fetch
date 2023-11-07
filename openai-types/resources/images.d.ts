@@ -1,7 +1,7 @@
-import * as Core from 'openai/core';
-import { APIResource } from 'openai/resource';
-import * as ImagesAPI from 'openai/resources/images';
-import { type Uploadable } from 'openai/core';
+import * as Core from '~/openai-types/core.js';
+import { APIResource } from '~/openai-types/resource.js';
+import * as ImagesAPI from '~/openai-types/resources/images.js';
+import { type Uploadable } from '~/openai-types/core.js';
 export declare class Images extends APIResource {
     /**
      * Creates a variation of a given image.

@@ -1,8 +1,8 @@
-import * as Core from 'openai/core';
-import { APIResource } from 'openai/resource';
-import * as RunsAPI from 'openai/resources/beta/threads/runs/runs';
-import * as StepsAPI from 'openai/resources/beta/threads/runs/steps';
-import { CursorPage, type CursorPageParams } from 'openai/pagination';
+import * as Core from '~/openai-types/core.js';
+import { APIResource } from '~/openai-types/resource.js';
+import * as RunsAPI from '~/openai-types/resources/beta/threads/runs/runs.js';
+import * as StepsAPI from '~/openai-types/resources/beta/threads/runs/steps.js';
+import { CursorPage, type CursorPageParams } from '~/openai-types/pagination.js';
 export declare class Runs extends APIResource {
     steps: StepsAPI.Steps;
     /**

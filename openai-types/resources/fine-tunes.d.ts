@@ -1,10 +1,10 @@
-import * as Core from 'openai/core';
-import { APIPromise } from 'openai/core';
-import { APIResource } from 'openai/resource';
-import * as FineTunesAPI from 'openai/resources/fine-tunes';
-import * as FilesAPI from 'openai/resources/files';
-import { Page } from 'openai/pagination';
-import { Stream } from 'openai/streaming';
+import * as Core from '~/openai-types/core.js';
+import { APIPromise } from '~/openai-types/core.js';
+import { APIResource } from '~/openai-types/resource.js';
+import * as FineTunesAPI from '~/openai-types/resources/fine-tunes.js';
+import * as FilesAPI from '~/openai-types/resources/files.js';
+import { Page } from '~/openai-types/pagination.js';
+import { Stream } from '~/openai-types/streaming.js';
 export declare class FineTunes extends APIResource {
     /**
      * Creates a job that fine-tunes a specified model from a given dataset.

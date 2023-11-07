@@ -4,8 +4,8 @@
 /**
  * Types will get added to this namespace when you import one of the following:
  *
- *   import 'openai/shims/node'
- *   import 'openai/shims/web'
+ *   import '~/openai-types/shims/node.js'
+ *   import '~/openai-types/shims/web.js'
  *
  * Importing more than one will cause type and runtime errors.
  */
