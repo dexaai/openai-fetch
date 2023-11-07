@@ -1,10 +1,9 @@
 import ky from 'ky';
-import type { Options } from 'ky';
+import type { KyInstance, Options } from 'ky';
 import { APIError, castToError } from './errors.js';
 
 const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
 
-type KyInstance = ReturnType<typeof ky.extend>;
 export interface KyOptions extends Omit<Options, 'credentials'> {
   credentials?: 'include' | 'omit' | 'same-origin';
 }
