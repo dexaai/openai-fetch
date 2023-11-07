@@ -1,8 +1,8 @@
-import * as Core from 'openai/core';
-import { APIPromise } from 'openai/core';
-import { APIResource } from 'openai/resource';
-import * as CompletionsAPI from 'openai/resources/completions';
-import { Stream } from 'openai/streaming';
+import * as Core from '../core.js';
+import { APIPromise } from '../core.js';
+import { APIResource } from '../resource.js';
+import * as CompletionsAPI from '../resources/completions.js';
+import { Stream } from '../streaming.js';
 export declare class Completions extends APIResource {
     /**
      * Creates a completion for the provided prompt and parameters.

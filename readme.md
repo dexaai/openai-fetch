@@ -20,11 +20,17 @@ Unfortunately, the official [openai-node](https://github.com/openai/openai-node)
 - Endpoints other than chat, completions, and embeddings
 - Aren't concerned with lib size or fetch patching
 
+## Install
+
+```bash
+npm install openai-fetch
+```
+
+This package requires `node >= 18` or an environment with `fetch` support.
+
+This package exports [ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c). If your project uses CommonJS, consider switching to ESM or use the [dynamic `import()`](https://v8.dev/features/dynamic-import) function.
+
 ## Usage
-
-**Warning:** This package is native [ESM](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) and no longer provides a CommonJS export. If your project uses CommonJS, you will have to [convert to ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) or use the [dynamic `import()`](https://v8.dev/features/dynamic-import) function. Please don't open issues for questions regarding CommonJS / ESM.
-
-Install `openai-fetch` with your favorite package manager and create an instance of the `OpenAIClient` class.
 
 ```ts
 import { OpenAIClient } from 'openai-fetch';
@@ -58,3 +64,7 @@ client.createEmbeddings(params: EmbeddingParams): Promise<EmbeddingResponse>
 ### Type Definitions
 
 The type definitions are avaible through TSServer, and can be found here: [type definitions](/src/types.ts).
+
+## License
+
+MIT © [Dexa](https://dexa.ai)

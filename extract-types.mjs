@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 
 /**
  * This is used to extract the type declarations from the openai Node.js
  * package. Doing this allows it to be a devDependency instead of a dependency,
  * which greatly reduces the size of the final bundle.
  */
-function extractTypes(srcDir, destDir, root = false) {
+function extractTypes(srcDir, destDir) {
   if (!fs.existsSync(destDir)) {
     fs.mkdirSync(destDir, { recursive: true });
   }
@@ -20,20 +20,17 @@ function extractTypes(srcDir, destDir, root = false) {
     if (entry.isDirectory()) {
       extractTypes(srcPath, destPath);
     } else if (entry.isFile() && entry.name.endsWith('.d.ts')) {
-      console.log(destPath);
+      const depth = Math.max(0, destPath.split('/').length - 2);
+      const relativePath = depth > 0 ? '../'.repeat(depth) : './';
 
-      if (root && entry.name === 'index.d.ts') {
-        // OpenAI has one line with an absolute package import, so switch it to
-        // be a relative import.
-        const content = fs
-          .readFileSync(srcPath, 'utf8')
-          .replaceAll("'openai/resources/index'", "'./resources/index.js'");
-        fs.writeFileSync(destPath, content);
-      } else {
-        fs.copyFileSync(srcPath, destPath);
-      }
+      // OpenAI has some absolute package imports, so switch them to use relative imports.
+      const content = fs
+        .readFileSync(srcPath, 'utf8')
+        .replaceAll(/'openai\/([^'.]*)'/g, `'${relativePath}$1.js'`);
+      fs.writeFileSync(destPath, content);
+      console.log(destPath);
     }
   }
 }
 
-extractTypes('node_modules/openai', 'openai-types', true);
+extractTypes('node_modules/openai', 'openai-types');

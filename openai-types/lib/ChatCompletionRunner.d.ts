@@ -1,4 +1,4 @@
-import { type Completions, type ChatCompletionMessageParam, type ChatCompletionCreateParamsNonStreaming } from 'openai/resources/chat/completions';
+import { type Completions, type ChatCompletionMessageParam, type ChatCompletionCreateParamsNonStreaming } from '../resources/chat/completions.js';
 import { type RunnableFunctions, type BaseFunctionsArgs, RunnableTools } from "./RunnableFunction.js";
 import { AbstractChatCompletionRunner, AbstractChatCompletionRunnerEvents, RunnerOptions } from "./AbstractChatCompletionRunner.js";
 export interface ChatCompletionRunnerEvents extends AbstractChatCompletionRunnerEvents {

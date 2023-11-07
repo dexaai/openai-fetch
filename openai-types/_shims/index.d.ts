@@ -2,7 +2,7 @@
  * Disclaimer: modules in _shims aren't intended to be imported by SDK users.
  */
 import { manual } from "./manual-types.js";
-import * as auto from 'openai/_shims/auto/types';
+import * as auto from '../_shims/auto/types.js';
 import { type RequestOptions } from "../core.js";
 
 type SelectType<Manual, Auto> = unknown extends Manual ? Auto : Manual;

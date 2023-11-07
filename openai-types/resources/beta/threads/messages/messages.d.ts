@@ -1,8 +1,8 @@
-import * as Core from 'openai/core';
-import { APIResource } from 'openai/resource';
-import * as MessagesAPI from 'openai/resources/beta/threads/messages/messages';
-import * as FilesAPI from 'openai/resources/beta/threads/messages/files';
-import { CursorPage, type CursorPageParams } from 'openai/pagination';
+import * as Core from '../../../../core.js';
+import { APIResource } from '../../../../resource.js';
+import * as MessagesAPI from '../../../../resources/beta/threads/messages/messages.js';
+import * as FilesAPI from '../../../../resources/beta/threads/messages/files.js';
+import { CursorPage, type CursorPageParams } from '../../../../pagination.js';
 export declare class Messages extends APIResource {
     files: FilesAPI.Files;
     /**

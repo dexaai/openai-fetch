@@ -1,8 +1,8 @@
-import * as Core from 'openai/core';
-import { APIResource } from 'openai/resource';
-import * as AssistantsAPI from 'openai/resources/beta/assistants/assistants';
-import * as FilesAPI from 'openai/resources/beta/assistants/files';
-import { CursorPage, type CursorPageParams } from 'openai/pagination';
+import * as Core from '../../../core.js';
+import { APIResource } from '../../../resource.js';
+import * as AssistantsAPI from '../../../resources/beta/assistants/assistants.js';
+import * as FilesAPI from '../../../resources/beta/assistants/files.js';
+import { CursorPage, type CursorPageParams } from '../../../pagination.js';
 export declare class Assistants extends APIResource {
     files: FilesAPI.Files;
     /**

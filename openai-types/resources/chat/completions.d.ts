@@ -1,9 +1,9 @@
-import * as Core from 'openai/core';
-import { APIPromise } from 'openai/core';
-import { APIResource } from 'openai/resource';
-import * as ChatCompletionsAPI from 'openai/resources/chat/completions';
-import * as CompletionsAPI from 'openai/resources/completions';
-import { Stream } from 'openai/streaming';
+import * as Core from '../../core.js';
+import { APIPromise } from '../../core.js';
+import { APIResource } from '../../resource.js';
+import * as ChatCompletionsAPI from '../../resources/chat/completions.js';
+import * as CompletionsAPI from '../../resources/completions.js';
+import { Stream } from '../../streaming.js';
 export declare class Completions extends APIResource {
     /**
      * Creates a model response for the given chat conversation.

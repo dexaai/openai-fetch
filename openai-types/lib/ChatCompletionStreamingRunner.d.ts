@@ -1,6 +1,6 @@
-import { Completions, type ChatCompletionChunk, type ChatCompletionCreateParamsStreaming } from 'openai/resources/chat/completions';
+import { Completions, type ChatCompletionChunk, type ChatCompletionCreateParamsStreaming } from '../resources/chat/completions.js';
 import { RunnerOptions, type AbstractChatCompletionRunnerEvents } from "./AbstractChatCompletionRunner.js";
-import { type ReadableStream } from 'openai/_shims/index';
+import { type ReadableStream } from '../_shims/index.js';
 import { RunnableTools, type BaseFunctionsArgs, type RunnableFunctions } from "./RunnableFunction.js";
 import { ChatCompletionSnapshot, ChatCompletionStream } from "./ChatCompletionStream.js";
 export interface ChatCompletionStreamEvents extends AbstractChatCompletionRunnerEvents {

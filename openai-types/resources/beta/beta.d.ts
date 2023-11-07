@@ -1,7 +1,7 @@
-import { APIResource } from 'openai/resource';
-import * as AssistantsAPI from 'openai/resources/beta/assistants/assistants';
-import * as ChatAPI from 'openai/resources/beta/chat/chat';
-import * as ThreadsAPI from 'openai/resources/beta/threads/threads';
+import { APIResource } from '../../resource.js';
+import * as AssistantsAPI from '../../resources/beta/assistants/assistants.js';
+import * as ChatAPI from '../../resources/beta/chat/chat.js';
+import * as ThreadsAPI from '../../resources/beta/threads/threads.js';
 export declare class Beta extends APIResource {
     chat: ChatAPI.Chat;
     assistants: AssistantsAPI.Assistants;
