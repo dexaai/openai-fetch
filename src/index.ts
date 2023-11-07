@@ -1,46 +1,32 @@
-// The OpenAI client class
-export { OpenAIClient } from './openai-client';
+export { OpenAIClient } from './openai-client.js';
+export type { ConfigOpts } from './openai-client.js';
 
-// Zod schemas
-export {
-  ChatCompletionParamsSchema,
-  ChatMessageFunctionCallSchema,
-  ChatMessageFunctionSchema,
-  ChatMessageRoleSchema,
-  ChatMessageSchema,
-} from './schemas/chat-completion';
-export {
-  BulkCompletionParamsSchema,
-  CompletionParamsSchema,
-} from './schemas/completion';
-export {
-  BulkEmbeddingParamsSchema,
-  EmbeddingParamsSchema,
-} from './schemas/embedding';
-export { EditParamsSchema } from './schemas/edit';
-
-// Custom OpenAI error
-export { OpenAIApiError } from './errors';
-
-// Types
 export type {
-  ChatCompletionParams,
-  ChatCompletionResponse,
   ChatMessage,
-  ChatMessageFunction,
-  ChatMessageFunctionCall,
-  ChatMessageRole,
-  ChatResponseMessage,
-} from './schemas/chat-completion';
-export type {
-  BulkCompletionParams,
+  ChatParams,
+  ChatResponse,
+  ChatStreamParams,
+  ChatStreamResponse,
   CompletionParams,
   CompletionResponse,
-} from './schemas/completion';
-export type {
-  BulkEmbeddingParams,
+  CompletionStreamParams,
+  CompletionStreamResponse,
   EmbeddingParams,
   EmbeddingResponse,
-} from './schemas/embedding';
-export type { EditParams, EditResponse } from './schemas/edit';
-export type { ConfigOpts } from './openai-client';
+} from './types.js';
+
+export {
+  APIConnectionError,
+  APIConnectionTimeoutError,
+  APIError,
+  APIUserAbortError,
+  AuthenticationError,
+  BadRequestError,
+  ConflictError,
+  InternalServerError,
+  NotFoundError,
+  OpenAIError,
+  PermissionDeniedError,
+  RateLimitError,
+  UnprocessableEntityError,
+} from './errors.js';

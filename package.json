@@ -1,50 +1,78 @@
 {
   "name": "openai-fetch",
-  "version": "1.6.5",
+  "type": "module",
+  "version": "2.0.0-beta.9",
   "description": "OpenAI client powered by fetch",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.js",
-  "files": [
-    "dist"
-  ],
-  "repository": "rileytomasek/openai-fetch",
+  "repository": "dexaai/openai-fetch",
+  "license": "MIT",
   "author": {
     "name": "Riley Tomasek",
     "email": "hi@rile.yt",
     "url": "https://rile.yt"
   },
-  "scripts": {
-    "build": "rm -rf dist && node build.js && tsc -b",
-    "lint": "eslint src",
-    "prepare": "yarn build",
-    "prepublishOnly": "yarn lint && yarn typecheck",
-    "release": "np",
-    "typecheck": "tsc"
+  "engines": {
+    "node": ">=18"
   },
-  "license": "MIT",
-  "private": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "openai-types"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.dist.json",
+    "prebuild": "run-s clean:build extract-types",
+    "clean": "rimraf dist openai-types node_modules",
+    "dev": "tsc --watch",
+    "clean:build": "rimraf dist openai-types",
+    "extract-types": "node extract-types.mjs",
+    "prepare": "run-s build",
+    "prepublishOnly": "run-s test",
+    "release": "np",
+    "pretest": "run-s build",
+    "test": "run-p test:*",
+    "test:lint": "eslint src",
+    "test:format": "prettier --check \"**/*.{js,ts,tsx}\"",
+    "test:typecheck": "tsc --noEmit"
+  },
   "dependencies": {
-    "ky": "^0.33.3",
-    "zod": "^3.21.2"
+    "ky": "^1.1.3"
   },
   "devDependencies": {
-    "@types/node": "^18.14.6",
-    "dotenv": "^16.0.3",
-    "esbuild": "^0.17.11",
-    "eslint": "^8.35.0",
-    "eslint-config-hckrs": "^0.0.3",
-    "np": "^7.6.3",
-    "openai": "^3.2.1",
-    "prettier": "^2.8.4",
-    "tsx": "^3.12.3",
-    "type-fest": "^3.6.1",
-    "typescript": "^4.9.5"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "@dexaai/eslint-config": "^0.4.0",
+    "eslint": "^8.52.0",
+    "np": "^8.0.4",
+    "npm-run-all": "^4.1.5",
+    "openai": "^4.12.4",
+    "prettier": "^3.0.3",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
   },
   "prettier": {
     "singleQuote": true
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@dexaai/eslint-config",
+      "@dexaai/eslint-config/node"
+    ],
+    "ignorePatterns": [
+      "dist",
+      "node_modules",
+      "openai-types"
+    ],
+    "rules": {
+      "no-console": "off",
+      "no-process-env": "off"
+    }
   }
 }
