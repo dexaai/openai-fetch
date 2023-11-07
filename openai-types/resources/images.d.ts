@@ -26,6 +26,11 @@ export interface Image {
      */
     b64_json?: string;
     /**
+     * The prompt that was used to generate the image, if there was any revision to the
+     * prompt.
+     */
+    revised_prompt?: string;
+    /**
      * The URL of the generated image, if `response_format` is `url` (default).
      */
     url?: string;
@@ -41,7 +46,13 @@ export interface ImageCreateVariationParams {
      */
     image: Uploadable;
     /**
-     * The number of images to generate. Must be between 1 and 10.
+     * The model to use for image generation. Only `dall-e-2` is supported at this
+     * time.
+     */
+    model?: (string & {}) | 'dall-e-2' | null;
+    /**
+     * The number of images to generate. Must be between 1 and 10. For `dall-e-3`, only
+     * `n=1` is supported.
      */
     n?: number | null;
     /**
@@ -79,6 +90,11 @@ export interface ImageEditParams {
      */
     mask?: Uploadable;
     /**
+     * The model to use for image generation. Only `dall-e-2` is supported at this
+     * time.
+     */
+    model?: (string & {}) | 'dall-e-2' | null;
+    /**
      * The number of images to generate. Must be between 1 and 10.
      */
     n?: number | null;
@@ -102,13 +118,24 @@ export interface ImageEditParams {
 export interface ImageGenerateParams {
     /**
      * A text description of the desired image(s). The maximum length is 1000
-     * characters.
+     * characters for `dall-e-2` and 4000 characters for `dall-e-3`.
      */
     prompt: string;
     /**
-     * The number of images to generate. Must be between 1 and 10.
+     * The model to use for image generation.
+     */
+    model?: (string & {}) | 'dall-e-2' | 'dall-e-3' | null;
+    /**
+     * The number of images to generate. Must be between 1 and 10. For `dall-e-3`, only
+     * `n=1` is supported.
      */
     n?: number | null;
+    /**
+     * The quality of the image that will be generated. `hd` creates images with finer
+     * details and greater consistency across the image. This param is only supported
+     * for `dall-e-3`.
+     */
+    quality?: 'standard' | 'hd';
     /**
      * The format in which the generated images are returned. Must be one of `url` or
      * `b64_json`.
@@ -116,9 +143,17 @@ export interface ImageGenerateParams {
     response_format?: 'url' | 'b64_json' | null;
     /**
      * The size of the generated images. Must be one of `256x256`, `512x512`, or
-     * `1024x1024`.
+     * `1024x1024` for `dall-e-2`. Must be one of `1024x1024`, `1792x1024`, or
+     * `1024x1792` for `dall-e-3` models.
      */
-    size?: '256x256' | '512x512' | '1024x1024' | null;
+    size?: '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792' | null;
+    /**
+     * The style of the generated images. Must be one of `vivid` or `natural`. Vivid
+     * causes the model to lean towards generating hyper-real and dramatic images.
+     * Natural causes the model to produce more natural, less hyper-real looking
+     * images. This param is only supported for `dall-e-3`.
+     */
+    style?: 'vivid' | 'natural' | null;
     /**
      * A unique identifier representing your end-user, which can help OpenAI to monitor
      * and detect abuse.

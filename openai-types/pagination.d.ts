@@ -1,14 +1,14 @@
 import { AbstractPage, Response, APIClient, FinalRequestOptions, PageInfo } from "./core.js";
 export interface PageResponse<Item> {
     data: Array<Item>;
-    object: string;
+    object: 'list';
 }
 /**
  * Note: no pagination actually occurs yet, this is for forwards-compatibility.
  */
 export declare class Page<Item> extends AbstractPage<Item> implements PageResponse<Item> {
     data: Array<Item>;
-    object: string;
+    object: 'list';
     constructor(client: APIClient, response: Response, body: PageResponse<Item>, options: FinalRequestOptions);
     getPaginatedItems(): Item[];
     /**

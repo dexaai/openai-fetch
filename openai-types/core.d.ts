@@ -200,6 +200,7 @@ export type RequestOptions<Req extends {} = Record<string, unknown> | Readable> 
     httpAgent?: Agent;
     signal?: AbortSignal | undefined | null;
     idempotencyKey?: string;
+    __binaryResponse?: boolean | undefined;
 };
 export declare const isRequestOptions: (obj: unknown) => obj is RequestOptions<Readable | Record<string, unknown>>;
 export type FinalRequestOptions<Req extends {} = Record<string, unknown> | Readable> = RequestOptions<Req> & {

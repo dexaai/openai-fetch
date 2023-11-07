@@ -23,10 +23,10 @@
     "url": "https://rile.yt"
   },
   "scripts": {
-    "prebuild": "yarn clean:biuld && yarn extract-types",
+    "prebuild": "yarn clean:build && yarn extract-types",
     "build": "tsc --project tsconfig.dist.json",
     "clean": "rm -rf dist openai-types node_modules",
-    "clean:biuld": "rm -rf dist openai-types",
+    "clean:build": "rm -rf dist openai-types",
     "extract-types": "node extract-types.mjs",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint src",
@@ -43,8 +43,8 @@
   "devDependencies": {
     "@dexaai/eslint-config": "^0.4.0",
     "eslint": "^8.52.0",
-    "openai": "^4.12.4",
     "np": "^8.0.4",
+    "openai": "^4.12.4",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },

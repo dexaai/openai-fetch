@@ -71,7 +71,7 @@ export interface FineTune {
     /**
      * The object type, which is always "fine-tune".
      */
-    object: string;
+    object: 'fine-tune';
     /**
      * The organization that owns the fine-tuning job.
      */
@@ -149,11 +149,11 @@ export interface FineTuneEvent {
     created_at: number;
     level: string;
     message: string;
-    object: string;
+    object: 'fine-tune-event';
 }
 export interface FineTuneEventsListResponse {
     data: Array<FineTuneEvent>;
-    object: string;
+    object: 'list';
 }
 export interface FineTuneCreateParams {
     /**

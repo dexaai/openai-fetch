@@ -19,7 +19,7 @@ export interface CreateEmbeddingResponse {
     /**
      * The object type, which is always "embedding".
      */
-    object: string;
+    object: 'embedding';
     /**
      * The usage information for the request.
      */
@@ -57,7 +57,7 @@ export interface Embedding {
     /**
      * The object type, which is always "embedding".
      */
-    object: string;
+    object: 'embedding';
 }
 export interface EmbeddingCreateParams {
     /**
@@ -77,6 +77,11 @@ export interface EmbeddingCreateParams {
      * descriptions of them.
      */
     model: (string & {}) | 'text-embedding-ada-002';
+    /**
+     * The format to return the embeddings in. Can be either `float` or
+     * [`base64`](https://pypi.org/project/pybase64/).
+     */
+    encoding_format?: 'float' | 'base64';
     /**
      * A unique identifier representing your end-user, which can help OpenAI to monitor
      * and detect abuse.

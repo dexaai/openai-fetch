@@ -97,6 +97,7 @@ export declare class OpenAI extends Core.APIClient {
     models: API.Models;
     fineTuning: API.FineTuning;
     fineTunes: API.FineTunes;
+    beta: API.Beta;
     protected defaultQuery(): Core.DefaultQuery | undefined;
     protected defaultHeaders(opts: Core.FinalRequestOptions): Core.Headers;
     protected authHeaders(opts: Core.FinalRequestOptions): Core.Headers;
@@ -136,10 +137,23 @@ export declare namespace OpenAI {
     export import CompletionCreateParamsStreaming = API.CompletionCreateParamsStreaming;
     export import Chat = API.Chat;
     export import ChatCompletion = API.ChatCompletion;
+    export import ChatCompletionAssistantMessageParam = API.ChatCompletionAssistantMessageParam;
     export import ChatCompletionChunk = API.ChatCompletionChunk;
+    export import ChatCompletionContentPart = API.ChatCompletionContentPart;
+    export import ChatCompletionContentPartImage = API.ChatCompletionContentPartImage;
+    export import ChatCompletionContentPartText = API.ChatCompletionContentPartText;
+    export import ChatCompletionFunctionCallOption = API.ChatCompletionFunctionCallOption;
+    export import ChatCompletionFunctionMessageParam = API.ChatCompletionFunctionMessageParam;
     export import ChatCompletionMessage = API.ChatCompletionMessage;
     export import ChatCompletionMessageParam = API.ChatCompletionMessageParam;
+    export import ChatCompletionMessageToolCall = API.ChatCompletionMessageToolCall;
+    export import ChatCompletionNamedToolChoice = API.ChatCompletionNamedToolChoice;
     export import ChatCompletionRole = API.ChatCompletionRole;
+    export import ChatCompletionSystemMessageParam = API.ChatCompletionSystemMessageParam;
+    export import ChatCompletionTool = API.ChatCompletionTool;
+    export import ChatCompletionToolChoiceOption = API.ChatCompletionToolChoiceOption;
+    export import ChatCompletionToolMessageParam = API.ChatCompletionToolMessageParam;
+    export import ChatCompletionUserMessageParam = API.ChatCompletionUserMessageParam;
     export import ChatCompletionCreateParams = API.ChatCompletionCreateParams;
     export import ChatCompletionCreateParamsNonStreaming = API.ChatCompletionCreateParamsNonStreaming;
     export import ChatCompletionCreateParamsStreaming = API.ChatCompletionCreateParamsStreaming;
@@ -156,6 +170,7 @@ export declare namespace OpenAI {
     export import FileObject = API.FileObject;
     export import FileObjectsPage = API.FileObjectsPage;
     export import FileCreateParams = API.FileCreateParams;
+    export import FileListParams = API.FileListParams;
     export import Images = API.Images;
     export import Image = API.Image;
     export import ImagesResponse = API.ImagesResponse;
@@ -181,6 +196,7 @@ export declare namespace OpenAI {
     export import FineTuneListEventsParams = API.FineTuneListEventsParams;
     export import FineTuneListEventsParamsNonStreaming = API.FineTuneListEventsParamsNonStreaming;
     export import FineTuneListEventsParamsStreaming = API.FineTuneListEventsParamsStreaming;
+    export import Beta = API.Beta;
 }
 export default OpenAI;
 //# sourceMappingURL=index.d.ts.map
