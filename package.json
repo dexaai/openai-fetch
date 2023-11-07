@@ -55,5 +55,24 @@
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
+  },
+  "prettier": {
+    "singleQuote": true
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@dexaai/eslint-config",
+      "@dexaai/eslint-config/node"
+    ],
+    "ignorePatterns": [
+      "dist",
+      "node_modules",
+      "openai-types"
+    ],
+    "rules": {
+      "no-console": "off",
+      "no-process-env": "off"
+    }
   }
 }
