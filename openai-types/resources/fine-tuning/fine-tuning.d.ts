@@ -1,5 +1,5 @@
-import { APIResource } from '~/openai-types/resource.js';
-import * as JobsAPI from '~/openai-types/resources/fine-tuning/jobs.js';
+import { APIResource } from '../../resource.js';
+import * as JobsAPI from '../../resources/fine-tuning/jobs.js';
 export declare class FineTuning extends APIResource {
     jobs: JobsAPI.Jobs;
 }

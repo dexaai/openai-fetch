@@ -1,6 +1,6 @@
-import * as Core from '~/openai-types/core.js';
-import { APIResource } from '~/openai-types/resource.js';
-import * as ModerationsAPI from '~/openai-types/resources/moderations.js';
+import * as Core from '../core.js';
+import { APIResource } from '../resource.js';
+import * as ModerationsAPI from '../resources/moderations.js';
 export declare class Moderations extends APIResource {
     /**
      * Classifies if text violates OpenAI's Content Policy

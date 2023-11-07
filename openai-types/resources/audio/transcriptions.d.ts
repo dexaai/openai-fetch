@@ -1,7 +1,7 @@
-import * as Core from '~/openai-types/core.js';
-import { APIResource } from '~/openai-types/resource.js';
-import * as TranscriptionsAPI from '~/openai-types/resources/audio/transcriptions.js';
-import { type Uploadable } from '~/openai-types/core.js';
+import * as Core from '../../core.js';
+import { APIResource } from '../../resource.js';
+import * as TranscriptionsAPI from '../../resources/audio/transcriptions.js';
+import { type Uploadable } from '../../core.js';
 export declare class Transcriptions extends APIResource {
     /**
      * Transcribes audio into the input language.

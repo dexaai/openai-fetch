@@ -32,8 +32,8 @@ export declare class APIPromise<T> extends Promise<T> {
      * 👋 Getting the wrong TypeScript type for `Response`?
      * Try setting `"moduleResolution": "NodeNext"` if you can,
      * or add one of these imports before your first `import … from 'openai'`:
-     * - `import '~/openai-types/shims/node.js'` (if you're running on Node)
-     * - `import '~/openai-types/shims/web.js'` (otherwise)
+     * - `import './shims/node.js'` (if you're running on Node)
+     * - `import './shims/web.js'` (otherwise)
      */
     asResponse(): Promise<Response>;
     /**
@@ -46,8 +46,8 @@ export declare class APIPromise<T> extends Promise<T> {
      * 👋 Getting the wrong TypeScript type for `Response`?
      * Try setting `"moduleResolution": "NodeNext"` if you can,
      * or add one of these imports before your first `import … from 'openai'`:
-     * - `import '~/openai-types/shims/node.js'` (if you're running on Node)
-     * - `import '~/openai-types/shims/web.js'` (otherwise)
+     * - `import './shims/node.js'` (if you're running on Node)
+     * - `import './shims/web.js'` (otherwise)
      */
     withResponse(): Promise<{
         data: T;

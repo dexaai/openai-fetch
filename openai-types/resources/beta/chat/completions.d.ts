@@ -1,17 +1,17 @@
-import * as Core from '~/openai-types/core.js';
-import { APIResource } from '~/openai-types/resource.js';
-import { ChatCompletionRunner, ChatCompletionFunctionRunnerParams } from '~/openai-types/lib/ChatCompletionRunner.js';
-export { ChatCompletionRunner, ChatCompletionFunctionRunnerParams } from '~/openai-types/lib/ChatCompletionRunner.js';
-import { ChatCompletionStreamingRunner, ChatCompletionStreamingFunctionRunnerParams } from '~/openai-types/lib/ChatCompletionStreamingRunner.js';
-export { ChatCompletionStreamingRunner, ChatCompletionStreamingFunctionRunnerParams, } from '~/openai-types/lib/ChatCompletionStreamingRunner.js';
-import { BaseFunctionsArgs } from '~/openai-types/lib/RunnableFunction.js';
-export { RunnableFunction, RunnableFunctions, RunnableFunctionWithParse, RunnableFunctionWithoutParse, ParsingFunction, } from '~/openai-types/lib/RunnableFunction.js';
-import { ChatCompletionToolRunnerParams } from '~/openai-types/lib/ChatCompletionRunner.js';
-export { ChatCompletionToolRunnerParams } from '~/openai-types/lib/ChatCompletionRunner.js';
-import { ChatCompletionStreamingToolRunnerParams } from '~/openai-types/lib/ChatCompletionStreamingRunner.js';
-export { ChatCompletionStreamingToolRunnerParams } from '~/openai-types/lib/ChatCompletionStreamingRunner.js';
-import { ChatCompletionStream, type ChatCompletionStreamParams } from '~/openai-types/lib/ChatCompletionStream.js';
-export { ChatCompletionStream, type ChatCompletionStreamParams } from '~/openai-types/lib/ChatCompletionStream.js';
+import * as Core from '../../../core.js';
+import { APIResource } from '../../../resource.js';
+import { ChatCompletionRunner, ChatCompletionFunctionRunnerParams } from '../../../lib/ChatCompletionRunner.js';
+export { ChatCompletionRunner, ChatCompletionFunctionRunnerParams } from '../../../lib/ChatCompletionRunner.js';
+import { ChatCompletionStreamingRunner, ChatCompletionStreamingFunctionRunnerParams } from '../../../lib/ChatCompletionStreamingRunner.js';
+export { ChatCompletionStreamingRunner, ChatCompletionStreamingFunctionRunnerParams, } from '../../../lib/ChatCompletionStreamingRunner.js';
+import { BaseFunctionsArgs } from '../../../lib/RunnableFunction.js';
+export { RunnableFunction, RunnableFunctions, RunnableFunctionWithParse, RunnableFunctionWithoutParse, ParsingFunction, } from '../../../lib/RunnableFunction.js';
+import { ChatCompletionToolRunnerParams } from '../../../lib/ChatCompletionRunner.js';
+export { ChatCompletionToolRunnerParams } from '../../../lib/ChatCompletionRunner.js';
+import { ChatCompletionStreamingToolRunnerParams } from '../../../lib/ChatCompletionStreamingRunner.js';
+export { ChatCompletionStreamingToolRunnerParams } from '../../../lib/ChatCompletionStreamingRunner.js';
+import { ChatCompletionStream, type ChatCompletionStreamParams } from '../../../lib/ChatCompletionStream.js';
+export { ChatCompletionStream, type ChatCompletionStreamParams } from '../../../lib/ChatCompletionStream.js';
 export declare class Completions extends APIResource {
     /**
      * A convenience helper for using function calls with the /chat/completions

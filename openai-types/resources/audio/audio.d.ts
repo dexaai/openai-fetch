@@ -1,7 +1,7 @@
-import { APIResource } from '~/openai-types/resource.js';
-import * as SpeechAPI from '~/openai-types/resources/audio/speech.js';
-import * as TranscriptionsAPI from '~/openai-types/resources/audio/transcriptions.js';
-import * as TranslationsAPI from '~/openai-types/resources/audio/translations.js';
+import { APIResource } from '../../resource.js';
+import * as SpeechAPI from '../../resources/audio/speech.js';
+import * as TranscriptionsAPI from '../../resources/audio/transcriptions.js';
+import * as TranslationsAPI from '../../resources/audio/translations.js';
 export declare class Audio extends APIResource {
     transcriptions: TranscriptionsAPI.Transcriptions;
     translations: TranslationsAPI.Translations;

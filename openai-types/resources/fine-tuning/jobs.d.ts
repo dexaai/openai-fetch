@@ -1,7 +1,7 @@
-import * as Core from '~/openai-types/core.js';
-import { APIResource } from '~/openai-types/resource.js';
-import * as JobsAPI from '~/openai-types/resources/fine-tuning/jobs.js';
-import { CursorPage, type CursorPageParams } from '~/openai-types/pagination.js';
+import * as Core from '../../core.js';
+import { APIResource } from '../../resource.js';
+import * as JobsAPI from '../../resources/fine-tuning/jobs.js';
+import { CursorPage, type CursorPageParams } from '../../pagination.js';
 export declare class Jobs extends APIResource {
     /**
      * Creates a job that fine-tunes a specified model from a given dataset.

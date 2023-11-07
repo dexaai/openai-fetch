@@ -1,5 +1,5 @@
-import { APIResource } from '~/openai-types/resource.js';
-import * as CompletionsAPI from '~/openai-types/resources/beta/chat/completions.js';
+import { APIResource } from '../../../resource.js';
+import * as CompletionsAPI from '../../../resources/beta/chat/completions.js';
 export declare class Chat extends APIResource {
     completions: CompletionsAPI.Completions;
 }

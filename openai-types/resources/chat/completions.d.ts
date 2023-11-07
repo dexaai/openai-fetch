@@ -1,9 +1,9 @@
-import * as Core from '~/openai-types/core.js';
-import { APIPromise } from '~/openai-types/core.js';
-import { APIResource } from '~/openai-types/resource.js';
-import * as ChatCompletionsAPI from '~/openai-types/resources/chat/completions.js';
-import * as CompletionsAPI from '~/openai-types/resources/completions.js';
-import { Stream } from '~/openai-types/streaming.js';
+import * as Core from '../../core.js';
+import { APIPromise } from '../../core.js';
+import { APIResource } from '../../resource.js';
+import * as ChatCompletionsAPI from '../../resources/chat/completions.js';
+import * as CompletionsAPI from '../../resources/completions.js';
+import { Stream } from '../../streaming.js';
 export declare class Completions extends APIResource {
     /**
      * Creates a model response for the given chat conversation.

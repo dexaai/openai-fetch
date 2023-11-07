@@ -1,6 +1,6 @@
-import * as Core from '~/openai-types/core.js';
-import { APIResource } from '~/openai-types/resource.js';
-import * as EmbeddingsAPI from '~/openai-types/resources/embeddings.js';
+import * as Core from '../core.js';
+import { APIResource } from '../resource.js';
+import * as EmbeddingsAPI from '../resources/embeddings.js';
 export declare class Embeddings extends APIResource {
     /**
      * Creates an embedding vector representing the input text.

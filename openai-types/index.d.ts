@@ -3,7 +3,7 @@ import * as Pagination from "./pagination.js";
 import * as Errors from "./error.js";
 import { type Agent } from "./_shims/index.js";
 import * as Uploads from "./uploads.js";
-import * as API from '~/openai-types/resources/index.js';
+import * as API from './resources/index.js';
 export interface ClientOptions {
     /**
      * Defaults to process.env['OPENAI_API_KEY'].

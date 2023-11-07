@@ -1,7 +1,7 @@
-import * as Core from '~/openai-types/core.js';
-import { APIResource } from '~/openai-types/resource.js';
-import * as FilesAPI from '~/openai-types/resources/beta/threads/messages/files.js';
-import { CursorPage, type CursorPageParams } from '~/openai-types/pagination.js';
+import * as Core from '../../../../core.js';
+import { APIResource } from '../../../../resource.js';
+import * as FilesAPI from '../../../../resources/beta/threads/messages/files.js';
+import { CursorPage, type CursorPageParams } from '../../../../pagination.js';
 export declare class Files extends APIResource {
     /**
      * Retrieves a message file.

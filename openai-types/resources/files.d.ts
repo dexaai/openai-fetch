@@ -1,8 +1,8 @@
-import * as Core from '~/openai-types/core.js';
-import { APIResource } from '~/openai-types/resource.js';
-import * as FilesAPI from '~/openai-types/resources/files.js';
-import { type Uploadable } from '~/openai-types/core.js';
-import { Page } from '~/openai-types/pagination.js';
+import * as Core from '../core.js';
+import { APIResource } from '../resource.js';
+import * as FilesAPI from '../resources/files.js';
+import { type Uploadable } from '../core.js';
+import { Page } from '../pagination.js';
 export declare class Files extends APIResource {
     /**
      * Upload a file that can be used across various endpoints/features. The size of

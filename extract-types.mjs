@@ -20,10 +20,13 @@ function extractTypes(srcDir, destDir) {
     if (entry.isDirectory()) {
       extractTypes(srcPath, destPath);
     } else if (entry.isFile() && entry.name.endsWith('.d.ts')) {
-      // OpenAI has some absolute package imports, so switch them to use relative imports via TS path mapping.
+      const depth = Math.max(0, destPath.split('/').length - 2);
+      const relativePath = depth > 0 ? '../'.repeat(depth) : './';
+
+      // OpenAI has some absolute package imports, so switch them to use relative imports.
       const content = fs
         .readFileSync(srcPath, 'utf8')
-        .replaceAll(/'openai\/([^'.]*)'/g, "'~/openai-types/$1.js'");
+        .replaceAll(/'openai\/([^'.]*)'/g, `'${relativePath}$1.js'`);
       fs.writeFileSync(destPath, content);
       console.log(destPath);
     }

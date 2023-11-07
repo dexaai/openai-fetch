@@ -1,7 +1,7 @@
-import * as Core from '~/openai-types/core.js';
-import { APIResource } from '~/openai-types/resource.js';
-import * as EditsAPI from '~/openai-types/resources/edits.js';
-import * as CompletionsAPI from '~/openai-types/resources/completions.js';
+import * as Core from '../core.js';
+import { APIResource } from '../resource.js';
+import * as EditsAPI from '../resources/edits.js';
+import * as CompletionsAPI from '../resources/completions.js';
 export declare class Edits extends APIResource {
     /**
      * Creates a new edit for the provided input, instruction, and parameters.
