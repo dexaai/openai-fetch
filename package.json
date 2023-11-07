@@ -1,8 +1,18 @@
 {
   "name": "openai-fetch",
+  "type": "module",
   "version": "2.0.0-beta.8",
   "description": "OpenAI client powered by fetch",
-  "type": "module",
+  "repository": "dexaai/openai-fetch",
+  "license": "MIT",
+  "author": {
+    "name": "Riley Tomasek",
+    "email": "hi@rile.yt",
+    "url": "https://rile.yt"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -12,31 +22,27 @@
   },
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
+  "sideEffects": false,
   "files": [
     "dist",
     "openai-types"
   ],
-  "repository": "dexaai/openai-fetch",
-  "author": {
-    "name": "Riley Tomasek",
-    "email": "hi@rile.yt",
-    "url": "https://rile.yt"
-  },
   "scripts": {
-    "prebuild": "yarn clean:build && yarn extract-types",
     "build": "tsc --project tsconfig.dist.json",
-    "clean": "rm -rf dist openai-types node_modules",
-    "clean:build": "rm -rf dist openai-types",
+    "prebuild": "run-s clean:build extract-types",
+    "clean": "rimraf dist openai-types node_modules",
+    "dev": "tsc --watch",
+    "clean:build": "rimraf dist openai-types",
     "extract-types": "node extract-types.mjs",
-    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "lint": "eslint src",
-    "prepare": "yarn build",
-    "prepublishOnly": "yarn lint && yarn typecheck",
+    "prepare": "run-s build",
+    "prepublishOnly": "run-s test",
     "release": "np",
-    "typecheck": "tsc --noEmit"
+    "pretest": "run-s build",
+    "test": "run-p test:*",
+    "test:lint": "eslint src",
+    "test:format": "prettier --check \"**/*.{js,ts,tsx}\"",
+    "test:typecheck": "tsc --noEmit"
   },
-  "license": "MIT",
-  "private": false,
   "dependencies": {
     "ky": "^1.1.0"
   },
@@ -44,17 +50,10 @@
     "@dexaai/eslint-config": "^0.4.0",
     "eslint": "^8.52.0",
     "np": "^8.0.4",
+    "npm-run-all": "^4.1.5",
     "openai": "^4.12.4",
     "prettier": "^3.0.3",
+    "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org"
-  },
-  "prettier": {
-    "singleQuote": true
-  },
-  "engines": {
-    "node": ">=18"
   }
 }
