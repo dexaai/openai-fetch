@@ -23,7 +23,10 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "sideEffects": false,
-  "files": ["dist", "openai-types"],
+  "files": [
+    "dist",
+    "openai-types"
+  ],
   "scripts": {
     "build": "tsc --project tsconfig.dist.json",
     "prebuild": "run-s clean:build extract-types",
@@ -58,8 +61,15 @@
   },
   "eslintConfig": {
     "root": true,
-    "extends": ["@dexaai/eslint-config", "@dexaai/eslint-config/node"],
-    "ignorePatterns": ["dist", "node_modules", "openai-types"],
+    "extends": [
+      "@dexaai/eslint-config",
+      "@dexaai/eslint-config/node"
+    ],
+    "ignorePatterns": [
+      "dist",
+      "node_modules",
+      "openai-types"
+    ],
     "rules": {
       "no-console": "off",
       "no-process-env": "off"
