@@ -188,7 +188,7 @@ export class OpenAIClient {
   /* ------------------------------- Beta API ------------------------------- */
 
   /** Create an assistant with a model and instructions. */
-  async createBetaAssistant(
+  async createAssistant(
     params: Beta.AssistantCreateParams,
     opts?: RequestOpts,
   ) {
@@ -198,7 +198,7 @@ export class OpenAIClient {
   }
 
   /** Retrieves an assistant. */
-  async getBetaAssistant(assistantId: string, opts?: RequestOpts) {
+  async getAssistant(assistantId: string, opts?: RequestOpts) {
     if (!assistantId) {
       throw new Error('Missing required "assistantId"');
     }
@@ -209,7 +209,7 @@ export class OpenAIClient {
   }
 
   /** Modifies an assistant. */
-  async updateBetaAssistant(
+  async updateAssistant(
     assistantId: string,
     params: Beta.AssistantUpdateParams,
     opts?: RequestOpts,
@@ -224,7 +224,7 @@ export class OpenAIClient {
   }
 
   /** Delete an assistant. */
-  async deleteBetaAssistant(assistantId: string, opts?: RequestOpts) {
+  async deleteAssistant(assistantId: string, opts?: RequestOpts) {
     if (!assistantId) {
       throw new Error('Missing required "assistantId"');
     }
@@ -235,10 +235,7 @@ export class OpenAIClient {
   }
 
   /** Returns a list of assistants. */
-  async listBetaAssistants(
-    params?: Beta.AssistantListParams,
-    opts?: RequestOpts,
-  ) {
+  async listAssistants(params?: Beta.AssistantListParams, opts?: RequestOpts) {
     return this.getApi(opts)
       .get('assistants', {
         searchParams: params ?? ({} as any),
@@ -247,7 +244,7 @@ export class OpenAIClient {
   }
 
   /** Create an assistant file by attaching a File to an assistant. */
-  async createBetaAssistantFile(
+  async createAssistantFile(
     assistantId: string,
     params: OpenAI.Beta.Assistants.FileCreateParams,
     opts?: RequestOpts,
@@ -266,7 +263,7 @@ export class OpenAIClient {
   }
 
   /** Retrieves an AssistantFile. */
-  async getBetaAssistantFile(
+  async getAssistantFile(
     assistantId: string,
     fileId: string,
     opts?: RequestOpts,
@@ -285,7 +282,7 @@ export class OpenAIClient {
   }
 
   /** Delete an assistant file. */
-  async deleteBetaAssistantFile(
+  async deleteAssistantFile(
     assistantId: string,
     fileId: string,
     opts?: RequestOpts,
@@ -304,7 +301,7 @@ export class OpenAIClient {
   }
 
   /** Returns a list of assistant files. */
-  async listBetaAssistantFiles(
+  async listAssistantFiles(
     assistantId: string,
     params?: OpenAI.Beta.Assistants.FileListParams,
     opts?: RequestOpts,
