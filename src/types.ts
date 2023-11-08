@@ -64,3 +64,27 @@ export type CompletionStreamResponse = ReadableStream<OpenAI.Completion>;
 
 export type EmbeddingParams = OpenAI.EmbeddingCreateParams;
 export type EmbeddingResponse = OpenAI.CreateEmbeddingResponse;
+
+export declare namespace Beta {
+  export type Chat = OpenAI.Beta.Chat;
+  export type Assistants = OpenAI.Beta.Assistants;
+  export type Assistant = OpenAI.Beta.Assistant;
+  export type AssistantDeleted = OpenAI.Beta.AsssitantDeleted;
+  export type AssistantsPage = OpenAI.Beta.AssistantsPage;
+  export type AssistantCreateParams = OpenAI.Beta.AssistantCreateParams;
+  export type AssistantUpdateParams = OpenAI.Beta.AssistantUpdateParams;
+  export type AssistantListParams = OpenAI.Beta.AssistantListParams;
+  export type Threads = OpenAI.Beta.Threads;
+  export type Thread = OpenAI.Beta.Thread;
+  export type ThreadDeleted = OpenAI.Beta.ThreadDeleted;
+  export type ThreadCreateParams = OpenAI.Beta.ThreadCreateParams;
+  export type ThreadUpdateParams = OpenAI.Beta.ThreadUpdateParams;
+  export type ThreadCreateAndRunParams = OpenAI.Beta.ThreadCreateAndRunParams;
+
+  export type Files = OpenAI.Beta.Assistants.Files;
+  export type AssistantFile = OpenAI.Beta.Assistants.AssistantFile;
+  export type FileDeleteResponse = OpenAI.Beta.Assistants.FileDeleteResponse;
+  export type AssistantFilesPage = OpenAI.Beta.Assistants.AssistantFilesPage;
+  export type FileCreateParams = OpenAI.Beta.Assistants.FileCreateParams;
+  export type FileListParams = OpenAI.Beta.Assistants.FileListParams;
+}
