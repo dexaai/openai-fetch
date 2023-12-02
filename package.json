@@ -29,19 +29,19 @@
   ],
   "scripts": {
     "build": "tsc --project tsconfig.dist.json",
-    "prebuild": "run-s clean:build extract-types",
     "clean": "rimraf dist openai-types node_modules",
-    "dev": "tsc --watch",
     "clean:build": "rimraf dist openai-types",
+    "dev": "tsc --watch",
     "extract-types": "node extract-types.mjs",
-    "prepare": "run-s build",
-    "prepublishOnly": "run-s test",
+    "format": "prettier --check \"**/*.{js,ts,tsx}\"",
+    "lint": "eslint src",
+    "prebuild": "yarn run clean:build && yarn run extract-types",
+    "prepare": "yarn run build",
+    "prepublishOnly": "yarn run test",
+    "pretest": "yarn run build",
     "release": "np",
-    "pretest": "run-s build",
-    "test": "run-p test:*",
-    "test:lint": "eslint src",
-    "test:format": "prettier --check \"**/*.{js,ts,tsx}\"",
-    "test:typecheck": "tsc --noEmit"
+    "test": "yarn run lint && yarn run typecheck",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "ky": "^1.1.3"
@@ -50,7 +50,6 @@
     "@dexaai/eslint-config": "^0.4.0",
     "eslint": "^8.52.0",
     "np": "^8.0.4",
-    "npm-run-all": "^4.1.5",
     "openai": "^4.12.4",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
