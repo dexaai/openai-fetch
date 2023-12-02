@@ -40,7 +40,10 @@ export type ConfigOpts = {
 };
 
 /** Override the default Ky options for a single request. */
-type RequestOpts = { headers?: KyOptions['headers'] };
+type RequestOpts = {
+  headers?: KyOptions['headers'];
+  signal?: AbortSignal
+};
 
 export class OpenAIClient {
   private api: ReturnType<typeof createApiInstance>;
