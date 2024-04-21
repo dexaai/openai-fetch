@@ -5,7 +5,7 @@ export { ChatCompletionRunner, ChatCompletionFunctionRunnerParams } from '../../
 import { ChatCompletionStreamingRunner, ChatCompletionStreamingFunctionRunnerParams } from '../../../lib/ChatCompletionStreamingRunner.js';
 export { ChatCompletionStreamingRunner, ChatCompletionStreamingFunctionRunnerParams, } from '../../../lib/ChatCompletionStreamingRunner.js';
 import { BaseFunctionsArgs } from '../../../lib/RunnableFunction.js';
-export { RunnableFunction, RunnableFunctions, RunnableFunctionWithParse, RunnableFunctionWithoutParse, ParsingFunction, } from '../../../lib/RunnableFunction.js';
+export { RunnableFunction, RunnableFunctions, RunnableFunctionWithParse, RunnableFunctionWithoutParse, ParsingFunction, ParsingToolFunction, } from '../../../lib/RunnableFunction.js';
 import { ChatCompletionToolRunnerParams } from '../../../lib/ChatCompletionRunner.js';
 export { ChatCompletionToolRunnerParams } from '../../../lib/ChatCompletionRunner.js';
 import { ChatCompletionStreamingToolRunnerParams } from '../../../lib/ChatCompletionStreamingRunner.js';
@@ -14,13 +14,7 @@ import { ChatCompletionStream, type ChatCompletionStreamParams } from '../../../
 export { ChatCompletionStream, type ChatCompletionStreamParams } from '../../../lib/ChatCompletionStream.js';
 export declare class Completions extends APIResource {
     /**
-     * A convenience helper for using function calls with the /chat/completions
-     * endpoint which automatically calls the JavaScript functions you provide and
-     * sends their results back to the /chat/completions endpoint, looping as long as
-     * the model requests function calls.
-     *
-     * For more details and examples, see
-     * [the docs](https://github.com/openai/openai-node#automated-function-calls)
+     * @deprecated - use `runTools` instead.
      */
     runFunctions<FunctionsArgs extends BaseFunctionsArgs>(body: ChatCompletionFunctionRunnerParams<FunctionsArgs>, options?: Core.RequestOptions): ChatCompletionRunner;
     runFunctions<FunctionsArgs extends BaseFunctionsArgs>(body: ChatCompletionStreamingFunctionRunnerParams<FunctionsArgs>, options?: Core.RequestOptions): ChatCompletionStreamingRunner;

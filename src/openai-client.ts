@@ -1,18 +1,18 @@
-import type { OpenAI } from 'openai';
-import type { KyOptions } from './fetch-api.js';
-import { createApiInstance } from './fetch-api.js';
+import { type OpenAI } from 'openai';
+
+import { createApiInstance, type KyOptions } from './fetch-api.js';
 import { StreamCompletionChunker } from './streaming.js';
-import type {
-  ChatParams,
-  ChatResponse,
-  ChatStreamParams,
-  ChatStreamResponse,
-  CompletionParams,
-  CompletionResponse,
-  CompletionStreamParams,
-  CompletionStreamResponse,
-  EmbeddingParams,
-  EmbeddingResponse,
+import {
+  type ChatParams,
+  type ChatResponse,
+  type ChatStreamParams,
+  type ChatStreamResponse,
+  type CompletionParams,
+  type CompletionResponse,
+  type CompletionStreamParams,
+  type CompletionStreamResponse,
+  type EmbeddingParams,
+  type EmbeddingResponse,
 } from './types.js';
 
 export type ConfigOpts = {
@@ -40,18 +40,21 @@ export type ConfigOpts = {
 };
 
 /** Override the default Ky options for a single request. */
-type RequestOpts = { headers?: KyOptions['headers'] };
+type RequestOpts = {
+  headers?: KyOptions['headers'];
+  signal?: AbortSignal;
+};
 
 export class OpenAIClient {
   private api: ReturnType<typeof createApiInstance>;
 
   constructor(opts: ConfigOpts = {}) {
     const process = globalThis.process || { env: {} };
-    const apiKey = opts.apiKey || process.env['OPENAI_API_KEY'];
-    const organizationId = opts.organizationId || process.env['OPENAI_ORG_ID'];
+    const apiKey = opts.apiKey || process.env.OPENAI_API_KEY;
+    const organizationId = opts.organizationId || process.env.OPENAI_ORG_ID;
     if (!apiKey)
       throw new Error(
-        'Missing OpenAI API key. Please provide one in the config or set the OPENAI_API_KEY environment variable.',
+        'Missing OpenAI API key. Please provide one in the config or set the OPENAI_API_KEY environment variable.'
       );
     this.api = createApiInstance({
       apiKey,
@@ -68,7 +71,7 @@ export class OpenAIClient {
   /** Create a completion for a chat message. */
   async createChatCompletion(
     params: ChatParams,
-    opts?: RequestOpts,
+    opts?: RequestOpts
   ): Promise<ChatResponse> {
     const response: OpenAI.ChatCompletion = await this.getApi(opts)
       .post('chat/completions', { json: params })
@@ -79,7 +82,7 @@ export class OpenAIClient {
   /** Create a chat completion and stream back partial progress. */
   async streamChatCompletion(
     params: ChatStreamParams,
-    opts?: RequestOpts,
+    opts?: RequestOpts
   ): Promise<ChatStreamResponse> {
     const response = await this.getApi(opts).post('chat/completions', {
       json: { ...params, stream: true },
@@ -88,15 +91,15 @@ export class OpenAIClient {
     const stream = response.body as ReadableStream;
     return stream.pipeThrough(
       new StreamCompletionChunker(
-        (response: OpenAI.ChatCompletionChunk) => response,
-      ),
+        (response: OpenAI.ChatCompletionChunk) => response
+      )
     );
   }
 
   /** Create completions for an array of prompt strings. */
   async createCompletions(
     params: CompletionParams,
-    opts?: RequestOpts,
+    opts?: RequestOpts
   ): Promise<CompletionResponse> {
     const response: OpenAI.Completion = await this.getApi(opts)
       .post('completions', { json: params })
@@ -107,7 +110,7 @@ export class OpenAIClient {
   /** Create a completion for a single prompt string and stream back partial progress. */
   async streamCompletion(
     params: CompletionStreamParams,
-    opts?: RequestOpts,
+    opts?: RequestOpts
   ): Promise<CompletionStreamResponse> {
     const response = await this.getApi(opts).post('completions', {
       json: { ...params, stream: true },
@@ -115,14 +118,14 @@ export class OpenAIClient {
     });
     const stream = response.body as ReadableStream;
     return stream.pipeThrough(
-      new StreamCompletionChunker((response: OpenAI.Completion) => response),
+      new StreamCompletionChunker((response: OpenAI.Completion) => response)
     );
   }
 
   /** Create an embedding vector representing the input text. */
   async createEmbeddings(
     params: EmbeddingParams,
-    opts?: RequestOpts,
+    opts?: RequestOpts
   ): Promise<EmbeddingResponse> {
     const response: OpenAI.CreateEmbeddingResponse = await this.getApi(opts)
       .post('embeddings', { json: params })

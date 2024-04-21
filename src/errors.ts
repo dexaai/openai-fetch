@@ -16,7 +16,7 @@ export class OpenAIError extends Error {}
 export class APIError extends OpenAIError {
   readonly status: number | undefined;
   readonly headers: Headers | undefined;
-  readonly error: Object | undefined;
+  readonly error: object | undefined;
 
   readonly code: string | null | undefined;
   readonly param: string | null | undefined;
@@ -24,9 +24,9 @@ export class APIError extends OpenAIError {
 
   constructor(
     status: number | undefined,
-    error: Object | undefined,
+    error: object | undefined,
     message: string | undefined,
-    headers: Headers | undefined,
+    headers: Headers | undefined
   ) {
     super(`${APIError.makeMessage(status, error, message)}`);
     this.status = status;
@@ -34,23 +34,23 @@ export class APIError extends OpenAIError {
 
     const data = error as Record<string, any>;
     this.error = data;
-    this.code = data?.['code'];
-    this.param = data?.['param'];
-    this.type = data?.['type'];
+    this.code = data?.code;
+    this.param = data?.param;
+    this.type = data?.type;
   }
 
   private static makeMessage(
     status: number | undefined,
     error: any,
-    message: string | undefined,
+    message: string | undefined
   ) {
     const msg = error?.message
       ? typeof error.message === 'string'
         ? error.message
         : JSON.stringify(error.message)
       : error
-      ? JSON.stringify(error)
-      : message;
+        ? JSON.stringify(error)
+        : message;
 
     if (status && msg) {
       return `${status} ${msg}`;
@@ -66,15 +66,15 @@ export class APIError extends OpenAIError {
 
   static generate(
     status: number | undefined,
-    errorResponse: Object | undefined,
+    errorResponse: object | undefined,
     message: string | undefined,
-    headers: Headers | undefined,
+    headers: Headers | undefined
   ) {
     if (!status) {
       return new APIConnectionError({ cause: castToError(errorResponse) });
     }
 
-    const error = (errorResponse as Record<string, any>)?.['error'];
+    const error = (errorResponse as Record<string, any>)?.error;
 
     if (status === 400) {
       return new BadRequestError(status, error, message, headers);
@@ -144,31 +144,31 @@ export class APIConnectionTimeoutError extends APIConnectionError {
 }
 
 export class BadRequestError extends APIError {
-  override readonly status: 400 = 400;
+  override readonly status = 400 as const;
 }
 
 export class AuthenticationError extends APIError {
-  override readonly status: 401 = 401;
+  override readonly status = 401 as const;
 }
 
 export class PermissionDeniedError extends APIError {
-  override readonly status: 403 = 403;
+  override readonly status = 403 as const;
 }
 
 export class NotFoundError extends APIError {
-  override readonly status: 404 = 404;
+  override readonly status = 404 as const;
 }
 
 export class ConflictError extends APIError {
-  override readonly status: 409 = 409;
+  override readonly status = 409 as const;
 }
 
 export class UnprocessableEntityError extends APIError {
-  override readonly status: 422 = 422;
+  override readonly status = 422 as const;
 }
 
 export class RateLimitError extends APIError {
-  override readonly status: 429 = 429;
+  override readonly status = 429 as const;
 }
 
 export class InternalServerError extends APIError {}

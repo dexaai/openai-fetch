@@ -1,14 +1,16 @@
 import * as Core from '../core.js';
 import { APIResource } from '../resource.js';
+import { type Response } from '../_shims/index.js';
 import * as FilesAPI from '../resources/files.js';
 import { type Uploadable } from '../core.js';
 import { Page } from '../pagination.js';
 export declare class Files extends APIResource {
     /**
-     * Upload a file that can be used across various endpoints/features. The size of
-     * all the files uploaded by one organization can be up to 100 GB.
+     * Upload a file that can be used across various endpoints. The size of all the
+     * files uploaded by one organization can be up to 100 GB.
      *
-     * The size of individual files for can be a maximum of 512MB. See the
+     * The size of individual files can be a maximum of 512 MB or 2 million tokens for
+     * Assistants. See the
      * [Assistants Tools guide](https://platform.openai.com/docs/assistants/tools) to
      * learn more about the types of files supported. The Fine-tuning API only supports
      * `.jsonl` files.
@@ -32,6 +34,12 @@ export declare class Files extends APIResource {
     del(fileId: string, options?: Core.RequestOptions): Core.APIPromise<FileDeleted>;
     /**
      * Returns the contents of the specified file.
+     */
+    content(fileId: string, options?: Core.RequestOptions): Core.APIPromise<Response>;
+    /**
+     * Returns the contents of the specified file.
+     *
+     * @deprecated The `.content()` method should be used instead
      */
     retrieveContent(fileId: string, options?: Core.RequestOptions): Core.APIPromise<string>;
     /**
@@ -83,13 +91,13 @@ export interface FileObject {
      */
     purpose: 'fine-tune' | 'fine-tune-results' | 'assistants' | 'assistants_output';
     /**
-     * Deprecated. The current status of the file, which can be either `uploaded`,
-     * `processed`, or `error`.
+     * @deprecated: Deprecated. The current status of the file, which can be either
+     * `uploaded`, `processed`, or `error`.
      */
     status: 'uploaded' | 'processed' | 'error';
     /**
-     * Deprecated. For details on why a fine-tuning training file failed validation,
-     * see the `error` field on `fine_tuning.job`.
+     * @deprecated: Deprecated. For details on why a fine-tuning training file failed
+     * validation, see the `error` field on `fine_tuning.job`.
      */
     status_details?: string;
 }

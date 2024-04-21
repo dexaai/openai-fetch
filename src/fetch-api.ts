@@ -1,5 +1,5 @@
-import ky from 'ky';
-import type { KyInstance, Options } from 'ky';
+import ky, { type KyInstance, type Options } from 'ky';
+
 import { APIError, castToError } from './errors.js';
 
 const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
@@ -30,7 +30,7 @@ export function createApiInstance(args: {
     if (response) {
       const status = response.status;
       const headers = parseHeaders(response.headers);
-      let errorResponse: Object | undefined;
+      let errorResponse: object | undefined;
       let message: string | undefined;
       if (response.body) {
         const errText = await response
@@ -73,18 +73,18 @@ export function createApiInstance(args: {
 }
 
 function parseHeaders(
-  headers: HeadersInit | null | undefined,
+  headers: HeadersInit | null | undefined
 ): Record<string, string> {
   try {
     return !headers
       ? {}
       : Symbol.iterator in headers
-      ? Object.fromEntries(
-          Array.from(headers as Iterable<string[]>).map((header) => [
-            ...header,
-          ]),
-        )
-      : { ...headers };
+        ? Object.fromEntries(
+            Array.from(headers as Iterable<string[]>).map((header) => [
+              ...header,
+            ])
+          )
+        : { ...headers };
   } catch (e) {
     return {};
   }

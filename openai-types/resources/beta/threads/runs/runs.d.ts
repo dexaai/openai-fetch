@@ -1,14 +1,22 @@
 import * as Core from '../../../../core.js';
+import { APIPromise } from '../../../../core.js';
 import { APIResource } from '../../../../resource.js';
+import { AssistantStream, RunCreateParamsBaseStream } from '../../../../lib/AssistantStream.js';
+import { RunSubmitToolOutputsParamsStream } from '../../../../lib/AssistantStream.js';
 import * as RunsAPI from '../../../../resources/beta/threads/runs/runs.js';
+import * as AssistantsAPI from '../../../../resources/beta/assistants.js';
+import * as ThreadsAPI from '../../../../resources/beta/threads/threads.js';
 import * as StepsAPI from '../../../../resources/beta/threads/runs/steps.js';
 import { CursorPage, type CursorPageParams } from '../../../../pagination.js';
+import { Stream } from '../../../../streaming.js';
 export declare class Runs extends APIResource {
     steps: StepsAPI.Steps;
     /**
      * Create a run.
      */
-    create(threadId: string, body: RunCreateParams, options?: Core.RequestOptions): Core.APIPromise<Run>;
+    create(threadId: string, body: RunCreateParamsNonStreaming, options?: Core.RequestOptions): APIPromise<Run>;
+    create(threadId: string, body: RunCreateParamsStreaming, options?: Core.RequestOptions): APIPromise<Stream<AssistantsAPI.AssistantStreamEvent>>;
+    create(threadId: string, body: RunCreateParamsBase, options?: Core.RequestOptions): APIPromise<Stream<AssistantsAPI.AssistantStreamEvent> | Run>;
     /**
      * Retrieves a run.
      */
@@ -27,12 +35,54 @@ export declare class Runs extends APIResource {
      */
     cancel(threadId: string, runId: string, options?: Core.RequestOptions): Core.APIPromise<Run>;
     /**
+     * A helper to create a run an poll for a terminal state. More information on Run
+     * lifecycles can be found here:
+     * https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps
+     */
+    createAndPoll(threadId: string, body: RunCreateParamsNonStreaming, options?: Core.RequestOptions & {
+        pollIntervalMs?: number;
+    }): Promise<Run>;
+    /**
+     * Create a Run stream
+     *
+     * @deprecated use `stream` instead
+     */
+    createAndStream(threadId: string, body: RunCreateParamsBaseStream, options?: Core.RequestOptions): AssistantStream;
+    /**
+     * A helper to poll a run status until it reaches a terminal state. More
+     * information on Run lifecycles can be found here:
+     * https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps
+     */
+    poll(threadId: string, runId: string, options?: Core.RequestOptions & {
+        pollIntervalMs?: number;
+    }): Promise<Run>;
+    /**
+     * Create a Run stream
+     */
+    stream(threadId: string, body: RunCreateParamsBaseStream, options?: Core.RequestOptions): AssistantStream;
+    /**
      * When a run has the `status: "requires_action"` and `required_action.type` is
      * `submit_tool_outputs`, this endpoint can be used to submit the outputs from the
      * tool calls once they're all completed. All outputs must be submitted in a single
      * request.
      */
-    submitToolOutputs(threadId: string, runId: string, body: RunSubmitToolOutputsParams, options?: Core.RequestOptions): Core.APIPromise<Run>;
+    submitToolOutputs(threadId: string, runId: string, body: RunSubmitToolOutputsParamsNonStreaming, options?: Core.RequestOptions): APIPromise<Run>;
+    submitToolOutputs(threadId: string, runId: string, body: RunSubmitToolOutputsParamsStreaming, options?: Core.RequestOptions): APIPromise<Stream<AssistantsAPI.AssistantStreamEvent>>;
+    submitToolOutputs(threadId: string, runId: string, body: RunSubmitToolOutputsParamsBase, options?: Core.RequestOptions): APIPromise<Stream<AssistantsAPI.AssistantStreamEvent> | Run>;
+    /**
+     * A helper to submit a tool output to a run and poll for a terminal run state.
+     * More information on Run lifecycles can be found here:
+     * https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps
+     */
+    submitToolOutputsAndPoll(threadId: string, runId: string, body: RunSubmitToolOutputsParamsNonStreaming, options?: Core.RequestOptions & {
+        pollIntervalMs?: number;
+    }): Promise<Run>;
+    /**
+     * Submit the tool outputs from a previous run and stream the run to a terminal
+     * state. More information on Run lifecycles can be found here:
+     * https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps
+     */
+    submitToolOutputsStream(threadId: string, runId: string, body: RunSubmitToolOutputsParamsStream, options?: Core.RequestOptions): AssistantStream;
 }
 export declare class RunsPage extends CursorPage<Run> {
 }
@@ -102,17 +152,16 @@ export interface Run {
     /**
      * The Unix timestamp (in seconds) for when the run will expire.
      */
-    expires_at: number;
+    expires_at: number | null;
     /**
      * The Unix timestamp (in seconds) for when the run failed.
      */
     failed_at: number | null;
     /**
-     * The list of [File](https://platform.openai.com/docs/api-reference/files) IDs the
-     * [assistant](https://platform.openai.com/docs/api-reference/assistants) used for
-     * this run.
+     * Details on why the run is incomplete. Will be `null` if the run is not
+     * incomplete.
      */
-    file_ids: Array<string>;
+    incomplete_details: Run.IncompleteDetails | null;
     /**
      * The instructions that the
      * [assistant](https://platform.openai.com/docs/api-reference/assistants) used for
@@ -123,6 +172,16 @@ export interface Run {
      * The last error associated with this run. Will be `null` if there are no errors.
      */
     last_error: Run.LastError | null;
+    /**
+     * The maximum number of completion tokens specified to have been used over the
+     * course of the run.
+     */
+    max_completion_tokens: number | null;
+    /**
+     * The maximum number of prompt tokens specified to have been used over the course
+     * of the run.
+     */
+    max_prompt_tokens: number | null;
     /**
      * Set of 16 key-value pairs that can be attached to an object. This can be useful
      * for storing additional information about the object in a structured format. Keys
@@ -137,14 +196,31 @@ export interface Run {
      */
     model: string;
     /**
-     * The object type, which is always `assistant.run`.
+     * The object type, which is always `thread.run`.
      */
-    object: 'assistant.run';
+    object: 'thread.run';
     /**
      * Details on the action required to continue the run. Will be `null` if no action
      * is required.
      */
     required_action: Run.RequiredAction | null;
+    /**
+     * Specifies the format that the model must output. Compatible with
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) and
+     * all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     *
+     * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
+     * message the model generates is valid JSON.
+     *
+     * **Important:** when using JSON mode, you **must** also instruct the model to
+     * produce JSON yourself via a system or user message. Without this, the model may
+     * generate an unending stream of whitespace until the generation reaches the token
+     * limit, resulting in a long-running and seemingly "stuck" request. Also note that
+     * the message content may be partially cut off if `finish_reason="length"`, which
+     * indicates the generation exceeded `max_tokens` or the conversation exceeded the
+     * max context length.
+     */
+    response_format: ThreadsAPI.AssistantResponseFormatOption | null;
     /**
      * The Unix timestamp (in seconds) for when the run was started.
      */
@@ -154,28 +230,66 @@ export interface Run {
      * `requires_action`, `cancelling`, `cancelled`, `failed`, `completed`, or
      * `expired`.
      */
-    status: 'queued' | 'in_progress' | 'requires_action' | 'cancelling' | 'cancelled' | 'failed' | 'completed' | 'expired';
+    status: RunStatus;
     /**
      * The ID of the [thread](https://platform.openai.com/docs/api-reference/threads)
      * that was executed on as a part of this run.
      */
     thread_id: string;
     /**
+     * Controls which (if any) tool is called by the model. `none` means the model will
+     * not call any tools and instead generates a message. `auto` is the default value
+     * and means the model can pick between generating a message or calling a tool.
+     * Specifying a particular tool like `{"type": "file_search"}` or
+     * `{"type": "function", "function": {"name": "my_function"}}` forces the model to
+     * call that tool.
+     */
+    tool_choice: ThreadsAPI.AssistantToolChoiceOption | null;
+    /**
      * The list of tools that the
      * [assistant](https://platform.openai.com/docs/api-reference/assistants) used for
      * this run.
      */
-    tools: Array<Run.AssistantToolsCode | Run.AssistantToolsRetrieval | Run.AssistantToolsFunction>;
+    tools: Array<AssistantsAPI.AssistantTool>;
+    /**
+     * Controls for how a thread will be truncated prior to the run. Use this to
+     * control the intial context window of the run.
+     */
+    truncation_strategy: Run.TruncationStrategy | null;
+    /**
+     * Usage statistics related to the run. This value will be `null` if the run is not
+     * in a terminal state (i.e. `in_progress`, `queued`, etc.).
+     */
+    usage: Run.Usage | null;
+    /**
+     * The sampling temperature used for this run. If not set, defaults to 1.
+     */
+    temperature?: number | null;
+    /**
+     * The nucleus sampling value used for this run. If not set, defaults to 1.
+     */
+    top_p?: number | null;
 }
 export declare namespace Run {
+    /**
+     * Details on why the run is incomplete. Will be `null` if the run is not
+     * incomplete.
+     */
+    interface IncompleteDetails {
+        /**
+         * The reason why the run is incomplete. This will point to which specific token
+         * limit was reached over the course of the run.
+         */
+        reason?: 'max_completion_tokens' | 'max_prompt_tokens';
+    }
     /**
      * The last error associated with this run. Will be `null` if there are no errors.
      */
     interface LastError {
         /**
-         * One of `server_error` or `rate_limit_exceeded`.
+         * One of `server_error`, `rate_limit_exceeded`, or `invalid_prompt`.
          */
-        code: 'server_error' | 'rate_limit_exceeded';
+        code: 'server_error' | 'rate_limit_exceeded' | 'invalid_prompt';
         /**
          * A human-readable description of the error.
          */
@@ -206,58 +320,51 @@ export declare namespace Run {
             tool_calls: Array<RunsAPI.RequiredActionFunctionToolCall>;
         }
     }
-    interface AssistantToolsCode {
+    /**
+     * Controls for how a thread will be truncated prior to the run. Use this to
+     * control the intial context window of the run.
+     */
+    interface TruncationStrategy {
         /**
-         * The type of tool being defined: `code_interpreter`
+         * The truncation strategy to use for the thread. The default is `auto`. If set to
+         * `last_messages`, the thread will be truncated to the n most recent messages in
+         * the thread. When set to `auto`, messages in the middle of the thread will be
+         * dropped to fit the context length of the model, `max_prompt_tokens`.
          */
-        type: 'code_interpreter';
+        type: 'auto' | 'last_messages';
+        /**
+         * The number of most recent messages from the thread when constructing the context
+         * for the run.
+         */
+        last_messages?: number | null;
     }
-    interface AssistantToolsRetrieval {
+    /**
+     * Usage statistics related to the run. This value will be `null` if the run is not
+     * in a terminal state (i.e. `in_progress`, `queued`, etc.).
+     */
+    interface Usage {
         /**
-         * The type of tool being defined: `retrieval`
+         * Number of completion tokens used over the course of the run.
          */
-        type: 'retrieval';
-    }
-    interface AssistantToolsFunction {
+        completion_tokens: number;
         /**
-         * The function definition.
+         * Number of prompt tokens used over the course of the run.
          */
-        function: AssistantToolsFunction.Function;
+        prompt_tokens: number;
         /**
-         * The type of tool being defined: `function`
+         * Total number of tokens used (prompt + completion).
          */
-        type: 'function';
-    }
-    namespace AssistantToolsFunction {
-        /**
-         * The function definition.
-         */
-        interface Function {
-            /**
-             * A description of what the function does, used by the model to choose when and
-             * how to call the function.
-             */
-            description: string;
-            /**
-             * The name of the function to be called. Must be a-z, A-Z, 0-9, or contain
-             * underscores and dashes, with a maximum length of 64.
-             */
-            name: string;
-            /**
-             * The parameters the functions accepts, described as a JSON Schema object. See the
-             * [guide](https://platform.openai.com/docs/guides/gpt/function-calling) for
-             * examples, and the
-             * [JSON Schema reference](https://json-schema.org/understanding-json-schema/) for
-             * documentation about the format.
-             *
-             * To describe a function that accepts no parameters, provide the value
-             * `{"type": "object", "properties": {}}`.
-             */
-            parameters: Record<string, unknown>;
-        }
+        total_tokens: number;
     }
 }
-export interface RunCreateParams {
+/**
+ * The status of the run, which can be either `queued`, `in_progress`,
+ * `requires_action`, `cancelling`, `cancelled`, `failed`, `completed`, or
+ * `expired`.
+ */
+export type RunStatus = 'queued' | 'in_progress' | 'requires_action' | 'cancelling' | 'cancelled' | 'failed' | 'completed' | 'expired';
+export type RunCreateParams = RunCreateParamsNonStreaming | RunCreateParamsStreaming;
+export interface RunCreateParamsBase {
     /**
      * The ID of the
      * [assistant](https://platform.openai.com/docs/api-reference/assistants) to use to
@@ -265,10 +372,37 @@ export interface RunCreateParams {
      */
     assistant_id: string;
     /**
-     * Override the default system message of the assistant. This is useful for
-     * modifying the behavior on a per-run basis.
+     * Appends additional instructions at the end of the instructions for the run. This
+     * is useful for modifying the behavior on a per-run basis without overriding other
+     * instructions.
+     */
+    additional_instructions?: string | null;
+    /**
+     * Adds additional messages to the thread before creating the run.
+     */
+    additional_messages?: Array<RunCreateParams.AdditionalMessage> | null;
+    /**
+     * Overrides the
+     * [instructions](https://platform.openai.com/docs/api-reference/assistants/createAssistant)
+     * of the assistant. This is useful for modifying the behavior on a per-run basis.
      */
     instructions?: string | null;
+    /**
+     * The maximum number of completion tokens that may be used over the course of the
+     * run. The run will make a best effort to use only the number of completion tokens
+     * specified, across multiple turns of the run. If the run exceeds the number of
+     * completion tokens specified, the run will end with status `incomplete`. See
+     * `incomplete_details` for more info.
+     */
+    max_completion_tokens?: number | null;
+    /**
+     * The maximum number of prompt tokens that may be used over the course of the run.
+     * The run will make a best effort to use only the number of prompt tokens
+     * specified, across multiple turns of the run. If the run exceeds the number of
+     * prompt tokens specified, the run will end with status `incomplete`. See
+     * `incomplete_details` for more info.
+     */
+    max_prompt_tokens?: number | null;
     /**
      * Set of 16 key-value pairs that can be attached to an object. This can be useful
      * for storing additional information about the object in a structured format. Keys
@@ -282,64 +416,139 @@ export interface RunCreateParams {
      * model associated with the assistant. If not, the model associated with the
      * assistant will be used.
      */
-    model?: string | null;
+    model?: (string & {}) | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
+    /**
+     * Specifies the format that the model must output. Compatible with
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) and
+     * all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     *
+     * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
+     * message the model generates is valid JSON.
+     *
+     * **Important:** when using JSON mode, you **must** also instruct the model to
+     * produce JSON yourself via a system or user message. Without this, the model may
+     * generate an unending stream of whitespace until the generation reaches the token
+     * limit, resulting in a long-running and seemingly "stuck" request. Also note that
+     * the message content may be partially cut off if `finish_reason="length"`, which
+     * indicates the generation exceeded `max_tokens` or the conversation exceeded the
+     * max context length.
+     */
+    response_format?: ThreadsAPI.AssistantResponseFormatOption | null;
+    /**
+     * If `true`, returns a stream of events that happen during the Run as server-sent
+     * events, terminating when the Run enters a terminal state with a `data: [DONE]`
+     * message.
+     */
+    stream?: boolean | null;
+    /**
+     * What sampling temperature to use, between 0 and 2. Higher values like 0.8 will
+     * make the output more random, while lower values like 0.2 will make it more
+     * focused and deterministic.
+     */
+    temperature?: number | null;
+    /**
+     * Controls which (if any) tool is called by the model. `none` means the model will
+     * not call any tools and instead generates a message. `auto` is the default value
+     * and means the model can pick between generating a message or calling a tool.
+     * Specifying a particular tool like `{"type": "file_search"}` or
+     * `{"type": "function", "function": {"name": "my_function"}}` forces the model to
+     * call that tool.
+     */
+    tool_choice?: ThreadsAPI.AssistantToolChoiceOption | null;
     /**
      * Override the tools the assistant can use for this run. This is useful for
      * modifying the behavior on a per-run basis.
      */
-    tools?: Array<RunCreateParams.AssistantToolsCode | RunCreateParams.AssistantToolsRetrieval | RunCreateParams.AssistantToolsFunction> | null;
+    tools?: Array<AssistantsAPI.AssistantTool> | null;
+    /**
+     * An alternative to sampling with temperature, called nucleus sampling, where the
+     * model considers the results of the tokens with top_p probability mass. So 0.1
+     * means only the tokens comprising the top 10% probability mass are considered.
+     *
+     * We generally recommend altering this or temperature but not both.
+     */
+    top_p?: number | null;
+    /**
+     * Controls for how a thread will be truncated prior to the run. Use this to
+     * control the intial context window of the run.
+     */
+    truncation_strategy?: RunCreateParams.TruncationStrategy | null;
 }
 export declare namespace RunCreateParams {
-    interface AssistantToolsCode {
+    interface AdditionalMessage {
         /**
-         * The type of tool being defined: `code_interpreter`
+         * The content of the message.
          */
-        type: 'code_interpreter';
+        content: string;
+        /**
+         * The role of the entity that is creating the message. Allowed values include:
+         *
+         * - `user`: Indicates the message is sent by an actual user and should be used in
+         *   most cases to represent user-generated messages.
+         * - `assistant`: Indicates the message is generated by the assistant. Use this
+         *   value to insert messages from the assistant into the conversation.
+         */
+        role: 'user' | 'assistant';
+        /**
+         * A list of files attached to the message, and the tools they should be added to.
+         */
+        attachments?: Array<AdditionalMessage.Attachment> | null;
+        /**
+         * Set of 16 key-value pairs that can be attached to an object. This can be useful
+         * for storing additional information about the object in a structured format. Keys
+         * can be a maximum of 64 characters long and values can be a maxium of 512
+         * characters long.
+         */
+        metadata?: unknown | null;
     }
-    interface AssistantToolsRetrieval {
-        /**
-         * The type of tool being defined: `retrieval`
-         */
-        type: 'retrieval';
-    }
-    interface AssistantToolsFunction {
-        /**
-         * The function definition.
-         */
-        function: AssistantToolsFunction.Function;
-        /**
-         * The type of tool being defined: `function`
-         */
-        type: 'function';
-    }
-    namespace AssistantToolsFunction {
-        /**
-         * The function definition.
-         */
-        interface Function {
+    namespace AdditionalMessage {
+        interface Attachment {
             /**
-             * A description of what the function does, used by the model to choose when and
-             * how to call the function.
+             * The ID of the file to attach to the message.
              */
-            description: string;
+            file_id?: string;
             /**
-             * The name of the function to be called. Must be a-z, A-Z, 0-9, or contain
-             * underscores and dashes, with a maximum length of 64.
+             * The tools to add this file to.
              */
-            name: string;
-            /**
-             * The parameters the functions accepts, described as a JSON Schema object. See the
-             * [guide](https://platform.openai.com/docs/guides/gpt/function-calling) for
-             * examples, and the
-             * [JSON Schema reference](https://json-schema.org/understanding-json-schema/) for
-             * documentation about the format.
-             *
-             * To describe a function that accepts no parameters, provide the value
-             * `{"type": "object", "properties": {}}`.
-             */
-            parameters: Record<string, unknown>;
+            tools?: Array<AssistantsAPI.CodeInterpreterTool | AssistantsAPI.FileSearchTool>;
         }
     }
+    /**
+     * Controls for how a thread will be truncated prior to the run. Use this to
+     * control the intial context window of the run.
+     */
+    interface TruncationStrategy {
+        /**
+         * The truncation strategy to use for the thread. The default is `auto`. If set to
+         * `last_messages`, the thread will be truncated to the n most recent messages in
+         * the thread. When set to `auto`, messages in the middle of the thread will be
+         * dropped to fit the context length of the model, `max_prompt_tokens`.
+         */
+        type: 'auto' | 'last_messages';
+        /**
+         * The number of most recent messages from the thread when constructing the context
+         * for the run.
+         */
+        last_messages?: number | null;
+    }
+    type RunCreateParamsNonStreaming = RunsAPI.RunCreateParamsNonStreaming;
+    type RunCreateParamsStreaming = RunsAPI.RunCreateParamsStreaming;
+}
+export interface RunCreateParamsNonStreaming extends RunCreateParamsBase {
+    /**
+     * If `true`, returns a stream of events that happen during the Run as server-sent
+     * events, terminating when the Run enters a terminal state with a `data: [DONE]`
+     * message.
+     */
+    stream?: false | null;
+}
+export interface RunCreateParamsStreaming extends RunCreateParamsBase {
+    /**
+     * If `true`, returns a stream of events that happen during the Run as server-sent
+     * events, terminating when the Run enters a terminal state with a `data: [DONE]`
+     * message.
+     */
+    stream: true;
 }
 export interface RunUpdateParams {
     /**
@@ -364,13 +573,562 @@ export interface RunListParams extends CursorPageParams {
      */
     order?: 'asc' | 'desc';
 }
-export interface RunSubmitToolOutputsParams {
+export interface RunCreateAndPollParams {
+    /**
+     * The ID of the
+     * [assistant](https://platform.openai.com/docs/api-reference/assistants) to use to
+     * execute this run.
+     */
+    assistant_id: string;
+    /**
+     * Appends additional instructions at the end of the instructions for the run. This
+     * is useful for modifying the behavior on a per-run basis without overriding other
+     * instructions.
+     */
+    additional_instructions?: string | null;
+    /**
+     * Adds additional messages to the thread before creating the run.
+     */
+    additional_messages?: Array<RunCreateAndPollParams.AdditionalMessage> | null;
+    /**
+     * Overrides the
+     * [instructions](https://platform.openai.com/docs/api-reference/assistants/createAssistant)
+     * of the assistant. This is useful for modifying the behavior on a per-run basis.
+     */
+    instructions?: string | null;
+    /**
+     * The maximum number of completion tokens that may be used over the course of the
+     * run. The run will make a best effort to use only the number of completion tokens
+     * specified, across multiple turns of the run. If the run exceeds the number of
+     * completion tokens specified, the run will end with status `incomplete`. See
+     * `incomplete_details` for more info.
+     */
+    max_completion_tokens?: number | null;
+    /**
+     * The maximum number of prompt tokens that may be used over the course of the run.
+     * The run will make a best effort to use only the number of prompt tokens
+     * specified, across multiple turns of the run. If the run exceeds the number of
+     * prompt tokens specified, the run will end with status `incomplete`. See
+     * `incomplete_details` for more info.
+     */
+    max_prompt_tokens?: number | null;
+    /**
+     * Set of 16 key-value pairs that can be attached to an object. This can be useful
+     * for storing additional information about the object in a structured format. Keys
+     * can be a maximum of 64 characters long and values can be a maxium of 512
+     * characters long.
+     */
+    metadata?: unknown | null;
+    /**
+     * The ID of the [Model](https://platform.openai.com/docs/api-reference/models) to
+     * be used to execute this run. If a value is provided here, it will override the
+     * model associated with the assistant. If not, the model associated with the
+     * assistant will be used.
+     */
+    model?: (string & {}) | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
+    /**
+     * Specifies the format that the model must output. Compatible with
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) and
+     * all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     *
+     * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
+     * message the model generates is valid JSON.
+     *
+     * **Important:** when using JSON mode, you **must** also instruct the model to
+     * produce JSON yourself via a system or user message. Without this, the model may
+     * generate an unending stream of whitespace until the generation reaches the token
+     * limit, resulting in a long-running and seemingly "stuck" request. Also note that
+     * the message content may be partially cut off if `finish_reason="length"`, which
+     * indicates the generation exceeded `max_tokens` or the conversation exceeded the
+     * max context length.
+     */
+    response_format?: ThreadsAPI.AssistantResponseFormatOption | null;
+    /**
+     * What sampling temperature to use, between 0 and 2. Higher values like 0.8 will
+     * make the output more random, while lower values like 0.2 will make it more
+     * focused and deterministic.
+     */
+    temperature?: number | null;
+    /**
+     * Controls which (if any) tool is called by the model. `none` means the model will
+     * not call any tools and instead generates a message. `auto` is the default value
+     * and means the model can pick between generating a message or calling a tool.
+     * Specifying a particular tool like `{"type": "file_search"}` or
+     * `{"type": "function", "function": {"name": "my_function"}}` forces the model to
+     * call that tool.
+     */
+    tool_choice?: ThreadsAPI.AssistantToolChoiceOption | null;
+    /**
+     * Override the tools the assistant can use for this run. This is useful for
+     * modifying the behavior on a per-run basis.
+     */
+    tools?: Array<AssistantsAPI.AssistantTool> | null;
+    /**
+     * An alternative to sampling with temperature, called nucleus sampling, where the
+     * model considers the results of the tokens with top_p probability mass. So 0.1
+     * means only the tokens comprising the top 10% probability mass are considered.
+     *
+     * We generally recommend altering this or temperature but not both.
+     */
+    top_p?: number | null;
+    /**
+     * Controls for how a thread will be truncated prior to the run. Use this to
+     * control the intial context window of the run.
+     */
+    truncation_strategy?: RunCreateAndPollParams.TruncationStrategy | null;
+}
+export declare namespace RunCreateAndPollParams {
+    interface AdditionalMessage {
+        /**
+         * The content of the message.
+         */
+        content: string;
+        /**
+         * The role of the entity that is creating the message. Allowed values include:
+         *
+         * - `user`: Indicates the message is sent by an actual user and should be used in
+         *   most cases to represent user-generated messages.
+         * - `assistant`: Indicates the message is generated by the assistant. Use this
+         *   value to insert messages from the assistant into the conversation.
+         */
+        role: 'user' | 'assistant';
+        /**
+         * A list of files attached to the message, and the tools they should be added to.
+         */
+        attachments?: Array<AdditionalMessage.Attachment> | null;
+        /**
+         * Set of 16 key-value pairs that can be attached to an object. This can be useful
+         * for storing additional information about the object in a structured format. Keys
+         * can be a maximum of 64 characters long and values can be a maxium of 512
+         * characters long.
+         */
+        metadata?: unknown | null;
+    }
+    namespace AdditionalMessage {
+        interface Attachment {
+            /**
+             * The ID of the file to attach to the message.
+             */
+            file_id?: string;
+            /**
+             * The tools to add this file to.
+             */
+            tools?: Array<AssistantsAPI.CodeInterpreterTool | AssistantsAPI.FileSearchTool>;
+        }
+    }
+    /**
+     * Controls for how a thread will be truncated prior to the run. Use this to
+     * control the intial context window of the run.
+     */
+    interface TruncationStrategy {
+        /**
+         * The truncation strategy to use for the thread. The default is `auto`. If set to
+         * `last_messages`, the thread will be truncated to the n most recent messages in
+         * the thread. When set to `auto`, messages in the middle of the thread will be
+         * dropped to fit the context length of the model, `max_prompt_tokens`.
+         */
+        type: 'auto' | 'last_messages';
+        /**
+         * The number of most recent messages from the thread when constructing the context
+         * for the run.
+         */
+        last_messages?: number | null;
+    }
+}
+export interface RunCreateAndStreamParams {
+    /**
+     * The ID of the
+     * [assistant](https://platform.openai.com/docs/api-reference/assistants) to use to
+     * execute this run.
+     */
+    assistant_id: string;
+    /**
+     * Appends additional instructions at the end of the instructions for the run. This
+     * is useful for modifying the behavior on a per-run basis without overriding other
+     * instructions.
+     */
+    additional_instructions?: string | null;
+    /**
+     * Adds additional messages to the thread before creating the run.
+     */
+    additional_messages?: Array<RunCreateAndStreamParams.AdditionalMessage> | null;
+    /**
+     * Overrides the
+     * [instructions](https://platform.openai.com/docs/api-reference/assistants/createAssistant)
+     * of the assistant. This is useful for modifying the behavior on a per-run basis.
+     */
+    instructions?: string | null;
+    /**
+     * The maximum number of completion tokens that may be used over the course of the
+     * run. The run will make a best effort to use only the number of completion tokens
+     * specified, across multiple turns of the run. If the run exceeds the number of
+     * completion tokens specified, the run will end with status `incomplete`. See
+     * `incomplete_details` for more info.
+     */
+    max_completion_tokens?: number | null;
+    /**
+     * The maximum number of prompt tokens that may be used over the course of the run.
+     * The run will make a best effort to use only the number of prompt tokens
+     * specified, across multiple turns of the run. If the run exceeds the number of
+     * prompt tokens specified, the run will end with status `incomplete`. See
+     * `incomplete_details` for more info.
+     */
+    max_prompt_tokens?: number | null;
+    /**
+     * Set of 16 key-value pairs that can be attached to an object. This can be useful
+     * for storing additional information about the object in a structured format. Keys
+     * can be a maximum of 64 characters long and values can be a maxium of 512
+     * characters long.
+     */
+    metadata?: unknown | null;
+    /**
+     * The ID of the [Model](https://platform.openai.com/docs/api-reference/models) to
+     * be used to execute this run. If a value is provided here, it will override the
+     * model associated with the assistant. If not, the model associated with the
+     * assistant will be used.
+     */
+    model?: (string & {}) | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
+    /**
+     * Specifies the format that the model must output. Compatible with
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) and
+     * all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     *
+     * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
+     * message the model generates is valid JSON.
+     *
+     * **Important:** when using JSON mode, you **must** also instruct the model to
+     * produce JSON yourself via a system or user message. Without this, the model may
+     * generate an unending stream of whitespace until the generation reaches the token
+     * limit, resulting in a long-running and seemingly "stuck" request. Also note that
+     * the message content may be partially cut off if `finish_reason="length"`, which
+     * indicates the generation exceeded `max_tokens` or the conversation exceeded the
+     * max context length.
+     */
+    response_format?: ThreadsAPI.AssistantResponseFormatOption | null;
+    /**
+     * What sampling temperature to use, between 0 and 2. Higher values like 0.8 will
+     * make the output more random, while lower values like 0.2 will make it more
+     * focused and deterministic.
+     */
+    temperature?: number | null;
+    /**
+     * Controls which (if any) tool is called by the model. `none` means the model will
+     * not call any tools and instead generates a message. `auto` is the default value
+     * and means the model can pick between generating a message or calling a tool.
+     * Specifying a particular tool like `{"type": "file_search"}` or
+     * `{"type": "function", "function": {"name": "my_function"}}` forces the model to
+     * call that tool.
+     */
+    tool_choice?: ThreadsAPI.AssistantToolChoiceOption | null;
+    /**
+     * Override the tools the assistant can use for this run. This is useful for
+     * modifying the behavior on a per-run basis.
+     */
+    tools?: Array<AssistantsAPI.AssistantTool> | null;
+    /**
+     * An alternative to sampling with temperature, called nucleus sampling, where the
+     * model considers the results of the tokens with top_p probability mass. So 0.1
+     * means only the tokens comprising the top 10% probability mass are considered.
+     *
+     * We generally recommend altering this or temperature but not both.
+     */
+    top_p?: number | null;
+    /**
+     * Controls for how a thread will be truncated prior to the run. Use this to
+     * control the intial context window of the run.
+     */
+    truncation_strategy?: RunCreateAndStreamParams.TruncationStrategy | null;
+}
+export declare namespace RunCreateAndStreamParams {
+    interface AdditionalMessage {
+        /**
+         * The content of the message.
+         */
+        content: string;
+        /**
+         * The role of the entity that is creating the message. Allowed values include:
+         *
+         * - `user`: Indicates the message is sent by an actual user and should be used in
+         *   most cases to represent user-generated messages.
+         * - `assistant`: Indicates the message is generated by the assistant. Use this
+         *   value to insert messages from the assistant into the conversation.
+         */
+        role: 'user' | 'assistant';
+        /**
+         * A list of files attached to the message, and the tools they should be added to.
+         */
+        attachments?: Array<AdditionalMessage.Attachment> | null;
+        /**
+         * Set of 16 key-value pairs that can be attached to an object. This can be useful
+         * for storing additional information about the object in a structured format. Keys
+         * can be a maximum of 64 characters long and values can be a maxium of 512
+         * characters long.
+         */
+        metadata?: unknown | null;
+    }
+    namespace AdditionalMessage {
+        interface Attachment {
+            /**
+             * The ID of the file to attach to the message.
+             */
+            file_id?: string;
+            /**
+             * The tools to add this file to.
+             */
+            tools?: Array<AssistantsAPI.CodeInterpreterTool | AssistantsAPI.FileSearchTool>;
+        }
+    }
+    /**
+     * Controls for how a thread will be truncated prior to the run. Use this to
+     * control the intial context window of the run.
+     */
+    interface TruncationStrategy {
+        /**
+         * The truncation strategy to use for the thread. The default is `auto`. If set to
+         * `last_messages`, the thread will be truncated to the n most recent messages in
+         * the thread. When set to `auto`, messages in the middle of the thread will be
+         * dropped to fit the context length of the model, `max_prompt_tokens`.
+         */
+        type: 'auto' | 'last_messages';
+        /**
+         * The number of most recent messages from the thread when constructing the context
+         * for the run.
+         */
+        last_messages?: number | null;
+    }
+}
+export interface RunStreamParams {
+    /**
+     * The ID of the
+     * [assistant](https://platform.openai.com/docs/api-reference/assistants) to use to
+     * execute this run.
+     */
+    assistant_id: string;
+    /**
+     * Appends additional instructions at the end of the instructions for the run. This
+     * is useful for modifying the behavior on a per-run basis without overriding other
+     * instructions.
+     */
+    additional_instructions?: string | null;
+    /**
+     * Adds additional messages to the thread before creating the run.
+     */
+    additional_messages?: Array<RunStreamParams.AdditionalMessage> | null;
+    /**
+     * Overrides the
+     * [instructions](https://platform.openai.com/docs/api-reference/assistants/createAssistant)
+     * of the assistant. This is useful for modifying the behavior on a per-run basis.
+     */
+    instructions?: string | null;
+    /**
+     * The maximum number of completion tokens that may be used over the course of the
+     * run. The run will make a best effort to use only the number of completion tokens
+     * specified, across multiple turns of the run. If the run exceeds the number of
+     * completion tokens specified, the run will end with status `incomplete`. See
+     * `incomplete_details` for more info.
+     */
+    max_completion_tokens?: number | null;
+    /**
+     * The maximum number of prompt tokens that may be used over the course of the run.
+     * The run will make a best effort to use only the number of prompt tokens
+     * specified, across multiple turns of the run. If the run exceeds the number of
+     * prompt tokens specified, the run will end with status `incomplete`. See
+     * `incomplete_details` for more info.
+     */
+    max_prompt_tokens?: number | null;
+    /**
+     * Set of 16 key-value pairs that can be attached to an object. This can be useful
+     * for storing additional information about the object in a structured format. Keys
+     * can be a maximum of 64 characters long and values can be a maxium of 512
+     * characters long.
+     */
+    metadata?: unknown | null;
+    /**
+     * The ID of the [Model](https://platform.openai.com/docs/api-reference/models) to
+     * be used to execute this run. If a value is provided here, it will override the
+     * model associated with the assistant. If not, the model associated with the
+     * assistant will be used.
+     */
+    model?: (string & {}) | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
+    /**
+     * Specifies the format that the model must output. Compatible with
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) and
+     * all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     *
+     * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
+     * message the model generates is valid JSON.
+     *
+     * **Important:** when using JSON mode, you **must** also instruct the model to
+     * produce JSON yourself via a system or user message. Without this, the model may
+     * generate an unending stream of whitespace until the generation reaches the token
+     * limit, resulting in a long-running and seemingly "stuck" request. Also note that
+     * the message content may be partially cut off if `finish_reason="length"`, which
+     * indicates the generation exceeded `max_tokens` or the conversation exceeded the
+     * max context length.
+     */
+    response_format?: ThreadsAPI.AssistantResponseFormatOption | null;
+    /**
+     * What sampling temperature to use, between 0 and 2. Higher values like 0.8 will
+     * make the output more random, while lower values like 0.2 will make it more
+     * focused and deterministic.
+     */
+    temperature?: number | null;
+    /**
+     * Controls which (if any) tool is called by the model. `none` means the model will
+     * not call any tools and instead generates a message. `auto` is the default value
+     * and means the model can pick between generating a message or calling a tool.
+     * Specifying a particular tool like `{"type": "file_search"}` or
+     * `{"type": "function", "function": {"name": "my_function"}}` forces the model to
+     * call that tool.
+     */
+    tool_choice?: ThreadsAPI.AssistantToolChoiceOption | null;
+    /**
+     * Override the tools the assistant can use for this run. This is useful for
+     * modifying the behavior on a per-run basis.
+     */
+    tools?: Array<AssistantsAPI.AssistantTool> | null;
+    /**
+     * An alternative to sampling with temperature, called nucleus sampling, where the
+     * model considers the results of the tokens with top_p probability mass. So 0.1
+     * means only the tokens comprising the top 10% probability mass are considered.
+     *
+     * We generally recommend altering this or temperature but not both.
+     */
+    top_p?: number | null;
+    /**
+     * Controls for how a thread will be truncated prior to the run. Use this to
+     * control the intial context window of the run.
+     */
+    truncation_strategy?: RunStreamParams.TruncationStrategy | null;
+}
+export declare namespace RunStreamParams {
+    interface AdditionalMessage {
+        /**
+         * The content of the message.
+         */
+        content: string;
+        /**
+         * The role of the entity that is creating the message. Allowed values include:
+         *
+         * - `user`: Indicates the message is sent by an actual user and should be used in
+         *   most cases to represent user-generated messages.
+         * - `assistant`: Indicates the message is generated by the assistant. Use this
+         *   value to insert messages from the assistant into the conversation.
+         */
+        role: 'user' | 'assistant';
+        /**
+         * A list of files attached to the message, and the tools they should be added to.
+         */
+        attachments?: Array<AdditionalMessage.Attachment> | null;
+        /**
+         * Set of 16 key-value pairs that can be attached to an object. This can be useful
+         * for storing additional information about the object in a structured format. Keys
+         * can be a maximum of 64 characters long and values can be a maxium of 512
+         * characters long.
+         */
+        metadata?: unknown | null;
+    }
+    namespace AdditionalMessage {
+        interface Attachment {
+            /**
+             * The ID of the file to attach to the message.
+             */
+            file_id?: string;
+            /**
+             * The tools to add this file to.
+             */
+            tools?: Array<AssistantsAPI.CodeInterpreterTool | AssistantsAPI.FileSearchTool>;
+        }
+    }
+    /**
+     * Controls for how a thread will be truncated prior to the run. Use this to
+     * control the intial context window of the run.
+     */
+    interface TruncationStrategy {
+        /**
+         * The truncation strategy to use for the thread. The default is `auto`. If set to
+         * `last_messages`, the thread will be truncated to the n most recent messages in
+         * the thread. When set to `auto`, messages in the middle of the thread will be
+         * dropped to fit the context length of the model, `max_prompt_tokens`.
+         */
+        type: 'auto' | 'last_messages';
+        /**
+         * The number of most recent messages from the thread when constructing the context
+         * for the run.
+         */
+        last_messages?: number | null;
+    }
+}
+export type RunSubmitToolOutputsParams = RunSubmitToolOutputsParamsNonStreaming | RunSubmitToolOutputsParamsStreaming;
+export interface RunSubmitToolOutputsParamsBase {
     /**
      * A list of tools for which the outputs are being submitted.
      */
     tool_outputs: Array<RunSubmitToolOutputsParams.ToolOutput>;
+    /**
+     * If `true`, returns a stream of events that happen during the Run as server-sent
+     * events, terminating when the Run enters a terminal state with a `data: [DONE]`
+     * message.
+     */
+    stream?: boolean | null;
 }
 export declare namespace RunSubmitToolOutputsParams {
+    interface ToolOutput {
+        /**
+         * The output of the tool call to be submitted to continue the run.
+         */
+        output?: string;
+        /**
+         * The ID of the tool call in the `required_action` object within the run object
+         * the output is being submitted for.
+         */
+        tool_call_id?: string;
+    }
+    type RunSubmitToolOutputsParamsNonStreaming = RunsAPI.RunSubmitToolOutputsParamsNonStreaming;
+    type RunSubmitToolOutputsParamsStreaming = RunsAPI.RunSubmitToolOutputsParamsStreaming;
+}
+export interface RunSubmitToolOutputsParamsNonStreaming extends RunSubmitToolOutputsParamsBase {
+    /**
+     * If `true`, returns a stream of events that happen during the Run as server-sent
+     * events, terminating when the Run enters a terminal state with a `data: [DONE]`
+     * message.
+     */
+    stream?: false | null;
+}
+export interface RunSubmitToolOutputsParamsStreaming extends RunSubmitToolOutputsParamsBase {
+    /**
+     * If `true`, returns a stream of events that happen during the Run as server-sent
+     * events, terminating when the Run enters a terminal state with a `data: [DONE]`
+     * message.
+     */
+    stream: true;
+}
+export interface RunSubmitToolOutputsAndPollParams {
+    /**
+     * A list of tools for which the outputs are being submitted.
+     */
+    tool_outputs: Array<RunSubmitToolOutputsAndPollParams.ToolOutput>;
+}
+export declare namespace RunSubmitToolOutputsAndPollParams {
+    interface ToolOutput {
+        /**
+         * The output of the tool call to be submitted to continue the run.
+         */
+        output?: string;
+        /**
+         * The ID of the tool call in the `required_action` object within the run object
+         * the output is being submitted for.
+         */
+        tool_call_id?: string;
+    }
+}
+export interface RunSubmitToolOutputsStreamParams {
+    /**
+     * A list of tools for which the outputs are being submitted.
+     */
+    tool_outputs: Array<RunSubmitToolOutputsStreamParams.ToolOutput>;
+}
+export declare namespace RunSubmitToolOutputsStreamParams {
     interface ToolOutput {
         /**
          * The output of the tool call to be submitted to continue the run.
@@ -386,17 +1144,38 @@ export declare namespace RunSubmitToolOutputsParams {
 export declare namespace Runs {
     export import RequiredActionFunctionToolCall = RunsAPI.RequiredActionFunctionToolCall;
     export import Run = RunsAPI.Run;
+    export import RunStatus = RunsAPI.RunStatus;
     export import RunsPage = RunsAPI.RunsPage;
     export import RunCreateParams = RunsAPI.RunCreateParams;
+    export import RunCreateParamsNonStreaming = RunsAPI.RunCreateParamsNonStreaming;
+    export import RunCreateParamsStreaming = RunsAPI.RunCreateParamsStreaming;
     export import RunUpdateParams = RunsAPI.RunUpdateParams;
     export import RunListParams = RunsAPI.RunListParams;
+    export import RunCreateAndPollParams = RunsAPI.RunCreateAndPollParams;
+    export import RunCreateAndStreamParams = RunsAPI.RunCreateAndStreamParams;
+    export import RunStreamParams = RunsAPI.RunStreamParams;
     export import RunSubmitToolOutputsParams = RunsAPI.RunSubmitToolOutputsParams;
+    export import RunSubmitToolOutputsParamsNonStreaming = RunsAPI.RunSubmitToolOutputsParamsNonStreaming;
+    export import RunSubmitToolOutputsParamsStreaming = RunsAPI.RunSubmitToolOutputsParamsStreaming;
+    export import RunSubmitToolOutputsAndPollParams = RunsAPI.RunSubmitToolOutputsAndPollParams;
+    export import RunSubmitToolOutputsStreamParams = RunsAPI.RunSubmitToolOutputsStreamParams;
     export import Steps = StepsAPI.Steps;
-    export import CodeToolCall = StepsAPI.CodeToolCall;
+    export import CodeInterpreterLogs = StepsAPI.CodeInterpreterLogs;
+    export import CodeInterpreterOutputImage = StepsAPI.CodeInterpreterOutputImage;
+    export import CodeInterpreterToolCall = StepsAPI.CodeInterpreterToolCall;
+    export import CodeInterpreterToolCallDelta = StepsAPI.CodeInterpreterToolCallDelta;
+    export import FileSearchToolCall = StepsAPI.FileSearchToolCall;
+    export import FileSearchToolCallDelta = StepsAPI.FileSearchToolCallDelta;
     export import FunctionToolCall = StepsAPI.FunctionToolCall;
+    export import FunctionToolCallDelta = StepsAPI.FunctionToolCallDelta;
     export import MessageCreationStepDetails = StepsAPI.MessageCreationStepDetails;
-    export import RetrievalToolCall = StepsAPI.RetrievalToolCall;
     export import RunStep = StepsAPI.RunStep;
+    export import RunStepDelta = StepsAPI.RunStepDelta;
+    export import RunStepDeltaEvent = StepsAPI.RunStepDeltaEvent;
+    export import RunStepDeltaMessageDelta = StepsAPI.RunStepDeltaMessageDelta;
+    export import ToolCall = StepsAPI.ToolCall;
+    export import ToolCallDelta = StepsAPI.ToolCallDelta;
+    export import ToolCallDeltaObject = StepsAPI.ToolCallDeltaObject;
     export import ToolCallsStepDetails = StepsAPI.ToolCallsStepDetails;
     export import RunStepsPage = StepsAPI.RunStepsPage;
     export import StepListParams = StepsAPI.StepListParams;
