@@ -1,22 +1,28 @@
 import * as Core from "./core.js";
-import * as Pagination from "./pagination.js";
 import * as Errors from "./error.js";
 import { type Agent } from "./_shims/index.js";
 import * as Uploads from "./uploads.js";
+import * as Pagination from './pagination.js';
 import * as API from './resources/index.js';
 export interface ClientOptions {
     /**
      * Defaults to process.env['OPENAI_API_KEY'].
      */
-    apiKey?: string;
+    apiKey?: string | undefined;
     /**
      * Defaults to process.env['OPENAI_ORG_ID'].
      */
-    organization?: string | null;
+    organization?: string | null | undefined;
+    /**
+     * Defaults to process.env['OPENAI_PROJECT_ID'].
+     */
+    project?: string | null | undefined;
     /**
      * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
+     *
+     * Defaults to process.env['OPENAI_BASE_URL'].
      */
-    baseURL?: string;
+    baseURL?: string | null | undefined;
     /**
      * The maximum amount of time (in milliseconds) that the client should wait for a response
      * from the server before timing out a single request.
@@ -70,13 +76,15 @@ export interface ClientOptions {
 export declare class OpenAI extends Core.APIClient {
     apiKey: string;
     organization: string | null;
+    project: string | null;
     private _options;
     /**
      * API Client for interfacing with the OpenAI API.
      *
-     * @param {string} [opts.apiKey==process.env['OPENAI_API_KEY'] ?? undefined]
-     * @param {string | null} [opts.organization==process.env['OPENAI_ORG_ID'] ?? null]
-     * @param {string} [opts.baseURL] - Override the default base URL for the API.
+     * @param {string | undefined} [opts.apiKey=process.env['OPENAI_API_KEY'] ?? undefined]
+     * @param {string | null | undefined} [opts.organization=process.env['OPENAI_ORG_ID'] ?? null]
+     * @param {string | null | undefined} [opts.project=process.env['OPENAI_PROJECT_ID'] ?? null]
+     * @param {string} [opts.baseURL=process.env['OPENAI_BASE_URL'] ?? https://api.openai.com/v1] - Override the default base URL for the API.
      * @param {number} [opts.timeout=10 minutes] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
      * @param {number} [opts.httpAgent] - An HTTP agent used to manage HTTP(s) connections.
      * @param {Core.Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
@@ -85,10 +93,9 @@ export declare class OpenAI extends Core.APIClient {
      * @param {Core.DefaultQuery} opts.defaultQuery - Default query parameters to include with every request to the API.
      * @param {boolean} [opts.dangerouslyAllowBrowser=false] - By default, client-side use of this library is not allowed, as it risks exposing your secret API credentials to attackers.
      */
-    constructor({ apiKey, organization, ...opts }?: ClientOptions);
+    constructor({ baseURL, apiKey, organization, project, ...opts }?: ClientOptions);
     completions: API.Completions;
     chat: API.Chat;
-    edits: API.Edits;
     embeddings: API.Embeddings;
     files: API.Files;
     images: API.Images;
@@ -96,8 +103,8 @@ export declare class OpenAI extends Core.APIClient {
     moderations: API.Moderations;
     models: API.Models;
     fineTuning: API.FineTuning;
-    fineTunes: API.FineTunes;
     beta: API.Beta;
+    batches: API.Batches;
     protected defaultQuery(): Core.DefaultQuery | undefined;
     protected defaultHeaders(opts: Core.FinalRequestOptions): Core.Headers;
     protected authHeaders(opts: Core.FinalRequestOptions): Core.Headers;
@@ -136,6 +143,7 @@ export declare namespace OpenAI {
     export import CompletionCreateParamsNonStreaming = API.CompletionCreateParamsNonStreaming;
     export import CompletionCreateParamsStreaming = API.CompletionCreateParamsStreaming;
     export import Chat = API.Chat;
+    export import ChatModel = API.ChatModel;
     export import ChatCompletion = API.ChatCompletion;
     export import ChatCompletionAssistantMessageParam = API.ChatCompletionAssistantMessageParam;
     export import ChatCompletionChunk = API.ChatCompletionChunk;
@@ -150,6 +158,7 @@ export declare namespace OpenAI {
     export import ChatCompletionNamedToolChoice = API.ChatCompletionNamedToolChoice;
     export import ChatCompletionRole = API.ChatCompletionRole;
     export import ChatCompletionSystemMessageParam = API.ChatCompletionSystemMessageParam;
+    export import ChatCompletionTokenLogprob = API.ChatCompletionTokenLogprob;
     export import ChatCompletionTool = API.ChatCompletionTool;
     export import ChatCompletionToolChoiceOption = API.ChatCompletionToolChoiceOption;
     export import ChatCompletionToolMessageParam = API.ChatCompletionToolMessageParam;
@@ -157,9 +166,6 @@ export declare namespace OpenAI {
     export import ChatCompletionCreateParams = API.ChatCompletionCreateParams;
     export import ChatCompletionCreateParamsNonStreaming = API.ChatCompletionCreateParamsNonStreaming;
     export import ChatCompletionCreateParamsStreaming = API.ChatCompletionCreateParamsStreaming;
-    export import Edits = API.Edits;
-    export import Edit = API.Edit;
-    export import EditCreateParams = API.EditCreateParams;
     export import Embeddings = API.Embeddings;
     export import CreateEmbeddingResponse = API.CreateEmbeddingResponse;
     export import Embedding = API.Embedding;
@@ -187,16 +193,17 @@ export declare namespace OpenAI {
     export import ModelDeleted = API.ModelDeleted;
     export import ModelsPage = API.ModelsPage;
     export import FineTuning = API.FineTuning;
-    export import FineTunes = API.FineTunes;
-    export import FineTune = API.FineTune;
-    export import FineTuneEvent = API.FineTuneEvent;
-    export import FineTuneEventsListResponse = API.FineTuneEventsListResponse;
-    export import FineTunesPage = API.FineTunesPage;
-    export import FineTuneCreateParams = API.FineTuneCreateParams;
-    export import FineTuneListEventsParams = API.FineTuneListEventsParams;
-    export import FineTuneListEventsParamsNonStreaming = API.FineTuneListEventsParamsNonStreaming;
-    export import FineTuneListEventsParamsStreaming = API.FineTuneListEventsParamsStreaming;
     export import Beta = API.Beta;
+    export import Batches = API.Batches;
+    export import Batch = API.Batch;
+    export import BatchError = API.BatchError;
+    export import BatchRequestCounts = API.BatchRequestCounts;
+    export import BatchesPage = API.BatchesPage;
+    export import BatchCreateParams = API.BatchCreateParams;
+    export import BatchListParams = API.BatchListParams;
+    export import ErrorObject = API.ErrorObject;
+    export import FunctionDefinition = API.FunctionDefinition;
+    export import FunctionParameters = API.FunctionParameters;
 }
 export default OpenAI;
 //# sourceMappingURL=index.d.ts.map

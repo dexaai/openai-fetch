@@ -3,7 +3,7 @@ import { APIResource } from '../resource.js';
 import * as ModerationsAPI from '../resources/moderations.js';
 export declare class Moderations extends APIResource {
     /**
-     * Classifies if text violates OpenAI's Content Policy
+     * Classifies if text is potentially harmful.
      */
     create(body: ModerationCreateParams, options?: Core.RequestOptions): Core.APIPromise<ModerationCreateResponse>;
 }
@@ -17,8 +17,7 @@ export interface Moderation {
      */
     category_scores: Moderation.CategoryScores;
     /**
-     * Whether the content violates
-     * [OpenAI's usage policies](/policies/usage-policies).
+     * Whether any of the below categories are flagged.
      */
     flagged: boolean;
 }
@@ -41,7 +40,7 @@ export declare namespace Moderation {
          * Content that expresses, incites, or promotes hate based on race, gender,
          * ethnicity, religion, nationality, sexual orientation, disability status, or
          * caste. Hateful content aimed at non-protected groups (e.g., chess players) is
-         * harrassment.
+         * harassment.
          */
         hate: boolean;
         /**
@@ -136,8 +135,7 @@ export declare namespace Moderation {
     }
 }
 /**
- * Represents policy compliance report by OpenAI's content moderation model against
- * a given input.
+ * Represents if a given text input is potentially harmful.
  */
 export interface ModerationCreateResponse {
     /**

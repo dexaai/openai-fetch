@@ -55,7 +55,7 @@ class OpenAIStreamParser<Raw, Nice> {
         const name = line.substring(0, pos);
         if (name !== 'data') return;
         const content = line.substring(pos + 1).trim();
-        if (content.length == 0) return;
+        if (content.length === 0) return;
         if (content === '[DONE]') {
           this.onend?.();
           return;

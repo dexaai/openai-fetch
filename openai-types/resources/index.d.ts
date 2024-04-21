@@ -1,11 +1,11 @@
 export * from "./chat/index.js";
+export * from "./shared.js";
 export { Audio } from "./audio/audio.js";
+export { Batch, BatchError, BatchRequestCounts, BatchCreateParams, BatchListParams, BatchesPage, Batches, } from "./batches.js";
 export { Beta } from "./beta/beta.js";
 export { Completion, CompletionChoice, CompletionUsage, CompletionCreateParams, CompletionCreateParamsNonStreaming, CompletionCreateParamsStreaming, Completions, } from "./completions.js";
 export { CreateEmbeddingResponse, Embedding, EmbeddingCreateParams, Embeddings } from "./embeddings.js";
-export { Edit, EditCreateParams, Edits } from "./edits.js";
 export { FileContent, FileDeleted, FileObject, FileCreateParams, FileListParams, FileObjectsPage, Files, } from "./files.js";
-export { FineTune, FineTuneEvent, FineTuneEventsListResponse, FineTuneCreateParams, FineTuneListEventsParams, FineTuneListEventsParamsNonStreaming, FineTuneListEventsParamsStreaming, FineTunesPage, FineTunes, } from "./fine-tunes.js";
 export { FineTuning } from "./fine-tuning/fine-tuning.js";
 export { Image, ImagesResponse, ImageCreateVariationParams, ImageEditParams, ImageGenerateParams, Images, } from "./images.js";
 export { Model, ModelDeleted, ModelsPage, Models } from "./models.js";

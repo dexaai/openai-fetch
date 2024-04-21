@@ -20,13 +20,16 @@ export interface SpeechCreateParams {
     model: (string & {}) | 'tts-1' | 'tts-1-hd';
     /**
      * The voice to use when generating the audio. Supported voices are `alloy`,
-     * `echo`, `fable`, `onyx`, `nova`, and `shimmer`.
+     * `echo`, `fable`, `onyx`, `nova`, and `shimmer`. Previews of the voices are
+     * available in the
+     * [Text to speech guide](https://platform.openai.com/docs/guides/text-to-speech/voice-options).
      */
     voice: 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
     /**
-     * The format to audio in. Supported formats are `mp3`, `opus`, `aac`, and `flac`.
+     * The format to audio in. Supported formats are `mp3`, `opus`, `aac`, `flac`,
+     * `wav`, and `pcm`.
      */
-    response_format?: 'mp3' | 'opus' | 'aac' | 'flac';
+    response_format?: 'mp3' | 'opus' | 'aac' | 'flac' | 'wav' | 'pcm';
     /**
      * The speed of the generated audio. Select a value from `0.25` to `4.0`. `1.0` is
      * the default.
