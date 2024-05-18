@@ -1,7 +1,7 @@
-import * as Core from '../../../core.js';
-import { APIResource } from '../../../resource.js';
-import * as CheckpointsAPI from '../../../resources/fine-tuning/jobs/checkpoints.js';
-import { CursorPage, type CursorPageParams } from '../../../pagination.js';
+import * as Core from "../../../core.js";
+import { APIResource } from "../../../resource.js";
+import * as CheckpointsAPI from "./checkpoints.js";
+import { CursorPage, type CursorPageParams } from "../../../pagination.js";
 export declare class Checkpoints extends APIResource {
     /**
      * List checkpoints for a fine-tuning job.

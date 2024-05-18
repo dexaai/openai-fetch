@@ -1,14 +1,15 @@
-import * as Core from '../../../../core.js';
-import { APIPromise } from '../../../../core.js';
-import { APIResource } from '../../../../resource.js';
-import { AssistantStream, RunCreateParamsBaseStream } from '../../../../lib/AssistantStream.js';
-import { RunSubmitToolOutputsParamsStream } from '../../../../lib/AssistantStream.js';
-import * as RunsAPI from '../../../../resources/beta/threads/runs/runs.js';
-import * as AssistantsAPI from '../../../../resources/beta/assistants.js';
-import * as ThreadsAPI from '../../../../resources/beta/threads/threads.js';
-import * as StepsAPI from '../../../../resources/beta/threads/runs/steps.js';
-import { CursorPage, type CursorPageParams } from '../../../../pagination.js';
-import { Stream } from '../../../../streaming.js';
+import * as Core from "../../../../core.js";
+import { APIPromise } from "../../../../core.js";
+import { APIResource } from "../../../../resource.js";
+import { AssistantStream, RunCreateParamsBaseStream } from "../../../../lib/AssistantStream.js";
+import { RunSubmitToolOutputsParamsStream } from "../../../../lib/AssistantStream.js";
+import * as RunsAPI from "./runs.js";
+import * as AssistantsAPI from "../../assistants.js";
+import * as MessagesAPI from "../messages.js";
+import * as ThreadsAPI from "../threads.js";
+import * as StepsAPI from "./steps.js";
+import { CursorPage, type CursorPageParams } from "../../../../pagination.js";
+import { Stream } from "../../../../streaming.js";
 export declare class Runs extends APIResource {
     steps: StepsAPI.Steps;
     /**
@@ -206,8 +207,9 @@ export interface Run {
     required_action: Run.RequiredAction | null;
     /**
      * Specifies the format that the model must output. Compatible with
-     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) and
-     * all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
+     * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
      * message the model generates is valid JSON.
@@ -227,8 +229,8 @@ export interface Run {
     started_at: number | null;
     /**
      * The status of the run, which can be either `queued`, `in_progress`,
-     * `requires_action`, `cancelling`, `cancelled`, `failed`, `completed`, or
-     * `expired`.
+     * `requires_action`, `cancelling`, `cancelled`, `failed`, `completed`,
+     * `incomplete`, or `expired`.
      */
     status: RunStatus;
     /**
@@ -239,8 +241,9 @@ export interface Run {
     /**
      * Controls which (if any) tool is called by the model. `none` means the model will
      * not call any tools and instead generates a message. `auto` is the default value
-     * and means the model can pick between generating a message or calling a tool.
-     * Specifying a particular tool like `{"type": "file_search"}` or
+     * and means the model can pick between generating a message or calling one or more
+     * tools. `required` means the model must call one or more tools before responding
+     * to the user. Specifying a particular tool like `{"type": "file_search"}` or
      * `{"type": "function", "function": {"name": "my_function"}}` forces the model to
      * call that tool.
      */
@@ -359,10 +362,10 @@ export declare namespace Run {
 }
 /**
  * The status of the run, which can be either `queued`, `in_progress`,
- * `requires_action`, `cancelling`, `cancelled`, `failed`, `completed`, or
- * `expired`.
+ * `requires_action`, `cancelling`, `cancelled`, `failed`, `completed`,
+ * `incomplete`, or `expired`.
  */
-export type RunStatus = 'queued' | 'in_progress' | 'requires_action' | 'cancelling' | 'cancelled' | 'failed' | 'completed' | 'expired';
+export type RunStatus = 'queued' | 'in_progress' | 'requires_action' | 'cancelling' | 'cancelled' | 'failed' | 'completed' | 'incomplete' | 'expired';
 export type RunCreateParams = RunCreateParamsNonStreaming | RunCreateParamsStreaming;
 export interface RunCreateParamsBase {
     /**
@@ -416,11 +419,12 @@ export interface RunCreateParamsBase {
      * model associated with the assistant. If not, the model associated with the
      * assistant will be used.
      */
-    model?: (string & {}) | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
+    model?: (string & {}) | 'gpt-4o' | 'gpt-4o-2024-05-13' | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
     /**
      * Specifies the format that the model must output. Compatible with
-     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) and
-     * all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
+     * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
      * message the model generates is valid JSON.
@@ -449,8 +453,9 @@ export interface RunCreateParamsBase {
     /**
      * Controls which (if any) tool is called by the model. `none` means the model will
      * not call any tools and instead generates a message. `auto` is the default value
-     * and means the model can pick between generating a message or calling a tool.
-     * Specifying a particular tool like `{"type": "file_search"}` or
+     * and means the model can pick between generating a message or calling one or more
+     * tools. `required` means the model must call one or more tools before responding
+     * to the user. Specifying a particular tool like `{"type": "file_search"}` or
      * `{"type": "function", "function": {"name": "my_function"}}` forces the model to
      * call that tool.
      */
@@ -477,9 +482,9 @@ export interface RunCreateParamsBase {
 export declare namespace RunCreateParams {
     interface AdditionalMessage {
         /**
-         * The content of the message.
+         * The text contents of the message.
          */
-        content: string;
+        content: string | Array<MessagesAPI.MessageContentPartParam>;
         /**
          * The role of the entity that is creating the message. Allowed values include:
          *
@@ -625,11 +630,12 @@ export interface RunCreateAndPollParams {
      * model associated with the assistant. If not, the model associated with the
      * assistant will be used.
      */
-    model?: (string & {}) | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
+    model?: (string & {}) | 'gpt-4o' | 'gpt-4o-2024-05-13' | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
     /**
      * Specifies the format that the model must output. Compatible with
-     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) and
-     * all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
+     * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
      * message the model generates is valid JSON.
@@ -652,8 +658,9 @@ export interface RunCreateAndPollParams {
     /**
      * Controls which (if any) tool is called by the model. `none` means the model will
      * not call any tools and instead generates a message. `auto` is the default value
-     * and means the model can pick between generating a message or calling a tool.
-     * Specifying a particular tool like `{"type": "file_search"}` or
+     * and means the model can pick between generating a message or calling one or more
+     * tools. `required` means the model must call one or more tools before responding
+     * to the user. Specifying a particular tool like `{"type": "file_search"}` or
      * `{"type": "function", "function": {"name": "my_function"}}` forces the model to
      * call that tool.
      */
@@ -680,9 +687,9 @@ export interface RunCreateAndPollParams {
 export declare namespace RunCreateAndPollParams {
     interface AdditionalMessage {
         /**
-         * The content of the message.
+         * The text contents of the message.
          */
-        content: string;
+        content: string | Array<MessagesAPI.MessageContentPartParam>;
         /**
          * The role of the entity that is creating the message. Allowed values include:
          *
@@ -787,11 +794,12 @@ export interface RunCreateAndStreamParams {
      * model associated with the assistant. If not, the model associated with the
      * assistant will be used.
      */
-    model?: (string & {}) | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
+    model?: (string & {}) | 'gpt-4o' | 'gpt-4o-2024-05-13' | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
     /**
      * Specifies the format that the model must output. Compatible with
-     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) and
-     * all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
+     * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
      * message the model generates is valid JSON.
@@ -814,8 +822,9 @@ export interface RunCreateAndStreamParams {
     /**
      * Controls which (if any) tool is called by the model. `none` means the model will
      * not call any tools and instead generates a message. `auto` is the default value
-     * and means the model can pick between generating a message or calling a tool.
-     * Specifying a particular tool like `{"type": "file_search"}` or
+     * and means the model can pick between generating a message or calling one or more
+     * tools. `required` means the model must call one or more tools before responding
+     * to the user. Specifying a particular tool like `{"type": "file_search"}` or
      * `{"type": "function", "function": {"name": "my_function"}}` forces the model to
      * call that tool.
      */
@@ -842,9 +851,9 @@ export interface RunCreateAndStreamParams {
 export declare namespace RunCreateAndStreamParams {
     interface AdditionalMessage {
         /**
-         * The content of the message.
+         * The text contents of the message.
          */
-        content: string;
+        content: string | Array<MessagesAPI.MessageContentPartParam>;
         /**
          * The role of the entity that is creating the message. Allowed values include:
          *
@@ -949,11 +958,12 @@ export interface RunStreamParams {
      * model associated with the assistant. If not, the model associated with the
      * assistant will be used.
      */
-    model?: (string & {}) | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
+    model?: (string & {}) | 'gpt-4o' | 'gpt-4o-2024-05-13' | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
     /**
      * Specifies the format that the model must output. Compatible with
-     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo) and
-     * all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
+     * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
      * message the model generates is valid JSON.
@@ -976,8 +986,9 @@ export interface RunStreamParams {
     /**
      * Controls which (if any) tool is called by the model. `none` means the model will
      * not call any tools and instead generates a message. `auto` is the default value
-     * and means the model can pick between generating a message or calling a tool.
-     * Specifying a particular tool like `{"type": "file_search"}` or
+     * and means the model can pick between generating a message or calling one or more
+     * tools. `required` means the model must call one or more tools before responding
+     * to the user. Specifying a particular tool like `{"type": "file_search"}` or
      * `{"type": "function", "function": {"name": "my_function"}}` forces the model to
      * call that tool.
      */
@@ -1004,9 +1015,9 @@ export interface RunStreamParams {
 export declare namespace RunStreamParams {
     interface AdditionalMessage {
         /**
-         * The content of the message.
+         * The text contents of the message.
          */
-        content: string;
+        content: string | Array<MessagesAPI.MessageContentPartParam>;
         /**
          * The role of the entity that is creating the message. Allowed values include:
          *

@@ -1,7 +1,7 @@
-import * as Core from '../core.js';
-import { APIResource } from '../resource.js';
-import * as ModelsAPI from '../resources/models.js';
-import { Page } from '../pagination.js';
+import * as Core from "../core.js";
+import { APIResource } from "../resource.js";
+import * as ModelsAPI from "./models.js";
+import { Page } from "../pagination.js";
 export declare class Models extends APIResource {
     /**
      * Retrieves a model instance, providing basic information about the model such as

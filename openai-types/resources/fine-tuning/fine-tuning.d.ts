@@ -1,5 +1,5 @@
-import { APIResource } from '../../resource.js';
-import * as JobsAPI from '../../resources/fine-tuning/jobs/jobs.js';
+import { APIResource } from "../../resource.js";
+import * as JobsAPI from "./jobs/jobs.js";
 export declare class FineTuning extends APIResource {
     jobs: JobsAPI.Jobs;
 }

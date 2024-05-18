@@ -1,8 +1,8 @@
-import * as Core from '../../../core.js';
-import { APIResource } from '../../../resource.js';
-import { Uploadable } from '../../../core.js';
-import * as FilesAPI from '../../../resources/beta/vector-stores/files.js';
-import { CursorPage, type CursorPageParams } from '../../../pagination.js';
+import * as Core from "../../../core.js";
+import { APIResource } from "../../../resource.js";
+import { Uploadable } from "../../../core.js";
+import * as FilesAPI from "./files.js";
+import { CursorPage, type CursorPageParams } from "../../../pagination.js";
 export declare class Files extends APIResource {
     /**
      * Create a vector store file by attaching a
@@ -43,6 +43,7 @@ export declare class Files extends APIResource {
     }): Promise<VectorStoreFile>;
     /**
      * Upload a file to the `files` API and then attach it to the given vector store.
+     *
      * Note the file will be asynchronously processed (you can use the alternative
      * polling helper method to wait for processing to complete).
      */
@@ -83,6 +84,11 @@ export interface VectorStoreFile {
      * vector store file is ready for use.
      */
     status: 'in_progress' | 'completed' | 'cancelled' | 'failed';
+    /**
+     * The total vector store usage in bytes. Note that this may be different from the
+     * original file size.
+     */
+    usage_bytes: number;
     /**
      * The ID of the
      * [vector store](https://platform.openai.com/docs/api-reference/vector-stores/object)

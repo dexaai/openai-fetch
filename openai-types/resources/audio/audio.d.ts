@@ -1,7 +1,7 @@
-import { APIResource } from '../../resource.js';
-import * as SpeechAPI from '../../resources/audio/speech.js';
-import * as TranscriptionsAPI from '../../resources/audio/transcriptions.js';
-import * as TranslationsAPI from '../../resources/audio/translations.js';
+import { APIResource } from "../../resource.js";
+import * as SpeechAPI from "./speech.js";
+import * as TranscriptionsAPI from "./transcriptions.js";
+import * as TranslationsAPI from "./translations.js";
 export declare class Audio extends APIResource {
     transcriptions: TranscriptionsAPI.Transcriptions;
     translations: TranslationsAPI.Translations;

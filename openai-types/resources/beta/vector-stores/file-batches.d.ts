@@ -1,10 +1,10 @@
-import * as Core from '../../../core.js';
-import { APIResource } from '../../../resource.js';
-import { Uploadable } from '../../../core.js';
-import * as FileBatchesAPI from '../../../resources/beta/vector-stores/file-batches.js';
-import * as FilesAPI from '../../../resources/beta/vector-stores/files.js';
-import { VectorStoreFilesPage } from '../../../resources/beta/vector-stores/files.js';
-import { type CursorPageParams } from '../../../pagination.js';
+import * as Core from "../../../core.js";
+import { APIResource } from "../../../resource.js";
+import { Uploadable } from "../../../core.js";
+import * as FileBatchesAPI from "./file-batches.js";
+import * as FilesAPI from "./files.js";
+import { VectorStoreFilesPage } from "./files.js";
+import { type CursorPageParams } from "../../../pagination.js";
 export declare class FileBatches extends APIResource {
     /**
      * Create a vector store file batch.

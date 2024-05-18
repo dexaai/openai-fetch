@@ -1,7 +1,7 @@
-import * as Core from '../../../../core.js';
-import { APIResource } from '../../../../resource.js';
-import * as StepsAPI from '../../../../resources/beta/threads/runs/steps.js';
-import { CursorPage, type CursorPageParams } from '../../../../pagination.js';
+import * as Core from "../../../../core.js";
+import { APIResource } from "../../../../resource.js";
+import * as StepsAPI from "./steps.js";
+import { CursorPage, type CursorPageParams } from "../../../../pagination.js";
 export declare class Steps extends APIResource {
     /**
      * Retrieves a run step.

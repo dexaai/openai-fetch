@@ -1,8 +1,8 @@
-import { APIResource } from '../../resource.js';
-import * as AssistantsAPI from '../../resources/beta/assistants.js';
-import * as ChatAPI from '../../resources/beta/chat/chat.js';
-import * as ThreadsAPI from '../../resources/beta/threads/threads.js';
-import * as VectorStoresAPI from '../../resources/beta/vector-stores/vector-stores.js';
+import { APIResource } from "../../resource.js";
+import * as AssistantsAPI from "./assistants.js";
+import * as ChatAPI from "./chat/chat.js";
+import * as ThreadsAPI from "./threads/threads.js";
+import * as VectorStoresAPI from "./vector-stores/vector-stores.js";
 export declare class Beta extends APIResource {
     vectorStores: VectorStoresAPI.VectorStores;
     chat: ChatAPI.Chat;

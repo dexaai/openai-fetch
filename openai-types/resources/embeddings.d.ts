@@ -1,6 +1,6 @@
-import * as Core from '../core.js';
-import { APIResource } from '../resource.js';
-import * as EmbeddingsAPI from '../resources/embeddings.js';
+import * as Core from "../core.js";
+import { APIResource } from "../resource.js";
+import * as EmbeddingsAPI from "./embeddings.js";
 export declare class Embeddings extends APIResource {
     /**
      * Creates an embedding vector representing the input text.

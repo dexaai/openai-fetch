@@ -1,7 +1,7 @@
-import * as Core from '../../core.js';
-import { APIResource } from '../../resource.js';
-import * as TranslationsAPI from '../../resources/audio/translations.js';
-import { type Uploadable } from '../../core.js';
+import * as Core from "../../core.js";
+import { APIResource } from "../../resource.js";
+import * as TranslationsAPI from "./translations.js";
+import { type Uploadable } from "../../core.js";
 export declare class Translations extends APIResource {
     /**
      * Translates audio into English.

@@ -1,9 +1,9 @@
-import * as Core from '../../../core.js';
-import { APIResource } from '../../../resource.js';
-import * as VectorStoresAPI from '../../../resources/beta/vector-stores/vector-stores.js';
-import * as FileBatchesAPI from '../../../resources/beta/vector-stores/file-batches.js';
-import * as FilesAPI from '../../../resources/beta/vector-stores/files.js';
-import { CursorPage, type CursorPageParams } from '../../../pagination.js';
+import * as Core from "../../../core.js";
+import { APIResource } from "../../../resource.js";
+import * as VectorStoresAPI from "./vector-stores.js";
+import * as FileBatchesAPI from "./file-batches.js";
+import * as FilesAPI from "./files.js";
+import { CursorPage, type CursorPageParams } from "../../../pagination.js";
 export declare class VectorStores extends APIResource {
     files: FilesAPI.Files;
     fileBatches: FileBatchesAPI.FileBatches;
@@ -41,10 +41,6 @@ export interface VectorStore {
      */
     id: string;
     /**
-     * The byte size of the vector store.
-     */
-    bytes: number;
-    /**
      * The Unix timestamp (in seconds) for when the vector store was created.
      */
     created_at: number;
@@ -74,6 +70,10 @@ export interface VectorStore {
      * for use.
      */
     status: 'expired' | 'in_progress' | 'completed';
+    /**
+     * The total number of bytes used by the files in the vector store.
+     */
+    usage_bytes: number;
     /**
      * The expiration policy for a vector store.
      */

@@ -1,7 +1,7 @@
-import * as Core from '../core.js';
-import { APIResource } from '../resource.js';
-import * as BatchesAPI from '../resources/batches.js';
-import { CursorPage, type CursorPageParams } from '../pagination.js';
+import * as Core from "../core.js";
+import { APIResource } from "../resource.js";
+import * as BatchesAPI from "./batches.js";
+import { CursorPage, type CursorPageParams } from "../pagination.js";
 export declare class Batches extends APIResource {
     /**
      * Creates and executes a batch from an uploaded file of requests
@@ -32,7 +32,7 @@ export interface Batch {
     /**
      * The Unix timestamp (in seconds) for when the batch was created.
      */
-    created_at: string;
+    created_at: number;
     /**
      * The OpenAI API endpoint used by the batch.
      */
@@ -52,15 +52,15 @@ export interface Batch {
     /**
      * The Unix timestamp (in seconds) for when the batch was cancelled.
      */
-    cancelled_at?: string;
+    cancelled_at?: number;
     /**
      * The Unix timestamp (in seconds) for when the batch started cancelling.
      */
-    cancelling_at?: string;
+    cancelling_at?: number;
     /**
      * The Unix timestamp (in seconds) for when the batch was completed.
      */
-    completed_at?: string;
+    completed_at?: number;
     /**
      * The ID of the file containing the outputs of requests with errors.
      */
@@ -69,23 +69,23 @@ export interface Batch {
     /**
      * The Unix timestamp (in seconds) for when the batch expired.
      */
-    expired_at?: string;
+    expired_at?: number;
     /**
      * The Unix timestamp (in seconds) for when the batch will expire.
      */
-    expires_at?: string;
+    expires_at?: number;
     /**
      * The Unix timestamp (in seconds) for when the batch failed.
      */
-    failed_at?: string;
+    failed_at?: number;
     /**
      * The Unix timestamp (in seconds) for when the batch started finalizing.
      */
-    finalizing_at?: string;
+    finalizing_at?: number;
     /**
      * The Unix timestamp (in seconds) for when the batch started processing.
      */
-    in_progress_at?: string;
+    in_progress_at?: number;
     /**
      * Set of 16 key-value pairs that can be attached to an object. This can be useful
      * for storing additional information about the object in a structured format. Keys
@@ -153,18 +153,22 @@ export interface BatchCreateParams {
      */
     completion_window: '24h';
     /**
-     * The endpoint to be used for all requests in the batch. Currently only
-     * `/v1/chat/completions` is supported.
+     * The endpoint to be used for all requests in the batch. Currently
+     * `/v1/chat/completions`, `/v1/embeddings`, and `/v1/completions` are supported.
+     * Note that `/v1/embeddings` batches are also restricted to a maximum of 50,000
+     * embedding inputs across all requests in the batch.
      */
-    endpoint: '/v1/chat/completions';
+    endpoint: '/v1/chat/completions' | '/v1/embeddings' | '/v1/completions';
     /**
      * The ID of an uploaded file that contains requests for the new batch.
      *
      * See [upload file](https://platform.openai.com/docs/api-reference/files/create)
      * for how to upload a file.
      *
-     * Your input file must be formatted as a JSONL file, and must be uploaded with the
-     * purpose `batch`.
+     * Your input file must be formatted as a
+     * [JSONL file](https://platform.openai.com/docs/api-reference/batch/requestInput),
+     * and must be uploaded with the purpose `batch`. The file can contain up to 50,000
+     * requests, and can be up to 100 MB in size.
      */
     input_file_id: string;
     /**

@@ -1,6 +1,6 @@
-import * as Core from '../core.js';
-import { APIResource } from '../resource.js';
-import * as ModerationsAPI from '../resources/moderations.js';
+import * as Core from "../core.js";
+import { APIResource } from "../resource.js";
+import * as ModerationsAPI from "./moderations.js";
 export declare class Moderations extends APIResource {
     /**
      * Classifies if text is potentially harmful.
