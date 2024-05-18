@@ -2562,10 +2562,15 @@ keyv@^4.5.3:
   dependencies:
     json-buffer "3.0.1"
 
-ky@^1.2.0, ky@^1.2.3:
+ky@^1.2.0:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/ky/-/ky-1.2.3.tgz#4e410c7f55b400d1d0bdceaf588a4765aa362946"
   integrity sha512-2IM3VssHfG2zYz2FsHRUqIp8chhLc9uxDMcK2THxgFfv8pQhnMfN8L0ul+iW4RdBl5AglF8ooPIflRm3yNH0IA==
+
+ky@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/ky/-/ky-1.2.4.tgz#d095aa848c686116f3326bfce53d9c2ffdb692c1"
+  integrity sha512-CfSrf4a0yj1n6WgPT6kQNQOopIGLkQzqSAXo05oKByaH7G3SiqW4a8jGox0p9whMXqO49H7ljgigivrMyycAVA==
 
 language-subtag-registry@^0.3.20:
   version "0.3.22"
@@ -3076,10 +3081,10 @@ open@^10.0.4:
     is-inside-container "^1.0.0"
     is-wsl "^3.1.0"
 
-openai@^4.38.2:
-  version "4.38.2"
-  resolved "https://registry.yarnpkg.com/openai/-/openai-4.38.2.tgz#4c5335260b819a0f89fd8f922fac6aa942f540e7"
-  integrity sha512-M16ehj0D84Gjq5cjvBzXRb5X+UvtWlxPDRAWAWMC0EN+6nHqnULIn5fWWeiexDPup25FeSZYv/ldp8KefcZVJQ==
+openai@^4.47.1:
+  version "4.47.1"
+  resolved "https://registry.yarnpkg.com/openai/-/openai-4.47.1.tgz#1d23c7a8eb3d7bcdc69709cd905f4c9af0181dba"
+  integrity sha512-WWSxhC/69ZhYWxH/OBsLEirIjUcfpQ5+ihkXKp06hmeYXgBBIUCa9IptMzYx6NdkiOCsSGYCnTIsxaic3AjRCQ==
   dependencies:
     "@types/node" "^18.11.18"
     "@types/node-fetch" "^2.6.4"
@@ -3520,10 +3525,10 @@ rimraf@^3.0.2:
   dependencies:
     glob "^7.1.3"
 
-rimraf@^5.0.5:
-  version "5.0.5"
-  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-5.0.5.tgz#9be65d2d6e683447d2e9013da2bf451139a61ccf"
-  integrity sha512-CqDakW+hMe/Bz202FPEymy68P+G50RfMQK+Qo5YUqc9SPipvbGjCGKd0RSKEelbsfQuw3g5NZDSrlZZAJurH1A==
+rimraf@^5.0.7:
+  version "5.0.7"
+  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-5.0.7.tgz#27bddf202e7d89cb2e0381656380d1734a854a74"
+  integrity sha512-nV6YcJo5wbLW77m+8KjH8aB/7/rxQy9SZ0HY5shnwULfS+9nmTtVXAJET5NdZmCzA4fPI/Hm1wo/Po/4mopOdg==
   dependencies:
     glob "^10.3.7"
 
