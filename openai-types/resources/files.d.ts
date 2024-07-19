@@ -1,9 +1,8 @@
-import * as Core from "../core.js";
 import { APIResource } from "../resource.js";
-import { type Response } from "../_shims/index.js";
+import * as Core from "../core.js";
 import * as FilesAPI from "./files.js";
-import { type Uploadable } from "../core.js";
 import { Page } from "../pagination.js";
+import { type Response } from "../_shims/index.js";
 export declare class Files extends APIResource {
     /**
      * Upload a file that can be used across various endpoints. Individual files can be
@@ -15,9 +14,15 @@ export declare class Files extends APIResource {
      * [Assistants Tools guide](https://platform.openai.com/docs/assistants/tools) for
      * details.
      *
-     * The Fine-tuning API only supports `.jsonl` files.
+     * The Fine-tuning API only supports `.jsonl` files. The input also has certain
+     * required formats for fine-tuning
+     * [chat](https://platform.openai.com/docs/api-reference/fine-tuning/chat-input) or
+     * [completions](https://platform.openai.com/docs/api-reference/fine-tuning/completions-input)
+     * models.
      *
-     * The Batch API only supports `.jsonl` files up to 100 MB in size.
+     * The Batch API only supports `.jsonl` files up to 100 MB in size. The input also
+     * has a specific required
+     * [format](https://platform.openai.com/docs/api-reference/batch/request-input).
      *
      * Please [contact us](https://help.openai.com/) if you need to increase these
      * storage limits.
@@ -110,7 +115,7 @@ export interface FileCreateParams {
     /**
      * The File object (not file name) to be uploaded.
      */
-    file: Uploadable;
+    file: Core.Uploadable;
     /**
      * The intended purpose of the uploaded file.
      *
@@ -121,7 +126,7 @@ export interface FileCreateParams {
      * [Batch API](https://platform.openai.com/docs/guides/batch), and "fine-tune" for
      * [Fine-tuning](https://platform.openai.com/docs/api-reference/fine-tuning).
      */
-    purpose: 'assistants' | 'batch' | 'fine-tune';
+    purpose: 'assistants' | 'batch' | 'fine-tune' | 'vision';
 }
 export interface FileListParams {
     /**
