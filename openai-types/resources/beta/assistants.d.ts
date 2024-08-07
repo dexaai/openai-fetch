@@ -2,6 +2,7 @@ import { APIResource } from "../../resource.js";
 import * as Core from "../../core.js";
 import * as AssistantsAPI from "./assistants.js";
 import * as Shared from "../shared.js";
+import * as ChatAPI from "../chat/chat.js";
 import * as MessagesAPI from "./threads/messages.js";
 import * as ThreadsAPI from "./threads/threads.js";
 import * as RunsAPI from "./threads/runs/runs.js";
@@ -87,6 +88,11 @@ export interface Assistant {
      * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
      * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     *
+     * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
+     * Outputs which guarantees the model will match your supplied JSON schema. Learn
+     * more in the
+     * [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
      *
      * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
      * message the model generates is valid JSON.
@@ -499,8 +505,8 @@ export declare namespace FileSearchTool {
     interface FileSearch {
         /**
          * The maximum number of results the file search tool should output. The default is
-         * 20 for gpt-4\* models and 5 for gpt-3.5-turbo. This number should be between 1
-         * and 50 inclusive.
+         * 20 for `gpt-4*` models and 5 for `gpt-3.5-turbo`. This number should be between
+         * 1 and 50 inclusive.
          *
          * Note that the file search tool may output fewer than `max_num_results` results.
          * See the
@@ -831,7 +837,7 @@ export interface AssistantCreateParams {
      * [Model overview](https://platform.openai.com/docs/models/overview) for
      * descriptions of them.
      */
-    model: (string & {}) | 'gpt-4o' | 'gpt-4o-2024-05-13' | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613';
+    model: (string & {}) | ChatAPI.ChatModel;
     /**
      * The description of the assistant. The maximum length is 512 characters.
      */
@@ -857,6 +863,11 @@ export interface AssistantCreateParams {
      * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
      * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     *
+     * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
+     * Outputs which guarantees the model will match your supplied JSON schema. Learn
+     * more in the
+     * [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
      *
      * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
      * message the model generates is valid JSON.
@@ -1026,6 +1037,11 @@ export interface AssistantUpdateParams {
      * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
      * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     *
+     * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
+     * Outputs which guarantees the model will match your supplied JSON schema. Learn
+     * more in the
+     * [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
      *
      * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
      * message the model generates is valid JSON.

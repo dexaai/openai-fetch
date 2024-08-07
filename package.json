@@ -10,6 +10,7 @@
     "email": "hi@rile.yt",
     "url": "https://rile.yt"
   },
+  "packageManager": "pnpm@9.6.0",
   "engines": {
     "node": ">=18"
   },
@@ -36,12 +37,12 @@
     "fix": "eslint --fix --quiet . ; prettier --write --log-level=silent .",
     "format": "prettier --check \"**/*.{js,ts,tsx}\"",
     "lint": "eslint src",
-    "prebuild": "yarn run clean:build && yarn run extract-types",
-    "prepare": "yarn run build",
-    "prepublishOnly": "yarn run test",
-    "pretest": "yarn run build",
+    "prebuild": "pnpm run clean:build && pnpm run extract-types",
+    "prepare": "pnpm run build",
+    "prepublishOnly": "pnpm run test",
+    "pretest": "pnpm run build",
     "release": "np",
-    "test": "yarn run lint && yarn run typecheck",
+    "test": "pnpm run lint && pnpm run typecheck",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -51,10 +52,9 @@
     "@dexaai/eslint-config": "^1.3.0",
     "eslint": "^8.57.0",
     "np": "^10.0.7",
-    "openai": "^4.52.7",
+    "openai": "^4.55.0",
     "prettier": "^3.3.3",
     "rimraf": "^5.0.7",
     "typescript": "^5.5.3"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  }
 }

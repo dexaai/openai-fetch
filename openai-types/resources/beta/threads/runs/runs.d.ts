@@ -5,6 +5,7 @@ import { AssistantStream, RunCreateParamsBaseStream } from "../../../../lib/Assi
 import { RunSubmitToolOutputsParamsStream } from "../../../../lib/AssistantStream.js";
 import * as RunsAPI from "./runs.js";
 import * as AssistantsAPI from "../../assistants.js";
+import * as ChatAPI from "../../../chat/chat.js";
 import * as MessagesAPI from "../messages.js";
 import * as ThreadsAPI from "../threads.js";
 import * as StepsAPI from "./steps.js";
@@ -217,6 +218,11 @@ export interface Run {
      * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
+     * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
+     * Outputs which guarantees the model will match your supplied JSON schema. Learn
+     * more in the
+     * [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
+     *
      * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
      * message the model generates is valid JSON.
      *
@@ -425,7 +431,7 @@ export interface RunCreateParamsBase {
      * model associated with the assistant. If not, the model associated with the
      * assistant will be used.
      */
-    model?: (string & {}) | 'gpt-4o' | 'gpt-4o-2024-05-13' | 'gpt-4-turbo' | 'gpt-4-turbo-2024-04-09' | 'gpt-4-0125-preview' | 'gpt-4-turbo-preview' | 'gpt-4-1106-preview' | 'gpt-4-vision-preview' | 'gpt-4' | 'gpt-4-0314' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0314' | 'gpt-4-32k-0613' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-3.5-turbo-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | null;
+    model?: (string & {}) | ChatAPI.ChatModel | null;
     /**
      * Whether to enable
      * [parallel function calling](https://platform.openai.com/docs/guides/function-calling/parallel-function-calling)
@@ -437,6 +443,11 @@ export interface RunCreateParamsBase {
      * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
      * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+     *
+     * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
+     * Outputs which guarantees the model will match your supplied JSON schema. Learn
+     * more in the
+     * [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
      *
      * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
      * message the model generates is valid JSON.

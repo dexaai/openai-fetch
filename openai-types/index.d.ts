@@ -107,10 +107,12 @@ export declare class OpenAI extends Core.APIClient {
     fineTuning: API.FineTuning;
     beta: API.Beta;
     batches: API.Batches;
+    uploads: API.Uploads;
     protected defaultQuery(): Core.DefaultQuery | undefined;
     protected defaultHeaders(opts: Core.FinalRequestOptions): Core.Headers;
     protected authHeaders(opts: Core.FinalRequestOptions): Core.Headers;
     static OpenAI: typeof OpenAI;
+    static DEFAULT_TIMEOUT: number;
     static OpenAIError: typeof Errors.OpenAIError;
     static APIError: typeof Errors.APIError;
     static APIConnectionError: typeof Errors.APIConnectionError;
@@ -151,6 +153,7 @@ export declare namespace OpenAI {
     export import ChatCompletionChunk = API.ChatCompletionChunk;
     export import ChatCompletionContentPart = API.ChatCompletionContentPart;
     export import ChatCompletionContentPartImage = API.ChatCompletionContentPartImage;
+    export import ChatCompletionContentPartRefusal = API.ChatCompletionContentPartRefusal;
     export import ChatCompletionContentPartText = API.ChatCompletionContentPartText;
     export import ChatCompletionFunctionCallOption = API.ChatCompletionFunctionCallOption;
     export import ChatCompletionFunctionMessageParam = API.ChatCompletionFunctionMessageParam;
@@ -182,13 +185,16 @@ export declare namespace OpenAI {
     export import FileListParams = API.FileListParams;
     export import Images = API.Images;
     export import Image = API.Image;
+    export import ImageModel = API.ImageModel;
     export import ImagesResponse = API.ImagesResponse;
     export import ImageCreateVariationParams = API.ImageCreateVariationParams;
     export import ImageEditParams = API.ImageEditParams;
     export import ImageGenerateParams = API.ImageGenerateParams;
     export import Audio = API.Audio;
+    export import AudioModel = API.AudioModel;
     export import Moderations = API.Moderations;
     export import Moderation = API.Moderation;
+    export import ModerationModel = API.ModerationModel;
     export import ModerationCreateResponse = API.ModerationCreateResponse;
     export import ModerationCreateParams = API.ModerationCreateParams;
     export import Models = API.Models;
@@ -204,9 +210,16 @@ export declare namespace OpenAI {
     export import BatchesPage = API.BatchesPage;
     export import BatchCreateParams = API.BatchCreateParams;
     export import BatchListParams = API.BatchListParams;
+    export import Uploads = API.Uploads;
+    export import Upload = API.Upload;
+    export import UploadCreateParams = API.UploadCreateParams;
+    export import UploadCompleteParams = API.UploadCompleteParams;
     export import ErrorObject = API.ErrorObject;
     export import FunctionDefinition = API.FunctionDefinition;
     export import FunctionParameters = API.FunctionParameters;
+    export import ResponseFormatJSONObject = API.ResponseFormatJSONObject;
+    export import ResponseFormatJSONSchema = API.ResponseFormatJSONSchema;
+    export import ResponseFormatText = API.ResponseFormatText;
 }
 /** API Client for interfacing with the Azure OpenAI API. */
 export interface AzureClientOptions extends ClientOptions {
