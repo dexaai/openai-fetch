@@ -54,4 +54,10 @@ export declare class RateLimitError extends APIError {
 }
 export declare class InternalServerError extends APIError {
 }
+export declare class LengthFinishReasonError extends OpenAIError {
+    constructor();
+}
+export declare class ContentFilterFinishReasonError extends OpenAIError {
+    constructor();
+}
 //# sourceMappingURL=error.d.ts.map
