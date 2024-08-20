@@ -5,7 +5,7 @@ export { Batch, BatchError, BatchRequestCounts, BatchCreateParams, BatchListPara
 export { Beta } from "./beta/beta.js";
 export { Completion, CompletionChoice, CompletionUsage, CompletionCreateParams, CompletionCreateParamsNonStreaming, CompletionCreateParamsStreaming, Completions, } from "./completions.js";
 export { CreateEmbeddingResponse, Embedding, EmbeddingCreateParams, Embeddings } from "./embeddings.js";
-export { FileContent, FileDeleted, FileObject, FileCreateParams, FileListParams, FileObjectsPage, Files, } from "./files.js";
+export { FileContent, FileDeleted, FileObject, FilePurpose, FileCreateParams, FileListParams, FileObjectsPage, Files, } from "./files.js";
 export { FineTuning } from "./fine-tuning/fine-tuning.js";
 export { Image, ImageModel, ImagesResponse, ImageCreateVariationParams, ImageEditParams, ImageGenerateParams, Images, } from "./images.js";
 export { Model, ModelDeleted, ModelsPage, Models } from "./models.js";

@@ -1,8 +1,14 @@
-import { ZodTypeDef } from 'zod';
+import type { ZodTypeDef } from 'zod';
 import { Options, Targets } from "./Options.js";
 import { JsonSchema7Type } from "./parseDef.js";
 export type Refs = {
     seen: Map<ZodTypeDef, Seen>;
+    /**
+     * Set of all the `$ref`s we created, e.g. `Set(['#/$defs/ui'])`
+     * this notable does not include any `definitions` that were
+     * explicitly given as an option.
+     */
+    seenRefs: Set<string>;
     currentPath: string[];
     propertyPath: string[] | undefined;
 } & Options<Targets>;
