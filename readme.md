@@ -11,13 +11,13 @@ Unfortunately, the official [openai-node](https://github.com/openai/openai-node)
 - You want a fast and small client that doesn't patch fetch
 - Supports all envs with native fetch: Node 18+, browsers, Deno, Cloudflare Workers, etc
 - Package size: `openai-fetch` is [~14kb](https://bundlephobia.com/package/openai-fetch) and `openai` is [~142kb](https://bundlephobia.com/package/openai)
-- You only need the chat, completions, and embeddings
+- You only need the chat, completions, embeddings, and moderations
 
 ### Use `openai-node` if you need:
 
 - Your runtime doesn't have native fetch support
 - Your app can't handle native ESM code
-- Endpoints other than chat, completions, and embeddings
+- Endpoints other than chat, completions, embeddings, and moderations
 - Aren't concerned with lib size or fetch patching
 
 ## Install
@@ -59,6 +59,9 @@ client.streamCompletion(params: CompletionStreamParams): Promise<CompletionStrea
 
 // Generate one or more embeddings
 client.createEmbeddings(params: EmbeddingParams): Promise<EmbeddingResponse>
+
+// Checks for potentially harmful content
+client.createModeration(params: ModerationParams): Promise<ModerationResponse>
 ```
 
 ### Type Definitions

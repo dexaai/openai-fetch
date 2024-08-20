@@ -13,6 +13,8 @@ import {
   type CompletionStreamResponse,
   type EmbeddingParams,
   type EmbeddingResponse,
+  type ModerationParams,
+  type ModerationResponse,
 } from './types.js';
 
 export type ConfigOpts = {
@@ -129,6 +131,17 @@ export class OpenAIClient {
   ): Promise<EmbeddingResponse> {
     const response: OpenAI.CreateEmbeddingResponse = await this.getApi(opts)
       .post('embeddings', { json: params })
+      .json();
+    return response;
+  }
+
+  /** Given some input text, outputs if the model classifies it as potentially harmful across several categories. */
+  async createModeration(
+    params: ModerationParams,
+    opts?: RequestOpts
+  ): Promise<ModerationResponse> {
+    const response: OpenAI.ModerationCreateResponse = await this.getApi(opts)
+      .post('moderations', { json: params })
       .json();
     return response;
   }
