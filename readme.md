@@ -4,7 +4,7 @@
 
 A minimal and opinionated OpenAI client powered by fetch.
 
-Unfortunately, the official [openai-node](https://github.com/openai/openai-node) package patches fetch in problematic ways and is quite bloated.
+Unfortunately, the official [openai](https://github.com/openai/openai-node) package patches fetch in problematic ways and is quite bloated.
 
 ### Reasons to consider using `openai-fetch`:
 
@@ -13,12 +13,12 @@ Unfortunately, the official [openai-node](https://github.com/openai/openai-node)
 - Package size: `openai-fetch` is [~14kb](https://bundlephobia.com/package/openai-fetch) and `openai` is [~142kb](https://bundlephobia.com/package/openai)
 - You only need the chat, completions, embeddings, and moderations
 
-### Use `openai-node` if you need:
+### Use the official `openai` package if:
 
 - Your runtime doesn't have native fetch support
 - Your app can't handle native ESM code
-- Endpoints other than chat, completions, embeddings, and moderations
-- Aren't concerned with lib size or fetch patching
+- You need endpoints other than chat, completions, embeddings, and moderations
+- You aren't concerned with lib size or fetch patching
 
 ## Install
 
