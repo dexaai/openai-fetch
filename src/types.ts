@@ -68,24 +68,16 @@ export type ChatMessage = {
 export type { AnthropicModelAndUnknown as AnthropicModel }
 export type { ChatModel as OpenAIModel}
 
-export type ChatParams<T extends 'openai' | 'anthropic' = 'openai'> = 
-  T extends 'anthropic' 
-      // Use the openai param shape, with a few exceptions
-    ? Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages' | 'model'> & {
-        messages: ChatMessage[];
-        // Set the anthropic model of choice
-        model: Exclude<AnthropicModelAndUnknown, ChatModel>;
-        // anthropic requires max_tokens to be set explicitly
-        max_tokens: number;
-      }
-    : Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages' | 'model'> & {
-        messages: ChatMessage[];
-        model: Exclude<ChatModel | (string & {}), Exclude<AnthropicModelAndUnknown, (string & {})>>;
-      };
+type AnthropicModel = | "claude-3-5-sonnet-20240620" | "claude-3-opus-20240229" | "claude-3-sonnet-20240229" | "claude-3-haiku-20240307" | "claude-2.1" | "claude-2.0" | "claude-instant-1.2"
+
+export type ChatParams = Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages' | 'model'> & {
+  messages: ChatMessage[];
+  model: ChatModel | AnthropicModel | ({} & string)
+};
 
 export type ChatResponse = OpenAI.ChatCompletion;
 
-export type ChatStreamParams<T extends 'openai' | 'anthropic' = 'openai'> = ChatParams<T>;
+export type ChatStreamParams = ChatParams
 export type ChatStreamChunk = OpenAI.ChatCompletionChunk;
 export type ChatStreamResponse = ReadableStream<ChatStreamChunk>;
 

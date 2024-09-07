@@ -12,13 +12,12 @@ export interface KyOptions extends Omit<Options, 'credentials'> {
  * Create an instance of Ky with options shared by all requests.
  */
 export function createApiInstance(args: {
-  apiKey: string;
-  anthropicApiKey?: string;
+  apiKeyHeader: { [key: string]: string};
   baseUrl?: string;
   organizationId?: string;
   kyOptions?: KyOptions;
 }): KyInstance {
-  const { apiKey, anthropicApiKey, baseUrl, organizationId, kyOptions = {} } = args;
+  const { apiKeyHeader, baseUrl, organizationId, kyOptions = {} } = args;
   const { headers, hooks = {}, prefixUrl, retry, timeout, ...rest } = kyOptions;
 
   // Add a hook to handle OpenAI API errors
@@ -47,15 +46,13 @@ export function createApiInstance(args: {
     }
   });
 
-  const apiKeyHeader = apiKey ? { Authorization: `Bearer ${apiKey}` } : {};
-  const anthropicApiKeyHeader = anthropicApiKey ? { 'x-api-key': anthropicApiKey } : {};
-  const apiKeyHeaders = { ...apiKeyHeader, ...anthropicApiKeyHeader };
+
 
   return ky.extend({
     prefixUrl: baseUrl || prefixUrl || DEFAULT_BASE_URL,
     headers: {
       'User-Agent': 'openai-fetch',
-      ...apiKeyHeaders,
+      ...apiKeyHeader,
       ...(organizationId && {
         'OpenAI-Organization': organizationId,
       }),
