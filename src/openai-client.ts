@@ -20,28 +20,13 @@ import {
   type OpenAIModel
 } from './types.js';
 
-
-type OpenAIConfigOpts = {
-  /**
-   * The HTTP endpoint for the OpenAI API. You probably don't want to change this.
-   * @default https://api.openai.com/v1
-   */
-  baseUrl?: string
-}
-
-type AnthropicConfigOpts = {
-  baseUrl: `https://api.anthropic.com/v1`
-}
-
-
-export type ConfigOpts = (OpenAIConfigOpts | AnthropicConfigOpts) &
- 
- {
+export type ConfigOpts = {
   /**
    * The API key used to authenticate with the OpenAI API.
    * @see https://platform.openai.com/account/api-keys
    */
   apiKey?: string;
+
   /**
    * The API key used to authenticate with the Anthropic API. 
    */
@@ -56,6 +41,13 @@ export type ConfigOpts = (OpenAIConfigOpts | AnthropicConfigOpts) &
    * @see https://platform.openai.com/docs/api-reference/organization-optional
    */
   organizationId?: string;
+
+  /**
+   * The HTTP endpoint for the OpenAI API. You probably don't want to change this.
+   * @default https://api.openai.com/v1
+   */
+  baseUrl?: string
+
   /**
    * Options to pass to the underlying fetch library (Ky).
    * @see https://github.com/sindresorhus/ky/tree/main#options
