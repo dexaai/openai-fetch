@@ -12,6 +12,9 @@ importers:
         specifier: ^1.4.0
         version: 1.5.0
     devDependencies:
+      '@anthropic-ai/sdk':
+        specifier: ^0.27.2
+        version: 0.27.2
       '@dexaai/eslint-config':
         specifier: ^1.3.0
         version: 1.3.3(eslint@8.57.0)(typescript@5.5.4)
@@ -35,6 +38,9 @@ importers:
         version: 5.5.4
 
 packages:
+
+  '@anthropic-ai/sdk@0.27.2':
+    resolution: {integrity: sha512-Q6gOx4fyHQ+NCSaVeXEKFZfoFWCR3ctUA+sK5oGB7RKUkzUvK64aYM7v1T9ekJKwn8TwRq6IGjqS31n9PbjCIA==}
 
   '@babel/code-frame@7.24.7':
     resolution: {integrity: sha512-BcYH1CVJBO9tvyIZ2jVeXgSIMvGZ2FDRvDdOIVQyuklNKSsx+eppDEBq/g47Ayw+RqNFE+URvOShmf+f/qwAlA==}
@@ -2263,6 +2269,18 @@ packages:
     engines: {node: '>=18'}
 
 snapshots:
+
+  '@anthropic-ai/sdk@0.27.2':
+    dependencies:
+      '@types/node': 18.19.43
+      '@types/node-fetch': 2.6.11
+      abort-controller: 3.0.0
+      agentkeepalive: 4.5.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
 
   '@babel/code-frame@7.24.7':
     dependencies:

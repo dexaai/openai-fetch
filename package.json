@@ -26,7 +26,8 @@
   "sideEffects": false,
   "files": [
     "dist",
-    "openai-types"
+    "openai-types",
+    "anthropic-types"
   ],
   "scripts": {
     "build": "tsc --project tsconfig.dist.json",
@@ -49,6 +50,7 @@
     "ky": "^1.4.0"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.27.2",
     "@dexaai/eslint-config": "^1.3.0",
     "eslint": "^8.57.0",
     "np": "^10.0.7",

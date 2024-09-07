@@ -1,3 +1,4 @@
+import { type Anthropic } from '../anthropic-types/index.js';
 import { type OpenAI } from '../openai-types/index.js';
 
 /** The possible roles for a message. */
@@ -62,13 +63,24 @@ export type ChatMessage = {
   name?: string;
 };
 
-export type ChatParams = Omit<
-  OpenAI.ChatCompletionCreateParams,
-  'stream' | 'messages'
-> & { messages: ChatMessage[] };
+
+export type OpenAIModel = OpenAI.ChatCompletionCreateParams['model'];
+export type AnthropicModel = Anthropic.CompletionCreateParams['model'];
+
+
+export type ChatParams<T extends 'openai' | 'anthropic' = 'openai'> = 
+  T extends 'anthropic' 
+    ? Omit<Anthropic.MessageCreateParams, 'stream' | 'messages'> & {
+        messages: ChatMessage[];
+      }
+    : Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages' | 'model'> & {
+        messages: ChatMessage[];
+        model: OpenAIModel;
+      };
+
 export type ChatResponse = OpenAI.ChatCompletion;
 
-export type ChatStreamParams = ChatParams;
+export type ChatStreamParams<T extends 'openai' | 'anthropic' = 'openai'> = ChatParams<T>;
 export type ChatStreamChunk = OpenAI.ChatCompletionChunk;
 export type ChatStreamResponse = ReadableStream<ChatStreamChunk>;
 

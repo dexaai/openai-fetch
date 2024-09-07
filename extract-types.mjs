@@ -34,3 +34,4 @@ function extractTypes(srcDir, destDir) {
 }
 
 extractTypes('node_modules/openai', 'openai-types');
+extractTypes('node_modules/@anthropic-ai/sdk', 'anthropic-types');
