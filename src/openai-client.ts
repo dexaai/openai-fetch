@@ -57,16 +57,16 @@ export type ConfigOpts = (OpenAIConfigOpts | AnthropicConfigOpts) &
 
 /** Override the default Ky options for a single request. */
 type RequestOpts = {
-  headers?: KyOptions['headers'];
+  headers?: KyOptions['headers'] & (AnthropicConfigOpts | OpenAIConfigOpts);
   signal?: AbortSignal;
 };
 
-
 export class OpenAIClient<T extends ConfigOpts = ConfigOpts> {
   private api: ReturnType<typeof createApiInstance>;
-  private readonly provider: InferProvider<T>;
+  private opts: T;
 
   constructor(opts: T) {
+    this.opts = opts;
     const process = globalThis.process || { env: {} };
     const apiKey = opts.apiKey || process.env.OPENAI_API_KEY;
     const organizationId = opts.organizationId || process.env.OPENAI_ORG_ID;
@@ -75,31 +75,46 @@ export class OpenAIClient<T extends ConfigOpts = ConfigOpts> {
         'Missing OpenAI API key. Please provide one in the config or set the OPENAI_API_KEY environment variable.'
       );
 
-    this.provider = (opts.baseUrl?.includes('anthropic') ? 'anthropic' : 'openai') as InferProvider<T>;
-
     this.api = createApiInstance({
       apiKey,
-      anthropicApiKey: this.provider === 'anthropic' ? apiKey : undefined,
+      anthropicApiKey: this.getProvider(opts.baseUrl) === 'anthropic' ? apiKey : undefined,
       baseUrl: opts.baseUrl,
       organizationId,
       kyOptions: opts.kyOptions,
     });
   }
 
-  get isAnthropic() {
-    return this.provider === 'anthropic';
+  getProvider(overrideBaseUrl?: string) {
+    const defaultBaseUrl = this.opts.baseUrl;
+    const baseUrl = overrideBaseUrl || defaultBaseUrl;
+    return baseUrl?.includes('anthropic') ? 'anthropic' : 'openai';
   }
 
   private getApi(opts?: RequestOpts) {
     return opts ? this.api.extend(opts) : this.api;
   }
 
-  private convertToAnthropicFormat(params: ChatParams<'anthropic'>) {
-    // They don't allow a system prompt in messages.
+  private convertToolDefinitionToAnthropicFormat(tool: OpenAI.ChatCompletionTool): Anthropic.Tool {
+    return {
+      name: tool.function.name,
+      description: tool.function.description,
+      input_schema: {
+        type: 'object',
+        ...tool.function.parameters 
+      }
+    };
+  }
+  private convertChatParamsToAnthropicFormat(params: ChatParams<'anthropic'>) {
+    // Anthropic doesn't allow a system prompt in messages.
     const messages = params.messages.filter(msg => msg.role !== 'system');
+
+    // Convert the tool definitions to the Anthropic format.
+    const tools = params.tools?.map(this.convertToolDefinitionToAnthropicFormat);
+
     return {
       ...params,
-      messages 
+      messages,
+      tools
     };
   }
 
@@ -115,7 +130,7 @@ export class OpenAIClient<T extends ConfigOpts = ConfigOpts> {
   }
 
 
-  private convertFromAnthropicFormat(response: any):  OpenAI.ChatCompletion {
+  private convertAnthropicResponseToOpenAIFormat(response: any):  OpenAI.ChatCompletion {
     const textContent = response.content.filter((content: any) => content.type === 'text')[0].text;
     const toolCalls = response.content.filter((content: any) => content.type === 'tool_use') as Anthropic.ToolUseBlock[];
 
@@ -175,14 +190,14 @@ export class OpenAIClient<T extends ConfigOpts = ConfigOpts> {
   
 
   /** Create a completion for a chat message. */
-  async createChatCompletion(
-    params: ChatParams<InferProvider<T>>,
-    opts?: RequestOpts
+  async createChatCompletion<R extends RequestOpts>(
+    params: ChatParams<InferProvider<R['headers']>> | ChatParams<InferProvider<T>>,
+    opts?: R
   ): Promise<ChatResponse> {
-    if (this.isAnthropic) {
-      const anthropicParams = this.convertToAnthropicFormat(params as ChatParams<'anthropic'>);
+    if (this.getProvider(opts?.headers?.baseUrl) === 'anthropic') {
+      const anthropicParams = this.convertChatParamsToAnthropicFormat(params as ChatParams<'anthropic'>);
       const anthropicResponse = await this.getApi(opts).post('messages', { json: anthropicParams }).json();
-      return this.convertFromAnthropicFormat(anthropicResponse);
+      return this.convertAnthropicResponseToOpenAIFormat(anthropicResponse);
     }
 
     const response: OpenAI.ChatCompletion = await this.getApi(opts)
@@ -196,8 +211,8 @@ export class OpenAIClient<T extends ConfigOpts = ConfigOpts> {
     params: ChatStreamParams<InferProvider<T>>,
     opts?: RequestOpts
   ): Promise<ChatStreamResponse> {
-    if (this.isAnthropic) {
-      const anthropicParams = this.convertToAnthropicFormat(params as ChatParams<'anthropic'>);
+    if (this.getProvider(opts?.headers?.baseUrl) === 'anthropic') {
+      const anthropicParams = this.convertChatParamsToAnthropicFormat(params as ChatParams<'anthropic'>);
       const response = await this.getApi(opts).post('messages', {
         json: { ...anthropicParams, stream: true },
         onDownloadProgress: () => {}, // trick ky to return ReadableStream.

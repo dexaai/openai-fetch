@@ -70,12 +70,16 @@ export type AnthropicModel = Anthropic.CompletionCreateParams['model'];
 
 export type ChatParams<T extends 'openai' | 'anthropic' = 'openai'> = 
   T extends 'anthropic' 
-    ? Omit<Anthropic.MessageCreateParams, 'stream' | 'messages'> & {
+      // Use the openai param shape, with a few exceptions
+    ? Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages'> & {
         messages: ChatMessage[];
+        // Set the anthropic model of choice
+        model: AnthropicModel;
+        // anthropic requires max_tokens to be set explicitly
+        max_tokens: number;
       }
-    : Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages' | 'model'> & {
+    : Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages'> & {
         messages: ChatMessage[];
-        model: OpenAIModel;
       };
 
 export type ChatResponse = OpenAI.ChatCompletion;
