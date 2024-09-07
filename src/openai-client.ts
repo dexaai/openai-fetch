@@ -1,5 +1,5 @@
-import { type Anthropic } from '../anthropic-types/index.js';
 import { type KyInstance } from 'ky';
+import { type Anthropic } from '../anthropic-types/index.js';
 import { type OpenAI } from '../openai-types/index.js';
 import { createApiInstance, type KyOptions } from './fetch-api.js';
 import { StreamCompletionChunker } from './streaming.js';
