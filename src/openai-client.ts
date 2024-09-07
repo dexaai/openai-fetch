@@ -191,7 +191,7 @@ export class OpenAIClient<T extends ConfigOpts = ConfigOpts> {
 
   /** Create a completion for a chat message. */
   async createChatCompletion<R extends RequestOpts>(
-    params: ChatParams<InferProvider<R['headers']>> | ChatParams<InferProvider<T>>,
+    params: ChatParams<InferProvider<R['headers'] & T>> ,
     opts?: R
   ): Promise<ChatResponse> {
     if (this.getProvider(opts?.headers?.baseUrl) === 'anthropic') {

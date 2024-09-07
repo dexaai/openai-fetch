@@ -1,5 +1,6 @@
-import { type Anthropic } from '../anthropic-types/index.js';
+import { type Model as AnthropicModelAndUnknown } from '../anthropic-types/resources/messages.js';
 import { type OpenAI } from '../openai-types/index.js';
+import { type ChatModel } from '../openai-types/resources/index.js';
 
 /** The possible roles for a message. */
 export type Role = 'system' | 'user' | 'assistant' | 'function' | 'tool';
@@ -64,22 +65,22 @@ export type ChatMessage = {
 };
 
 
-export type OpenAIModel = OpenAI.ChatCompletionCreateParams['model'];
-export type AnthropicModel = Anthropic.CompletionCreateParams['model'];
-
+export type { AnthropicModelAndUnknown as AnthropicModel }
+export type { ChatModel as OpenAIModel}
 
 export type ChatParams<T extends 'openai' | 'anthropic' = 'openai'> = 
   T extends 'anthropic' 
       // Use the openai param shape, with a few exceptions
-    ? Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages'> & {
+    ? Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages' | 'model'> & {
         messages: ChatMessage[];
         // Set the anthropic model of choice
-        model: AnthropicModel;
+        model: Exclude<AnthropicModelAndUnknown, ChatModel>;
         // anthropic requires max_tokens to be set explicitly
         max_tokens: number;
       }
-    : Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages'> & {
+    : Omit<OpenAI.ChatCompletionCreateParams, 'stream' | 'messages' | 'model'> & {
         messages: ChatMessage[];
+        model: Exclude<ChatModel | (string & {}), Exclude<AnthropicModelAndUnknown, (string & {})>>;
       };
 
 export type ChatResponse = OpenAI.ChatCompletion;
