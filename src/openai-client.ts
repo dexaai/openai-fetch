@@ -207,9 +207,9 @@ export class OpenAIClient<T extends ConfigOpts = ConfigOpts> {
   }
 
   /** Create a chat completion and stream back partial progress. */
-  async streamChatCompletion(
-    params: ChatStreamParams<InferProvider<T>>,
-    opts?: RequestOpts
+  async streamChatCompletion<R extends RequestOpts>(
+    params: ChatStreamParams<InferProvider<R['headers'] & T>>,
+    opts?: R
   ): Promise<ChatStreamResponse> {
     if (this.getProvider(opts?.headers?.baseUrl) === 'anthropic') {
       const anthropicParams = this.convertChatParamsToAnthropicFormat(params as ChatParams<'anthropic'>);
