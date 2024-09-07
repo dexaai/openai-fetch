@@ -61,11 +61,11 @@ type RequestOpts = {
   signal?: AbortSignal;
 };
 
-export class OpenAIClient<T extends ConfigOpts = ConfigOpts> {
+export class OpenAIClient {
   private openAiApi: ReturnType<typeof createApiInstance>;
   private anthropicApi?: ReturnType<typeof createApiInstance>;
 
-  constructor(opts: T) {
+  constructor(opts: ConfigOpts = {}) {
     const process = globalThis.process || { env: {} };
     const apiKey = opts.apiKey || process.env.OPENAI_API_KEY;
     const organizationId = opts.organizationId || process.env.OPENAI_ORG_ID;
