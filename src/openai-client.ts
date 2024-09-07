@@ -57,7 +57,7 @@ export type ConfigOpts = {
 
 /** Override the default Ky options for a single request. */
 type RequestOpts = {
-  headers?: KyOptions['headers'] & (AnthropicConfigOpts | OpenAIConfigOpts);
+  headers?: KyOptions['headers'];
   signal?: AbortSignal;
 };
 
