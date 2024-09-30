@@ -16,6 +16,6 @@ export declare class ChatCompletionRunner<ParsedT = null> extends AbstractChatCo
     /** @deprecated - please use `runTools` instead. */
     static runFunctions(client: OpenAI, params: ChatCompletionFunctionRunnerParams<any[]>, options?: RunnerOptions): ChatCompletionRunner<null>;
     static runTools<ParsedT>(client: OpenAI, params: ChatCompletionToolRunnerParams<any[]>, options?: RunnerOptions): ChatCompletionRunner<ParsedT>;
-    _addMessage(this: ChatCompletionRunner<ParsedT>, message: ChatCompletionMessageParam): void;
+    _addMessage(this: ChatCompletionRunner<ParsedT>, message: ChatCompletionMessageParam, emit?: boolean): void;
 }
 //# sourceMappingURL=ChatCompletionRunner.d.ts.map

@@ -2,6 +2,7 @@ import { APIResource } from "../../../resource.js";
 import { Uploadable } from "../../../core.js";
 import * as Core from "../../../core.js";
 import * as FilesAPI from "./files.js";
+import * as VectorStoresAPI from "./vector-stores.js";
 import { CursorPage, type CursorPageParams } from "../../../pagination.js";
 export declare class Files extends APIResource {
     /**
@@ -99,7 +100,7 @@ export interface VectorStoreFile {
     /**
      * The strategy used to chunk the file.
      */
-    chunking_strategy?: VectorStoreFile.Static | VectorStoreFile.Other;
+    chunking_strategy?: VectorStoresAPI.FileChunkingStrategy;
 }
 export declare namespace VectorStoreFile {
     /**
@@ -116,39 +117,6 @@ export declare namespace VectorStoreFile {
          */
         message: string;
     }
-    interface Static {
-        static: Static.Static;
-        /**
-         * Always `static`.
-         */
-        type: 'static';
-    }
-    namespace Static {
-        interface Static {
-            /**
-             * The number of tokens that overlap between chunks. The default value is `400`.
-             *
-             * Note that the overlap must not exceed half of `max_chunk_size_tokens`.
-             */
-            chunk_overlap_tokens: number;
-            /**
-             * The maximum number of tokens in each chunk. The default value is `800`. The
-             * minimum value is `100` and the maximum value is `4096`.
-             */
-            max_chunk_size_tokens: number;
-        }
-    }
-    /**
-     * This is returned when the chunking strategy is unknown. Typically, this is
-     * because the file was indexed before the `chunking_strategy` concept was
-     * introduced in the API.
-     */
-    interface Other {
-        /**
-         * Always `other`.
-         */
-        type: 'other';
-    }
 }
 export interface VectorStoreFileDeleted {
     id: string;
@@ -164,43 +132,9 @@ export interface FileCreateParams {
     file_id: string;
     /**
      * The chunking strategy used to chunk the file(s). If not set, will use the `auto`
-     * strategy.
+     * strategy. Only applicable if `file_ids` is non-empty.
      */
-    chunking_strategy?: FileCreateParams.AutoChunkingStrategyRequestParam | FileCreateParams.StaticChunkingStrategyRequestParam;
-}
-export declare namespace FileCreateParams {
-    /**
-     * The default strategy. This strategy currently uses a `max_chunk_size_tokens` of
-     * `800` and `chunk_overlap_tokens` of `400`.
-     */
-    interface AutoChunkingStrategyRequestParam {
-        /**
-         * Always `auto`.
-         */
-        type: 'auto';
-    }
-    interface StaticChunkingStrategyRequestParam {
-        static: StaticChunkingStrategyRequestParam.Static;
-        /**
-         * Always `static`.
-         */
-        type: 'static';
-    }
-    namespace StaticChunkingStrategyRequestParam {
-        interface Static {
-            /**
-             * The number of tokens that overlap between chunks. The default value is `400`.
-             *
-             * Note that the overlap must not exceed half of `max_chunk_size_tokens`.
-             */
-            chunk_overlap_tokens: number;
-            /**
-             * The maximum number of tokens in each chunk. The default value is `800`. The
-             * minimum value is `100` and the maximum value is `4096`.
-             */
-            max_chunk_size_tokens: number;
-        }
-    }
+    chunking_strategy?: VectorStoresAPI.FileChunkingStrategyParam;
 }
 export interface FileListParams extends CursorPageParams {
     /**

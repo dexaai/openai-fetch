@@ -11,6 +11,13 @@ export declare class Beta extends APIResource {
 }
 export declare namespace Beta {
     export import VectorStores = VectorStoresAPI.VectorStores;
+    export import AutoFileChunkingStrategyParam = VectorStoresAPI.AutoFileChunkingStrategyParam;
+    export import FileChunkingStrategy = VectorStoresAPI.FileChunkingStrategy;
+    export import FileChunkingStrategyParam = VectorStoresAPI.FileChunkingStrategyParam;
+    export import OtherFileChunkingStrategyObject = VectorStoresAPI.OtherFileChunkingStrategyObject;
+    export import StaticFileChunkingStrategy = VectorStoresAPI.StaticFileChunkingStrategy;
+    export import StaticFileChunkingStrategyObject = VectorStoresAPI.StaticFileChunkingStrategyObject;
+    export import StaticFileChunkingStrategyParam = VectorStoresAPI.StaticFileChunkingStrategyParam;
     export import VectorStore = VectorStoresAPI.VectorStore;
     export import VectorStoreDeleted = VectorStoresAPI.VectorStoreDeleted;
     export import VectorStoresPage = VectorStoresAPI.VectorStoresPage;

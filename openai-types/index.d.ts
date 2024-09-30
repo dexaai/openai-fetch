@@ -111,6 +111,7 @@ export declare class OpenAI extends Core.APIClient {
     protected defaultQuery(): Core.DefaultQuery | undefined;
     protected defaultHeaders(opts: Core.FinalRequestOptions): Core.Headers;
     protected authHeaders(opts: Core.FinalRequestOptions): Core.Headers;
+    protected stringifyQuery(query: Record<string, unknown>): string;
     static OpenAI: typeof OpenAI;
     static DEFAULT_TIMEOUT: number;
     static OpenAIError: typeof Errors.OpenAIError;
@@ -175,6 +176,7 @@ export declare namespace OpenAI {
     export import Embeddings = API.Embeddings;
     export import CreateEmbeddingResponse = API.CreateEmbeddingResponse;
     export import Embedding = API.Embedding;
+    export import EmbeddingModel = API.EmbeddingModel;
     export import EmbeddingCreateParams = API.EmbeddingCreateParams;
     export import Files = API.Files;
     export import FileContent = API.FileContent;
@@ -193,9 +195,13 @@ export declare namespace OpenAI {
     export import ImageGenerateParams = API.ImageGenerateParams;
     export import Audio = API.Audio;
     export import AudioModel = API.AudioModel;
+    export import AudioResponseFormat = API.AudioResponseFormat;
     export import Moderations = API.Moderations;
     export import Moderation = API.Moderation;
+    export import ModerationImageURLInput = API.ModerationImageURLInput;
     export import ModerationModel = API.ModerationModel;
+    export import ModerationMultiModalInput = API.ModerationMultiModalInput;
+    export import ModerationTextInput = API.ModerationTextInput;
     export import ModerationCreateResponse = API.ModerationCreateResponse;
     export import ModerationCreateParams = API.ModerationCreateParams;
     export import Models = API.Models;
@@ -260,7 +266,7 @@ export declare class AzureOpenAI extends OpenAI {
      * @param {string | undefined} [opts.apiKey=process.env['AZURE_OPENAI_API_KEY'] ?? undefined]
      * @param {string | undefined} opts.deployment - A model deployment, if given, sets the base client URL to include `/deployments/{deployment}`.
      * @param {string | null | undefined} [opts.organization=process.env['OPENAI_ORG_ID'] ?? null]
-     * @param {string} [opts.baseURL=process.env['OPENAI_BASE_URL']] - Sets the base URL for the API.
+     * @param {string} [opts.baseURL=process.env['OPENAI_BASE_URL']] - Sets the base URL for the API, e.g. `https://example-resource.azure.openai.com/openai/`.
      * @param {number} [opts.timeout=10 minutes] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
      * @param {number} [opts.httpAgent] - An HTTP agent used to manage HTTP(s) connections.
      * @param {Core.Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.

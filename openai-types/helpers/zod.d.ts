@@ -1,5 +1,5 @@
-import { ResponseFormatJSONSchema } from '../resources.js';
-import type z from 'zod';
+import { ResponseFormatJSONSchema } from "../resources/index.js";
+import type { infer as zodInfer, ZodType } from 'zod';
 import { AutoParseableResponseFormat, AutoParseableTool } from "../lib/parser.js";
 /**
  * Creates a chat completion `JSONSchema` response format object from
@@ -38,20 +38,20 @@ import { AutoParseableResponseFormat, AutoParseableTool } from "../lib/parser.js
  * This can be passed directly to the `.create()` method but will not
  * result in any automatic parsing, you'll have to parse the response yourself.
  */
-export declare function zodResponseFormat<ZodInput extends z.ZodType>(zodObject: ZodInput, name: string, props?: Omit<ResponseFormatJSONSchema, 'schema' | 'strict' | 'name'>): AutoParseableResponseFormat<z.infer<ZodInput>>;
+export declare function zodResponseFormat<ZodInput extends ZodType>(zodObject: ZodInput, name: string, props?: Omit<ResponseFormatJSONSchema.JSONSchema, 'schema' | 'strict' | 'name'>): AutoParseableResponseFormat<zodInfer<ZodInput>>;
 /**
  * Creates a chat completion `function` tool that can be invoked
  * automatically by the chat completion `.runTools()` method or automatically
  * parsed by `.parse()` / `.stream()`.
  */
-export declare function zodFunction<Parameters extends z.ZodType>(options: {
+export declare function zodFunction<Parameters extends ZodType>(options: {
     name: string;
     parameters: Parameters;
-    function?: ((args: z.infer<Parameters>) => unknown | Promise<unknown>) | undefined;
+    function?: ((args: zodInfer<Parameters>) => unknown | Promise<unknown>) | undefined;
     description?: string | undefined;
 }): AutoParseableTool<{
     arguments: Parameters;
     name: string;
-    function: (args: z.infer<Parameters>) => unknown;
+    function: (args: zodInfer<Parameters>) => unknown;
 }>;
 //# sourceMappingURL=zod.d.ts.map

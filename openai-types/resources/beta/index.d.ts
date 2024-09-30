@@ -2,5 +2,5 @@ export { Assistant, AssistantDeleted, AssistantStreamEvent, AssistantTool, CodeI
 export { AssistantResponseFormatOption, AssistantToolChoice, AssistantToolChoiceFunction, AssistantToolChoiceOption, Thread, ThreadDeleted, ThreadCreateParams, ThreadUpdateParams, ThreadCreateAndRunParams, ThreadCreateAndRunParamsNonStreaming, ThreadCreateAndRunParamsStreaming, ThreadCreateAndRunPollParams, ThreadCreateAndRunStreamParams, Threads, } from "./threads/index.js";
 export { Beta } from "./beta.js";
 export { Chat } from "./chat/index.js";
-export { VectorStore, VectorStoreDeleted, VectorStoreCreateParams, VectorStoreUpdateParams, VectorStoreListParams, VectorStoresPage, VectorStores, } from "./vector-stores/index.js";
+export { AutoFileChunkingStrategyParam, FileChunkingStrategy, FileChunkingStrategyParam, OtherFileChunkingStrategyObject, StaticFileChunkingStrategy, StaticFileChunkingStrategyObject, StaticFileChunkingStrategyParam, VectorStore, VectorStoreDeleted, VectorStoreCreateParams, VectorStoreUpdateParams, VectorStoreListParams, VectorStoresPage, VectorStores, } from "./vector-stores/index.js";
 //# sourceMappingURL=index.d.ts.map

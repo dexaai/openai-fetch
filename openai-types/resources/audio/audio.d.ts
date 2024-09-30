@@ -9,8 +9,14 @@ export declare class Audio extends APIResource {
     speech: SpeechAPI.Speech;
 }
 export type AudioModel = 'whisper-1';
+/**
+ * The format of the output, in one of these options: `json`, `text`, `srt`,
+ * `verbose_json`, or `vtt`.
+ */
+export type AudioResponseFormat = 'json' | 'text' | 'srt' | 'verbose_json' | 'vtt';
 export declare namespace Audio {
     export import AudioModel = AudioAPI.AudioModel;
+    export import AudioResponseFormat = AudioAPI.AudioResponseFormat;
     export import Transcriptions = TranscriptionsAPI.Transcriptions;
     export import Transcription = TranscriptionsAPI.Transcription;
     export import TranscriptionCreateParams = TranscriptionsAPI.TranscriptionCreateParams;

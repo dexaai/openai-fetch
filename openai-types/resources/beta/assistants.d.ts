@@ -5,6 +5,7 @@ import * as Shared from "../shared.js";
 import * as ChatAPI from "../chat/chat.js";
 import * as MessagesAPI from "./threads/messages.js";
 import * as ThreadsAPI from "./threads/threads.js";
+import * as VectorStoresAPI from "./vector-stores/vector-stores.js";
 import * as RunsAPI from "./threads/runs/runs.js";
 import * as StepsAPI from "./threads/runs/steps.js";
 import { CursorPage, type CursorPageParams } from "../../pagination.js";
@@ -90,11 +91,11 @@ export interface Assistant {
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
-     * Outputs which guarantees the model will match your supplied JSON schema. Learn
-     * more in the
+     * Outputs which ensures the model will match your supplied JSON schema. Learn more
+     * in the
      * [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
      *
-     * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
+     * Setting to `{ "type": "json_object" }` enables JSON mode, which ensures the
      * message the model generates is valid JSON.
      *
      * **Important:** when using JSON mode, you **must** also instruct the model to
@@ -323,8 +324,8 @@ export declare namespace AssistantStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object) is
-     * created.
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
+     * is created.
      */
     interface ThreadRunStepCreated {
         /**
@@ -335,7 +336,7 @@ export declare namespace AssistantStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object)
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
      * moves to an `in_progress` state.
      */
     interface ThreadRunStepInProgress {
@@ -347,8 +348,8 @@ export declare namespace AssistantStreamEvent {
     }
     /**
      * Occurs when parts of a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object) are
-     * being streamed.
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
+     * are being streamed.
      */
     interface ThreadRunStepDelta {
         /**
@@ -360,8 +361,8 @@ export declare namespace AssistantStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object) is
-     * completed.
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
+     * is completed.
      */
     interface ThreadRunStepCompleted {
         /**
@@ -372,7 +373,7 @@ export declare namespace AssistantStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object)
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
      * fails.
      */
     interface ThreadRunStepFailed {
@@ -384,8 +385,8 @@ export declare namespace AssistantStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object) is
-     * cancelled.
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
+     * is cancelled.
      */
     interface ThreadRunStepCancelled {
         /**
@@ -396,7 +397,7 @@ export declare namespace AssistantStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object)
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
      * expires.
      */
     interface ThreadRunStepExpired {
@@ -510,10 +511,41 @@ export declare namespace FileSearchTool {
          *
          * Note that the file search tool may output fewer than `max_num_results` results.
          * See the
-         * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search/number-of-chunks-returned)
+         * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search/customizing-file-search-settings)
          * for more information.
          */
         max_num_results?: number;
+        /**
+         * The ranking options for the file search. If not specified, the file search tool
+         * will use the `auto` ranker and a score_threshold of 0.
+         *
+         * See the
+         * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search/customizing-file-search-settings)
+         * for more information.
+         */
+        ranking_options?: FileSearch.RankingOptions;
+    }
+    namespace FileSearch {
+        /**
+         * The ranking options for the file search. If not specified, the file search tool
+         * will use the `auto` ranker and a score_threshold of 0.
+         *
+         * See the
+         * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search/customizing-file-search-settings)
+         * for more information.
+         */
+        interface RankingOptions {
+            /**
+             * The score threshold for the file search. All values must be a floating point
+             * number between 0 and 1.
+             */
+            score_threshold: number;
+            /**
+             * The ranker to use for the file search. If not specified will use the `auto`
+             * ranker.
+             */
+            ranker?: 'auto' | 'default_2024_08_21';
+        }
     }
 }
 export interface FunctionTool {
@@ -598,15 +630,15 @@ export declare namespace MessageStreamEvent {
 }
 /**
  * Occurs when a
- * [run step](https://platform.openai.com/docs/api-reference/runs/step-object) is
- * created.
+ * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
+ * is created.
  */
 export type RunStepStreamEvent = RunStepStreamEvent.ThreadRunStepCreated | RunStepStreamEvent.ThreadRunStepInProgress | RunStepStreamEvent.ThreadRunStepDelta | RunStepStreamEvent.ThreadRunStepCompleted | RunStepStreamEvent.ThreadRunStepFailed | RunStepStreamEvent.ThreadRunStepCancelled | RunStepStreamEvent.ThreadRunStepExpired;
 export declare namespace RunStepStreamEvent {
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object) is
-     * created.
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
+     * is created.
      */
     interface ThreadRunStepCreated {
         /**
@@ -617,7 +649,7 @@ export declare namespace RunStepStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object)
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
      * moves to an `in_progress` state.
      */
     interface ThreadRunStepInProgress {
@@ -629,8 +661,8 @@ export declare namespace RunStepStreamEvent {
     }
     /**
      * Occurs when parts of a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object) are
-     * being streamed.
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
+     * are being streamed.
      */
     interface ThreadRunStepDelta {
         /**
@@ -642,8 +674,8 @@ export declare namespace RunStepStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object) is
-     * completed.
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
+     * is completed.
      */
     interface ThreadRunStepCompleted {
         /**
@@ -654,7 +686,7 @@ export declare namespace RunStepStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object)
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
      * fails.
      */
     interface ThreadRunStepFailed {
@@ -666,8 +698,8 @@ export declare namespace RunStepStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object) is
-     * cancelled.
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
+     * is cancelled.
      */
     interface ThreadRunStepCancelled {
         /**
@@ -678,7 +710,7 @@ export declare namespace RunStepStreamEvent {
     }
     /**
      * Occurs when a
-     * [run step](https://platform.openai.com/docs/api-reference/runs/step-object)
+     * [run step](https://platform.openai.com/docs/api-reference/run-steps/step-object)
      * expires.
      */
     interface ThreadRunStepExpired {
@@ -865,11 +897,11 @@ export interface AssistantCreateParams {
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
-     * Outputs which guarantees the model will match your supplied JSON schema. Learn
-     * more in the
+     * Outputs which ensures the model will match your supplied JSON schema. Learn more
+     * in the
      * [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
      *
-     * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
+     * Setting to `{ "type": "json_object" }` enables JSON mode, which ensures the
      * message the model generates is valid JSON.
      *
      * **Important:** when using JSON mode, you **must** also instruct the model to
@@ -949,9 +981,9 @@ export declare namespace AssistantCreateParams {
             interface VectorStore {
                 /**
                  * The chunking strategy used to chunk the file(s). If not set, will use the `auto`
-                 * strategy.
+                 * strategy. Only applicable if `file_ids` is non-empty.
                  */
-                chunking_strategy?: VectorStore.Auto | VectorStore.Static;
+                chunking_strategy?: VectorStoresAPI.FileChunkingStrategyParam;
                 /**
                  * A list of [file](https://platform.openai.com/docs/api-reference/files) IDs to
                  * add to the vector store. There can be a maximum of 10000 files in a vector
@@ -965,40 +997,6 @@ export declare namespace AssistantCreateParams {
                  * of 512 characters long.
                  */
                 metadata?: unknown;
-            }
-            namespace VectorStore {
-                /**
-                 * The default strategy. This strategy currently uses a `max_chunk_size_tokens` of
-                 * `800` and `chunk_overlap_tokens` of `400`.
-                 */
-                interface Auto {
-                    /**
-                     * Always `auto`.
-                     */
-                    type: 'auto';
-                }
-                interface Static {
-                    static: Static.Static;
-                    /**
-                     * Always `static`.
-                     */
-                    type: 'static';
-                }
-                namespace Static {
-                    interface Static {
-                        /**
-                         * The number of tokens that overlap between chunks. The default value is `400`.
-                         *
-                         * Note that the overlap must not exceed half of `max_chunk_size_tokens`.
-                         */
-                        chunk_overlap_tokens: number;
-                        /**
-                         * The maximum number of tokens in each chunk. The default value is `800`. The
-                         * minimum value is `100` and the maximum value is `4096`.
-                         */
-                        max_chunk_size_tokens: number;
-                    }
-                }
             }
         }
     }
@@ -1039,11 +1037,11 @@ export interface AssistantUpdateParams {
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
-     * Outputs which guarantees the model will match your supplied JSON schema. Learn
-     * more in the
+     * Outputs which ensures the model will match your supplied JSON schema. Learn more
+     * in the
      * [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
      *
-     * Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
+     * Setting to `{ "type": "json_object" }` enables JSON mode, which ensures the
      * message the model generates is valid JSON.
      *
      * **Important:** when using JSON mode, you **must** also instruct the model to
