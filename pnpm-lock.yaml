@@ -22,8 +22,8 @@ importers:
         specifier: ^10.0.7
         version: 10.0.7(typescript@5.6.2)
       openai:
-        specifier: ^4.65.0
-        version: 4.65.0
+        specifier: ^4.67.0
+        version: 4.67.0
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -1601,8 +1601,8 @@ packages:
     resolution: {integrity: sha512-mnkeQ1qP5Ue2wd+aivTD3NHd/lZ96Lu0jgf0pwktLPtx6cTZiH7tyeGRRHs0zX0rbrahXPnXlUnbeXyaBBuIaw==}
     engines: {node: '>=18'}
 
-  openai@4.65.0:
-    resolution: {integrity: sha512-LfA4KUBpH/8rA3vjCQ74LZtdK/8wx9W6Qxq8MHqEdImPsN1XPQ2ompIuJWkKS6kXt5Cs5i8Eb65IIo4M7U+yeQ==}
+  openai@4.67.0:
+    resolution: {integrity: sha512-jdsPSEdZbUNVtvEFE/eeL4FjKavyVMJJEdGMZk9vExglqUrblEcFxi3LK2WhskhrYKAU1MgJAI+dK9pDcA5z5w==}
     hasBin: true
     peerDependencies:
       zod: ^3.23.8
@@ -4093,7 +4093,7 @@ snapshots:
       is-inside-container: 1.0.0
       is-wsl: 3.1.0
 
-  openai@4.65.0:
+  openai@4.67.0:
     dependencies:
       '@types/node': 18.19.54
       '@types/node-fetch': 2.6.11

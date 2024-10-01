@@ -2,16 +2,39 @@ import { APIResource } from "../../resource.js";
 import * as Core from "../../core.js";
 import * as TranslationsAPI from "./translations.js";
 import * as AudioAPI from "./audio.js";
+import * as TranscriptionsAPI from "./transcriptions.js";
 export declare class Translations extends APIResource {
     /**
      * Translates audio into English.
      */
+    create(body: TranslationCreateParams<'json' | undefined>, options?: Core.RequestOptions): Core.APIPromise<Translation>;
+    create(body: TranslationCreateParams<'verbose_json'>, options?: Core.RequestOptions): Core.APIPromise<TranslationVerbose>;
+    create(body: TranslationCreateParams<'text' | 'srt' | 'vtt'>, options?: Core.RequestOptions): Core.APIPromise<string>;
     create(body: TranslationCreateParams, options?: Core.RequestOptions): Core.APIPromise<Translation>;
 }
 export interface Translation {
     text: string;
 }
-export interface TranslationCreateParams {
+export interface TranslationVerbose {
+    /**
+     * The duration of the input audio.
+     */
+    duration: string;
+    /**
+     * The language of the output translation (always `english`).
+     */
+    language: string;
+    /**
+     * The translated text.
+     */
+    text: string;
+    /**
+     * Segments of the translated text and their corresponding details.
+     */
+    segments?: Array<TranscriptionsAPI.TranscriptionSegment>;
+}
+export type TranslationCreateResponse = Translation | TranslationVerbose;
+export interface TranslationCreateParams<ResponseFormat extends AudioAPI.AudioResponseFormat | undefined = AudioAPI.AudioResponseFormat | undefined> {
     /**
      * The audio file object (not file name) translate, in one of these formats: flac,
      * mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm.
@@ -33,7 +56,7 @@ export interface TranslationCreateParams {
      * The format of the output, in one of these options: `json`, `text`, `srt`,
      * `verbose_json`, or `vtt`.
      */
-    response_format?: AudioAPI.AudioResponseFormat;
+    response_format?: ResponseFormat;
     /**
      * The sampling temperature, between 0 and 1. Higher values like 0.8 will make the
      * output more random, while lower values like 0.2 will make it more focused and
@@ -45,6 +68,8 @@ export interface TranslationCreateParams {
 }
 export declare namespace Translations {
     export import Translation = TranslationsAPI.Translation;
-    export import TranslationCreateParams = TranslationsAPI.TranslationCreateParams;
+    export import TranslationVerbose = TranslationsAPI.TranslationVerbose;
+    export import TranslationCreateResponse = TranslationsAPI.TranslationCreateResponse;
+    type TranslationCreateParams<ResponseFormat extends AudioAPI.AudioResponseFormat | undefined = AudioAPI.AudioResponseFormat | undefined> = TranslationsAPI.TranslationCreateParams<ResponseFormat>;
 }
 //# sourceMappingURL=translations.d.ts.map

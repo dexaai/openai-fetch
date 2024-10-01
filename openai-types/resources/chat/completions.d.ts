@@ -598,8 +598,12 @@ export type CreateChatCompletionRequestMessage = ChatCompletionMessageParam;
 export type ChatCompletionCreateParams = ChatCompletionCreateParamsNonStreaming | ChatCompletionCreateParamsStreaming;
 export interface ChatCompletionCreateParamsBase {
     /**
-     * A list of messages comprising the conversation so far.
-     * [Example Python code](https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models).
+     * A list of messages comprising the conversation so far. Depending on the
+     * [model](https://platform.openai.com/docs/models) you use, different message
+     * types (modalities) are supported, like
+     * [text](https://platform.openai.com/docs/guides/text-generation),
+     * [images](https://platform.openai.com/docs/guides/vision), and
+     * [audio](https://platform.openai.com/docs/guides/audio).
      */
     messages: Array<ChatCompletionMessageParam>;
     /**
@@ -668,6 +672,11 @@ export interface ChatCompletionCreateParamsBase {
      * [o1 series models](https://platform.openai.com/docs/guides/reasoning).
      */
     max_tokens?: number | null;
+    /**
+     * Developer-defined tags and values used for filtering completions in the
+     * [dashboard](https://platform.openai.com/completions).
+     */
+    metadata?: Record<string, string> | null;
     /**
      * How many chat completion choices to generate for each input message. Note that
      * you will be charged based on the number of generated tokens across all of the
@@ -741,6 +750,11 @@ export interface ChatCompletionCreateParamsBase {
      * Up to 4 sequences where the API will stop generating further tokens.
      */
     stop?: string | null | Array<string>;
+    /**
+     * Whether or not to store the output of this completion request for traffic
+     * logging in the [dashboard](https://platform.openai.com/completions).
+     */
+    store?: boolean | null;
     /**
      * If set, partial message deltas will be sent, like in ChatGPT. Tokens will be
      * sent as data-only

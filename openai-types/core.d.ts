@@ -41,7 +41,9 @@ export declare class APIPromise<T> extends Promise<WithRequestID<T>> {
      */
     asResponse(): Promise<Response>;
     /**
-     * Gets the parsed response data and the raw `Response` instance.
+     * Gets the parsed response data, the raw `Response` instance and the ID of the request,
+     * returned via the X-Request-ID header which is useful for debugging requests and reporting
+     * issues to OpenAI.
      *
      * If you just want to get the raw `Response` instance without parsing it,
      * you can use {@link asResponse()}.
@@ -56,6 +58,7 @@ export declare class APIPromise<T> extends Promise<WithRequestID<T>> {
     withResponse(): Promise<{
         data: T;
         response: Response;
+        request_id: string | null | undefined;
     }>;
     private parse;
     then<TResult1 = WithRequestID<T>, TResult2 = never>(onfulfilled?: ((value: WithRequestID<T>) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
