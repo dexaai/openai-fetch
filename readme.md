@@ -10,7 +10,7 @@ Unfortunately, the official [openai](https://github.com/openai/openai-node) pack
 
 - You want a fast and small client that doesn't patch fetch
 - Supports all envs with native fetch: Node 18+, browsers, Deno, Cloudflare Workers, etc
-- Package size: `openai-fetch` is [~14kb](https://bundlephobia.com/package/openai-fetch) and `openai` is [~142kb](https://bundlephobia.com/package/openai)
+- Package size: `openai-fetch` is [~14kb](https://bundlephobia.com/package/openai-fetch) and `openai` is [~152kb](https://bundlephobia.com/package/openai)
 - You only need chat, completions, embeddings, and moderations
 
 ### Use the official `openai` package if:
