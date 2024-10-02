@@ -22,7 +22,7 @@ export declare class APIUserAbortError extends APIError {
 export declare class APIConnectionError extends APIError {
     readonly status: undefined;
     constructor({ message, cause }: {
-        message?: string;
+        message?: string | undefined;
         cause?: Error | undefined;
     });
 }

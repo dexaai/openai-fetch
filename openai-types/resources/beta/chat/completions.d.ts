@@ -6,6 +6,7 @@ import { ChatCompletionStreamingRunner, ChatCompletionStreamingFunctionRunnerPar
 export { ChatCompletionStreamingRunner, ChatCompletionStreamingFunctionRunnerParams, } from "../../../lib/ChatCompletionStreamingRunner.js";
 import { BaseFunctionsArgs } from "../../../lib/RunnableFunction.js";
 export { RunnableFunction, RunnableFunctions, RunnableFunctionWithParse, RunnableFunctionWithoutParse, ParsingFunction, ParsingToolFunction, } from "../../../lib/RunnableFunction.js";
+import { RunnerOptions } from "../../../lib/AbstractChatCompletionRunner.js";
 import { ChatCompletionToolRunnerParams } from "../../../lib/ChatCompletionRunner.js";
 export { ChatCompletionToolRunnerParams } from "../../../lib/ChatCompletionRunner.js";
 import { ChatCompletionStreamingToolRunnerParams } from "../../../lib/ChatCompletionStreamingRunner.js";
@@ -32,7 +33,7 @@ export interface ParsedChatCompletion<ParsedT> extends ChatCompletion {
 }
 export type ChatCompletionParseParams = ChatCompletionCreateParamsNonStreaming;
 export declare class Completions extends APIResource {
-    parse<Params extends ChatCompletionParseParams, ParsedT = ExtractParsedContentFromParams<Params>>(body: Params, options?: Core.RequestOptions): Promise<ParsedChatCompletion<ParsedT>>;
+    parse<Params extends ChatCompletionParseParams, ParsedT = ExtractParsedContentFromParams<Params>>(body: Params, options?: Core.RequestOptions): Core.APIPromise<ParsedChatCompletion<ParsedT>>;
     /**
      * @deprecated - use `runTools` instead.
      */
@@ -47,8 +48,8 @@ export declare class Completions extends APIResource {
      * For more details and examples, see
      * [the docs](https://github.com/openai/openai-node#automated-function-calls)
      */
-    runTools<Params extends ChatCompletionToolRunnerParams<any>, ParsedT = ExtractParsedContentFromParams<Params>>(body: Params, options?: Core.RequestOptions): ChatCompletionRunner<ParsedT>;
-    runTools<Params extends ChatCompletionStreamingToolRunnerParams<any>, ParsedT = ExtractParsedContentFromParams<Params>>(body: Params, options?: Core.RequestOptions): ChatCompletionStreamingRunner<ParsedT>;
+    runTools<Params extends ChatCompletionToolRunnerParams<any>, ParsedT = ExtractParsedContentFromParams<Params>>(body: Params, options?: RunnerOptions): ChatCompletionRunner<ParsedT>;
+    runTools<Params extends ChatCompletionStreamingToolRunnerParams<any>, ParsedT = ExtractParsedContentFromParams<Params>>(body: Params, options?: RunnerOptions): ChatCompletionStreamingRunner<ParsedT>;
     /**
      * Creates a chat completion stream
      */

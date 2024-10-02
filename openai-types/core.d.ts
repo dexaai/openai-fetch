@@ -13,15 +13,18 @@ type APIResponseProps = {
     options: FinalRequestOptions;
     controller: AbortController;
 };
+type WithRequestID<T> = T extends Array<any> | Response | AbstractPage<any> ? T : T extends Record<string, any> ? T & {
+    _request_id?: string | null;
+} : T;
 /**
  * A subclass of `Promise` providing additional helper methods
  * for interacting with the SDK.
  */
-export declare class APIPromise<T> extends Promise<T> {
+export declare class APIPromise<T> extends Promise<WithRequestID<T>> {
     private responsePromise;
     private parseResponse;
     private parsedPromise;
-    constructor(responsePromise: Promise<APIResponseProps>, parseResponse?: (props: APIResponseProps) => PromiseOrValue<T>);
+    constructor(responsePromise: Promise<APIResponseProps>, parseResponse?: (props: APIResponseProps) => PromiseOrValue<WithRequestID<T>>);
     _thenUnwrap<U>(transform: (data: T) => U): APIPromise<U>;
     /**
      * Gets the raw `Response` instance instead of parsing the response
@@ -38,7 +41,9 @@ export declare class APIPromise<T> extends Promise<T> {
      */
     asResponse(): Promise<Response>;
     /**
-     * Gets the parsed response data and the raw `Response` instance.
+     * Gets the parsed response data, the raw `Response` instance and the ID of the request,
+     * returned via the X-Request-ID header which is useful for debugging requests and reporting
+     * issues to OpenAI.
      *
      * If you just want to get the raw `Response` instance without parsing it,
      * you can use {@link asResponse()}.
@@ -53,11 +58,12 @@ export declare class APIPromise<T> extends Promise<T> {
     withResponse(): Promise<{
         data: T;
         response: Response;
+        request_id: string | null | undefined;
     }>;
     private parse;
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
-    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+    then<TResult1 = WithRequestID<T>, TResult2 = never>(onfulfilled?: ((value: WithRequestID<T>) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<WithRequestID<T> | TResult>;
+    finally(onfinally?: (() => void) | undefined | null): Promise<WithRequestID<T>>;
 }
 export declare abstract class APIClient {
     baseURL: string;
@@ -98,7 +104,9 @@ export declare abstract class APIClient {
     private methodRequest;
     getAPIList<Item, PageClass extends AbstractPage<Item> = AbstractPage<Item>>(path: string, Page: new (...args: any[]) => PageClass, opts?: RequestOptions<any>): PagePromise<PageClass, Item>;
     private calculateContentLength;
-    buildRequest<Req>(options: FinalRequestOptions<Req>): {
+    buildRequest<Req>(options: FinalRequestOptions<Req>, { retryCount }?: {
+        retryCount?: number;
+    }): {
         req: RequestInit;
         url: string;
         timeout: number;
@@ -232,7 +240,8 @@ export interface HeadersProtocol {
 }
 export type HeadersLike = Record<string, string | string[] | undefined> | HeadersProtocol;
 export declare const isHeadersProtocol: (headers: any) => headers is HeadersProtocol;
-export declare const getRequiredHeader: (headers: HeadersLike, header: string) => string;
+export declare const getRequiredHeader: (headers: HeadersLike | Headers, header: string) => string;
+export declare const getHeader: (headers: HeadersLike | Headers, header: string) => string | undefined;
 /**
  * Encodes a string to Base64 format.
  */
