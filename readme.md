@@ -11,13 +11,13 @@ Unfortunately, the official [openai](https://github.com/openai/openai-node) pack
 - You want a fast and small client that doesn't patch fetch
 - Supports all envs with native fetch: Node 18+, browsers, Deno, Cloudflare Workers, etc
 - Package size: `openai-fetch` is [~14kb](https://bundlephobia.com/package/openai-fetch) and `openai` is [~152kb](https://bundlephobia.com/package/openai)
-- You only need chat, completions, embeddings, and moderations
+- You only need chat, completions, embeddings, and moderations, and TTS
 
 ### Use the official `openai` package if:
 
 - Your runtime doesn't have native fetch support
 - Your app can't handle native ESM code
-- You need endpoints other than chat, completions, embeddings, and moderations
+- You need endpoints other than chat, completions, embeddings, and moderations, and TTS
 - You aren't concerned with lib size or fetch patching
 
 ## Install
@@ -42,7 +42,7 @@ The `apiKey` is optional and will be read from `process.env.OPENAI_API_KEY` if p
 
 ## API
 
-The API follows OpenAI very closely, so their [reference documentation](https://beta.openai.com/docs/api-reference) can generally be used. Everything is strongly typed, so you will know if anything is different as soon as TypeScript parses your code.
+The API follows OpenAI very closely, so their [reference documentation](https://platform.openai.com/docs/api-reference) can generally be used. Everything is strongly typed, so you will know if anything is different as soon as TypeScript parses your code.
 
 ```ts
 // Generate a single chat completion
@@ -62,6 +62,9 @@ client.createEmbeddings(params: EmbeddingParams): Promise<EmbeddingResponse>
 
 // Checks for potentially harmful content
 client.createModeration(params: ModerationParams): Promise<ModerationResponse>
+
+// Text-to-Speech
+client.createSpeech(params: SpeechParams): Promise<SpeechResponse>
 ```
 
 ### Type Definitions
