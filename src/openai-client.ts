@@ -15,6 +15,8 @@ import {
   type EmbeddingResponse,
   type ModerationParams,
   type ModerationResponse,
+  type SpeechParams,
+  type SpeechResponse,
 } from './types.js';
 
 export type ConfigOpts = {
@@ -143,6 +145,17 @@ export class OpenAIClient {
     const response: OpenAI.ModerationCreateResponse = await this.getApi(opts)
       .post('moderations', { json: params })
       .json();
+    return response;
+  }
+
+  /** Generates audio from the input text. Also known as TTS. */
+  async createSpeech(
+    params: SpeechParams,
+    opts?: RequestOpts
+  ): Promise<SpeechResponse> {
+    const response = await this.getApi(opts)
+      .post('audio/speech', { json: params })
+      .arrayBuffer();
     return response;
   }
 }
