@@ -27,4 +27,6 @@ export type {
   CompletionStreamResponse,
   EmbeddingParams,
   EmbeddingResponse,
+  SpeechParams,
+  SpeechResponse,
 } from './types.js';
