@@ -25,7 +25,7 @@ export declare class APIPromise<T> extends Promise<WithRequestID<T>> {
     private parseResponse;
     private parsedPromise;
     constructor(responsePromise: Promise<APIResponseProps>, parseResponse?: (props: APIResponseProps) => PromiseOrValue<WithRequestID<T>>);
-    _thenUnwrap<U>(transform: (data: T) => U): APIPromise<U>;
+    _thenUnwrap<U>(transform: (data: T, props: APIResponseProps) => U): APIPromise<U>;
     /**
      * Gets the raw `Response` instance instead of parsing the response
      * data.
