@@ -52,9 +52,9 @@
     "@dexaai/eslint-config": "^1.3.0",
     "eslint": "^8.57.0",
     "np": "^10.0.7",
-    "openai": "^4.67.1",
+    "openai": "^4.67.3",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   }
 }
