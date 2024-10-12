@@ -32,7 +32,7 @@ export type ChatMessageContentPart =
       type: 'image_url';
       image_url: {
         url: string;
-        detail?: 'low' | 'high' | ('auto' & (string & {}));
+        detail?: 'low' | 'high' | 'auto' | (string & {});
       };
     }
   // Assistant messages only.
