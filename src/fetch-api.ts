@@ -85,6 +85,7 @@ function parseHeaders(
             ])
           )
         : { ...headers };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return {};
   }
@@ -93,6 +94,7 @@ function parseHeaders(
 function safeJson(text: string) {
   try {
     return JSON.parse(text);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     return undefined;
   }
