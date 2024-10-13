@@ -10,7 +10,7 @@
     "email": "hi@rile.yt",
     "url": "https://rile.yt"
   },
-  "packageManager": "pnpm@9.6.0",
+  "packageManager": "pnpm@9.12.1",
   "engines": {
     "node": ">=18"
   },
