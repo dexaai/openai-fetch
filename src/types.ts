@@ -35,6 +35,13 @@ export type ChatMessageContentPart =
         detail?: 'low' | 'high' | 'auto' | (string & {});
       };
     }
+  | {
+      type: 'input_audio';
+      input_audio: {
+        data: string;
+        format: 'mp3' | 'wav' | (string & {});
+      };
+    }
   // Assistant messages only.
   | {
       type: 'refusal';
