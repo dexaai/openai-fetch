@@ -46,7 +46,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "ky": "^1.7.2"
+    "ky": "^1.7.2",
+    "ai-fetch": "file:../ai-fetch"
   },
   "devDependencies": {
     "@dexaai/eslint-config": "^1.3.6",

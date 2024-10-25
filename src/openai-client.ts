@@ -1,8 +1,13 @@
 import { type OpenAI } from 'openai';
 
-import { createApiInstance, type KyOptions } from './fetch-api.js';
+import { type Options as KyOptions } from 'ky';
 import { StreamCompletionChunker } from './streaming.js';
 import {
+  AIChatClient,
+  AICompletionClient,
+  AIEmbeddingClient,
+  AIFetchClient,
+  AIFetchRequestOpts,
   type ChatParams,
   type ChatResponse,
   type ChatStreamParams,
@@ -13,8 +18,10 @@ import {
   type CompletionStreamResponse,
   type EmbeddingParams,
   type EmbeddingResponse,
-  type ModerationParams,
-  type ModerationResponse,
+  createApiInstance,
+} from 'ai-fetch';
+
+import {
   type SpeechParams,
   type SpeechResponse,
 } from './types.js';
@@ -43,39 +50,42 @@ export type ConfigOpts = {
   kyOptions?: KyOptions;
 };
 
-/** Override the default Ky options for a single request. */
-type RequestOpts = {
-  headers?: KyOptions['headers'];
-  signal?: AbortSignal;
-};
-
-export class OpenAIClient {
-  private api: ReturnType<typeof createApiInstance>;
+export class OpenAIClient implements AIFetchClient, AIChatClient, AIEmbeddingClient, AICompletionClient {
+  name = 'openai';
+  api: ReturnType<typeof createApiInstance>;
 
   constructor(opts: ConfigOpts = {}) {
     const process = globalThis.process || { env: {} };
     const apiKey = opts.apiKey || process.env.OPENAI_API_KEY;
     const organizationId = opts.organizationId || process.env.OPENAI_ORG_ID;
+    const prefixUrl =
+    opts.baseUrl ||
+      process.env.OPENAI_BASE_URL ||
+      'https://api.openai.com';
     if (!apiKey)
       throw new Error(
         'Missing OpenAI API key. Please provide one in the config or set the OPENAI_API_KEY environment variable.'
       );
     this.api = createApiInstance({
-      apiKey,
-      baseUrl: opts.baseUrl,
-      organizationId,
-      kyOptions: opts.kyOptions,
+      ...opts.kyOptions,
+      prefixUrl,
+      headers: {
+        ...opts.kyOptions?.headers,
+        'User-Agent': 'openai-fetch',
+        'Authorization': `Bearer ${apiKey}`,
+        'OpenAI-Organization': organizationId,
+      },
     });
   }
 
-  private getApi(opts?: RequestOpts) {
+  private getApi(opts?: AIFetchRequestOpts) {
     return opts ? this.api.extend(opts) : this.api;
   }
 
   /** Create a completion for a chat message. */
   async createChatCompletion(
-    params: ChatParams,
-    opts?: RequestOpts
+    params: ChatParams<OpenAI.ChatCompletionCreateParams['model']>,
+    opts?: AIFetchRequestOpts
   ): Promise<ChatResponse> {
     const response: OpenAI.ChatCompletion = await this.getApi(opts)
       .post('chat/completions', { json: params })
@@ -85,8 +95,8 @@ export class OpenAIClient {
 
   /** Create a chat completion and stream back partial progress. */
   async streamChatCompletion(
-    params: ChatStreamParams,
-    opts?: RequestOpts
+    params: ChatStreamParams<OpenAI.ChatCompletionCreateParamsStreaming['model']>,
+    opts?: AIFetchRequestOpts
   ): Promise<ChatStreamResponse> {
     const response = await this.getApi(opts).post('chat/completions', {
       json: { ...params, stream: true },
@@ -102,8 +112,8 @@ export class OpenAIClient {
 
   /** Create completions for an array of prompt strings. */
   async createCompletions(
-    params: CompletionParams,
-    opts?: RequestOpts
+    params: CompletionParams<OpenAI.CompletionCreateParams['model']>,
+    opts?: AIFetchRequestOpts
   ): Promise<CompletionResponse> {
     const response: OpenAI.Completion = await this.getApi(opts)
       .post('completions', { json: params })
@@ -113,8 +123,8 @@ export class OpenAIClient {
 
   /** Create a completion for a single prompt string and stream back partial progress. */
   async streamCompletion(
-    params: CompletionStreamParams,
-    opts?: RequestOpts
+    params: CompletionStreamParams<OpenAI.CompletionCreateParamsStreaming['model']>,
+    opts?: AIFetchRequestOpts
   ): Promise<CompletionStreamResponse> {
     const response = await this.getApi(opts).post('completions', {
       json: { ...params, stream: true },
@@ -128,8 +138,8 @@ export class OpenAIClient {
 
   /** Create an embedding vector representing the input text. */
   async createEmbeddings(
-    params: EmbeddingParams,
-    opts?: RequestOpts
+    params: EmbeddingParams<OpenAI.EmbeddingCreateParams['model']>,
+    opts?: AIFetchRequestOpts
   ): Promise<EmbeddingResponse> {
     const response: OpenAI.CreateEmbeddingResponse = await this.getApi(opts)
       .post('embeddings', { json: params })
@@ -139,9 +149,9 @@ export class OpenAIClient {
 
   /** Given some input text, outputs if the model classifies it as potentially harmful across several categories. */
   async createModeration(
-    params: ModerationParams,
-    opts?: RequestOpts
-  ): Promise<ModerationResponse> {
+    params: OpenAI.ModerationCreateParams,
+    opts?: AIFetchRequestOpts
+  ): Promise<OpenAI.ModerationCreateResponse> {
     const response: OpenAI.ModerationCreateResponse = await this.getApi(opts)
       .post('moderations', { json: params })
       .json();
@@ -151,7 +161,7 @@ export class OpenAIClient {
   /** Generates audio from the input text. Also known as TTS. */
   async createSpeech(
     params: SpeechParams,
-    opts?: RequestOpts
+    opts?: AIFetchRequestOpts
   ): Promise<SpeechResponse> {
     const response = await this.getApi(opts)
       .post('audio/speech', { json: params })
