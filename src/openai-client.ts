@@ -20,10 +20,7 @@ import { type Options as KyOptions } from 'ky';
 import { type OpenAI } from 'openai';
 
 import { StreamCompletionChunker } from './streaming.js';
-import {
-  type SpeechParams,
-  type SpeechResponse,
-} from './types.js';
+import { type SpeechParams, type SpeechResponse } from './types.js';
 
 export type ConfigOpts = {
   /**
@@ -49,7 +46,9 @@ export type ConfigOpts = {
   kyOptions?: KyOptions;
 };
 
-export class OpenAIClient implements AIFetchClient, AIChatClient, AIEmbeddingClient, AICompletionClient {
+export class OpenAIClient
+  implements AIFetchClient, AIChatClient, AIEmbeddingClient, AICompletionClient
+{
   name = 'openai';
   api: ReturnType<typeof createApiInstance>;
 
@@ -58,9 +57,7 @@ export class OpenAIClient implements AIFetchClient, AIChatClient, AIEmbeddingCli
     const apiKey = opts.apiKey || process.env.OPENAI_API_KEY;
     const organizationId = opts.organizationId || process.env.OPENAI_ORG_ID;
     const prefixUrl =
-    opts.baseUrl ||
-      process.env.OPENAI_BASE_URL ||
-      'https://api.openai.com';
+      opts.baseUrl || process.env.OPENAI_BASE_URL || 'https://api.openai.com';
     if (!apiKey)
       throw new Error(
         'Missing OpenAI API key. Please provide one in the config or set the OPENAI_API_KEY environment variable.'
@@ -71,7 +68,7 @@ export class OpenAIClient implements AIFetchClient, AIChatClient, AIEmbeddingCli
       headers: {
         ...opts.kyOptions?.headers,
         'User-Agent': 'openai-fetch',
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'OpenAI-Organization': organizationId,
       },
     });
@@ -94,7 +91,9 @@ export class OpenAIClient implements AIFetchClient, AIChatClient, AIEmbeddingCli
 
   /** Create a chat completion and stream back partial progress. */
   async streamChatCompletion(
-    params: ChatStreamParams<OpenAI.ChatCompletionCreateParamsStreaming['model']>,
+    params: ChatStreamParams<
+      OpenAI.ChatCompletionCreateParamsStreaming['model']
+    >,
     opts?: AIFetchRequestOpts
   ): Promise<ChatStreamResponse> {
     const response = await this.getApi(opts).post('chat/completions', {
@@ -122,7 +121,9 @@ export class OpenAIClient implements AIFetchClient, AIChatClient, AIEmbeddingCli
 
   /** Create a completion for a single prompt string and stream back partial progress. */
   async streamCompletion(
-    params: CompletionStreamParams<OpenAI.CompletionCreateParamsStreaming['model']>,
+    params: CompletionStreamParams<
+      OpenAI.CompletionCreateParamsStreaming['model']
+    >,
     opts?: AIFetchRequestOpts
   ): Promise<CompletionStreamResponse> {
     const response = await this.getApi(opts).post('completions', {

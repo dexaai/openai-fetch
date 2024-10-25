@@ -1,4 +1,4 @@
-export { type ConfigOpts,OpenAIClient } from './openai-client.js';
+export { type ConfigOpts, OpenAIClient } from './openai-client.js';
 export type {
   ModerationParams,
   ModerationResponse,
