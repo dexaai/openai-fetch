@@ -1,13 +1,9 @@
-import { type OpenAI } from 'openai';
-
-import { type Options as KyOptions } from 'ky';
-import { StreamCompletionChunker } from './streaming.js';
 import {
-  AIChatClient,
-  AICompletionClient,
-  AIEmbeddingClient,
-  AIFetchClient,
-  AIFetchRequestOpts,
+  type AIChatClient,
+  type AICompletionClient,
+  type AIEmbeddingClient,
+  type AIFetchClient,
+  type AIFetchRequestOpts,
   type ChatParams,
   type ChatResponse,
   type ChatStreamParams,
@@ -16,11 +12,14 @@ import {
   type CompletionResponse,
   type CompletionStreamParams,
   type CompletionStreamResponse,
+  createApiInstance,
   type EmbeddingParams,
   type EmbeddingResponse,
-  createApiInstance,
 } from 'ai-fetch';
+import { type Options as KyOptions } from 'ky';
+import { type OpenAI } from 'openai';
 
+import { StreamCompletionChunker } from './streaming.js';
 import {
   type SpeechParams,
   type SpeechResponse,

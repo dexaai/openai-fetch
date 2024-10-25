@@ -1,4 +1,10 @@
-export { OpenAIClient, type ConfigOpts } from './openai-client.js';
+export { type ConfigOpts,OpenAIClient } from './openai-client.js';
+export type {
+  ModerationParams,
+  ModerationResponse,
+  SpeechParams,
+  SpeechResponse,
+} from './types.js';
 export type {
   APIConnectionError,
   APIConnectionTimeoutError,
@@ -26,7 +32,3 @@ export type {
   RateLimitError,
   UnprocessableEntityError,
 } from 'ai-fetch';
-export type {
-  SpeechParams,
-  SpeechResponse,
-} from './types.js';
