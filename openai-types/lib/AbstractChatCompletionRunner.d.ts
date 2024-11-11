@@ -1,6 +1,6 @@
-import * as Core from '../core.js';
-import { type CompletionUsage } from '../resources/completions.js';
-import { type ChatCompletion, type ChatCompletionMessage, type ChatCompletionMessageParam, type ChatCompletionCreateParams } from '../resources/chat/completions.js';
+import * as Core from "../core.js";
+import { type CompletionUsage } from "../resources/completions.js";
+import { type ChatCompletion, type ChatCompletionMessage, type ChatCompletionMessageParam, type ChatCompletionCreateParams } from "../resources/chat/completions.js";
 import { type BaseFunctionsArgs } from "./RunnableFunction.js";
 import { ChatCompletionFunctionRunnerParams, ChatCompletionToolRunnerParams } from "./ChatCompletionRunner.js";
 import { ChatCompletionStreamingFunctionRunnerParams, ChatCompletionStreamingToolRunnerParams } from "./ChatCompletionStreamingRunner.js";

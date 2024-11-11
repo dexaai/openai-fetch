@@ -1,8 +1,8 @@
 import { APIResource } from "../../resource.js";
 import * as Core from "../../core.js";
-import * as UploadsAPI from "./uploads.js";
 import * as FilesAPI from "../files.js";
 import * as PartsAPI from "./parts.js";
+import { PartCreateParams, Parts, UploadPart } from "./parts.js";
 export declare class Uploads extends APIResource {
     parts: PartsAPI.Parts;
     /**
@@ -21,7 +21,7 @@ export declare class Uploads extends APIResource {
      * For certain `purpose`s, the correct `mime_type` must be specified. Please refer
      * to documentation for the supported MIME types for your use case:
      *
-     * - [Assistants](https://platform.openai.com/docs/assistants/tools/file-search/supported-files)
+     * - [Assistants](https://platform.openai.com/docs/assistants/tools/file-search#supported-files)
      *
      * For guidance on the proper filename extensions for each purpose, please follow
      * the documentation on
@@ -128,11 +128,7 @@ export interface UploadCompleteParams {
     md5?: string;
 }
 export declare namespace Uploads {
-    export import Upload = UploadsAPI.Upload;
-    export import UploadCreateParams = UploadsAPI.UploadCreateParams;
-    export import UploadCompleteParams = UploadsAPI.UploadCompleteParams;
-    export import Parts = PartsAPI.Parts;
-    export import UploadPart = PartsAPI.UploadPart;
-    export import PartCreateParams = PartsAPI.PartCreateParams;
+    export { type Upload as Upload, type UploadCreateParams as UploadCreateParams, type UploadCompleteParams as UploadCompleteParams, };
+    export { Parts as Parts, type UploadPart as UploadPart, type PartCreateParams as PartCreateParams };
 }
 //# sourceMappingURL=uploads.d.ts.map

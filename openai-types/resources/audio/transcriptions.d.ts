@@ -1,6 +1,5 @@
 import { APIResource } from "../../resource.js";
 import * as Core from "../../core.js";
-import * as TranscriptionsAPI from "./transcriptions.js";
 import * as AudioAPI from "./audio.js";
 export declare class Transcriptions extends APIResource {
     /**
@@ -131,7 +130,7 @@ export interface TranscriptionCreateParams<ResponseFormat extends AudioAPI.Audio
     /**
      * An optional text to guide the model's style or continue a previous audio
      * segment. The
-     * [prompt](https://platform.openai.com/docs/guides/speech-to-text/prompting)
+     * [prompt](https://platform.openai.com/docs/guides/speech-to-text#prompting)
      * should match the audio language.
      */
     prompt?: string;
@@ -158,11 +157,6 @@ export interface TranscriptionCreateParams<ResponseFormat extends AudioAPI.Audio
     timestamp_granularities?: Array<'word' | 'segment'>;
 }
 export declare namespace Transcriptions {
-    export import Transcription = TranscriptionsAPI.Transcription;
-    export import TranscriptionSegment = TranscriptionsAPI.TranscriptionSegment;
-    export import TranscriptionVerbose = TranscriptionsAPI.TranscriptionVerbose;
-    export import TranscriptionWord = TranscriptionsAPI.TranscriptionWord;
-    export import TranscriptionCreateResponse = TranscriptionsAPI.TranscriptionCreateResponse;
-    type TranscriptionCreateParams<ResponseFormat extends AudioAPI.AudioResponseFormat | undefined = AudioAPI.AudioResponseFormat | undefined> = TranscriptionsAPI.TranscriptionCreateParams<ResponseFormat>;
+    export { type Transcription as Transcription, type TranscriptionSegment as TranscriptionSegment, type TranscriptionVerbose as TranscriptionVerbose, type TranscriptionWord as TranscriptionWord, type TranscriptionCreateResponse as TranscriptionCreateResponse, type TranscriptionCreateParams as TranscriptionCreateParams, };
 }
 //# sourceMappingURL=transcriptions.d.ts.map

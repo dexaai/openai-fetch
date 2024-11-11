@@ -1,6 +1,5 @@
 import { APIResource } from "../../resource.js";
 import * as Core from "../../core.js";
-import * as TranslationsAPI from "./translations.js";
 import * as AudioAPI from "./audio.js";
 import * as TranscriptionsAPI from "./transcriptions.js";
 export declare class Translations extends APIResource {
@@ -48,7 +47,7 @@ export interface TranslationCreateParams<ResponseFormat extends AudioAPI.AudioRe
     /**
      * An optional text to guide the model's style or continue a previous audio
      * segment. The
-     * [prompt](https://platform.openai.com/docs/guides/speech-to-text/prompting)
+     * [prompt](https://platform.openai.com/docs/guides/speech-to-text#prompting)
      * should be in English.
      */
     prompt?: string;
@@ -67,9 +66,6 @@ export interface TranslationCreateParams<ResponseFormat extends AudioAPI.AudioRe
     temperature?: number;
 }
 export declare namespace Translations {
-    export import Translation = TranslationsAPI.Translation;
-    export import TranslationVerbose = TranslationsAPI.TranslationVerbose;
-    export import TranslationCreateResponse = TranslationsAPI.TranslationCreateResponse;
-    type TranslationCreateParams<ResponseFormat extends AudioAPI.AudioResponseFormat | undefined = AudioAPI.AudioResponseFormat | undefined> = TranslationsAPI.TranslationCreateParams<ResponseFormat>;
+    export { type Translation as Translation, type TranslationVerbose as TranslationVerbose, type TranslationCreateResponse as TranslationCreateResponse, type TranslationCreateParams as TranslationCreateParams, };
 }
 //# sourceMappingURL=translations.d.ts.map

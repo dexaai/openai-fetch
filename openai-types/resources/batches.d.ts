@@ -181,11 +181,6 @@ export interface BatchCreateParams {
 export interface BatchListParams extends CursorPageParams {
 }
 export declare namespace Batches {
-    export import Batch = BatchesAPI.Batch;
-    export import BatchError = BatchesAPI.BatchError;
-    export import BatchRequestCounts = BatchesAPI.BatchRequestCounts;
-    export import BatchesPage = BatchesAPI.BatchesPage;
-    export import BatchCreateParams = BatchesAPI.BatchCreateParams;
-    export import BatchListParams = BatchesAPI.BatchListParams;
+    export { type Batch as Batch, type BatchError as BatchError, type BatchRequestCounts as BatchRequestCounts, BatchesPage as BatchesPage, type BatchCreateParams as BatchCreateParams, type BatchListParams as BatchListParams, };
 }
 //# sourceMappingURL=batches.d.ts.map

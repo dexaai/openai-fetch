@@ -25,7 +25,7 @@ export declare class APIPromise<T> extends Promise<WithRequestID<T>> {
     private parseResponse;
     private parsedPromise;
     constructor(responsePromise: Promise<APIResponseProps>, parseResponse?: (props: APIResponseProps) => PromiseOrValue<WithRequestID<T>>);
-    _thenUnwrap<U>(transform: (data: T) => U): APIPromise<U>;
+    _thenUnwrap<U>(transform: (data: T, props: APIResponseProps) => U): APIPromise<U>;
     /**
      * Gets the raw `Response` instance instead of parsing the response
      * data.
@@ -159,8 +159,8 @@ export declare abstract class AbstractPage<Item> implements AsyncIterable<Item> 
     abstract getPaginatedItems(): Item[];
     hasNextPage(): boolean;
     getNextPage(): Promise<this>;
-    iterPages(): AsyncGenerator<AbstractPage<Item>, void, unknown>;
-    [Symbol.asyncIterator](): AsyncGenerator<Awaited<Item>, void, unknown>;
+    iterPages(): AsyncGenerator<this>;
+    [Symbol.asyncIterator](): AsyncGenerator<Item>;
 }
 /**
  * This subclass of Promise will resolve to an instantiated Page once the request completes.
@@ -180,7 +180,7 @@ export declare class PagePromise<PageClass extends AbstractPage<Item>, Item = Re
      *      console.log(item)
      *    }
      */
-    [Symbol.asyncIterator](): AsyncGenerator<Awaited<Item>, void, unknown>;
+    [Symbol.asyncIterator](): AsyncGenerator<Item>;
 }
 export declare const createResponseHeaders: (headers: Awaited<ReturnType<Fetch>>['headers']) => Record<string, string>;
 type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';

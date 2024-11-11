@@ -1,8 +1,9 @@
 import { APIResource } from "../../../resource.js";
 import * as Core from "../../../core.js";
-import * as VectorStoresAPI from "./vector-stores.js";
 import * as FileBatchesAPI from "./file-batches.js";
+import { FileBatchCreateParams, FileBatchListFilesParams, FileBatches, VectorStoreFileBatch } from "./file-batches.js";
 import * as FilesAPI from "./files.js";
+import { FileCreateParams, FileListParams, Files, VectorStoreFile, VectorStoreFileDeleted, VectorStoreFilesPage } from "./files.js";
 import { CursorPage, type CursorPageParams } from "../../../pagination.js";
 export declare class VectorStores extends APIResource {
     files: FilesAPI.Files;
@@ -264,8 +265,8 @@ export interface VectorStoreListParams extends CursorPageParams {
     /**
      * A cursor for use in pagination. `before` is an object ID that defines your place
      * in the list. For instance, if you make a list request and receive 100 objects,
-     * ending with obj_foo, your subsequent call can include before=obj_foo in order to
-     * fetch the previous page of the list.
+     * starting with obj_foo, your subsequent call can include before=obj_foo in order
+     * to fetch the previous page of the list.
      */
     before?: string;
     /**
@@ -275,28 +276,8 @@ export interface VectorStoreListParams extends CursorPageParams {
     order?: 'asc' | 'desc';
 }
 export declare namespace VectorStores {
-    export import AutoFileChunkingStrategyParam = VectorStoresAPI.AutoFileChunkingStrategyParam;
-    export import FileChunkingStrategy = VectorStoresAPI.FileChunkingStrategy;
-    export import FileChunkingStrategyParam = VectorStoresAPI.FileChunkingStrategyParam;
-    export import OtherFileChunkingStrategyObject = VectorStoresAPI.OtherFileChunkingStrategyObject;
-    export import StaticFileChunkingStrategy = VectorStoresAPI.StaticFileChunkingStrategy;
-    export import StaticFileChunkingStrategyObject = VectorStoresAPI.StaticFileChunkingStrategyObject;
-    export import StaticFileChunkingStrategyParam = VectorStoresAPI.StaticFileChunkingStrategyParam;
-    export import VectorStore = VectorStoresAPI.VectorStore;
-    export import VectorStoreDeleted = VectorStoresAPI.VectorStoreDeleted;
-    export import VectorStoresPage = VectorStoresAPI.VectorStoresPage;
-    export import VectorStoreCreateParams = VectorStoresAPI.VectorStoreCreateParams;
-    export import VectorStoreUpdateParams = VectorStoresAPI.VectorStoreUpdateParams;
-    export import VectorStoreListParams = VectorStoresAPI.VectorStoreListParams;
-    export import Files = FilesAPI.Files;
-    export import VectorStoreFile = FilesAPI.VectorStoreFile;
-    export import VectorStoreFileDeleted = FilesAPI.VectorStoreFileDeleted;
-    export import VectorStoreFilesPage = FilesAPI.VectorStoreFilesPage;
-    export import FileCreateParams = FilesAPI.FileCreateParams;
-    export import FileListParams = FilesAPI.FileListParams;
-    export import FileBatches = FileBatchesAPI.FileBatches;
-    export import VectorStoreFileBatch = FileBatchesAPI.VectorStoreFileBatch;
-    export import FileBatchCreateParams = FileBatchesAPI.FileBatchCreateParams;
-    export import FileBatchListFilesParams = FileBatchesAPI.FileBatchListFilesParams;
+    export { type AutoFileChunkingStrategyParam as AutoFileChunkingStrategyParam, type FileChunkingStrategy as FileChunkingStrategy, type FileChunkingStrategyParam as FileChunkingStrategyParam, type OtherFileChunkingStrategyObject as OtherFileChunkingStrategyObject, type StaticFileChunkingStrategy as StaticFileChunkingStrategy, type StaticFileChunkingStrategyObject as StaticFileChunkingStrategyObject, type StaticFileChunkingStrategyParam as StaticFileChunkingStrategyParam, type VectorStore as VectorStore, type VectorStoreDeleted as VectorStoreDeleted, VectorStoresPage as VectorStoresPage, type VectorStoreCreateParams as VectorStoreCreateParams, type VectorStoreUpdateParams as VectorStoreUpdateParams, type VectorStoreListParams as VectorStoreListParams, };
+    export { Files as Files, type VectorStoreFile as VectorStoreFile, type VectorStoreFileDeleted as VectorStoreFileDeleted, VectorStoreFilesPage as VectorStoreFilesPage, type FileCreateParams as FileCreateParams, type FileListParams as FileListParams, };
+    export { FileBatches as FileBatches, type VectorStoreFileBatch as VectorStoreFileBatch, type FileBatchCreateParams as FileBatchCreateParams, type FileBatchListFilesParams as FileBatchListFilesParams, };
 }
 //# sourceMappingURL=vector-stores.d.ts.map

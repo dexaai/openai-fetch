@@ -9,6 +9,7 @@ import * as ChatAPI from "../../../chat/chat.js";
 import * as MessagesAPI from "../messages.js";
 import * as ThreadsAPI from "../threads.js";
 import * as StepsAPI from "./steps.js";
+import { CodeInterpreterLogs, CodeInterpreterOutputImage, CodeInterpreterToolCall, CodeInterpreterToolCallDelta, FileSearchToolCall, FileSearchToolCallDelta, FunctionToolCall, FunctionToolCallDelta, MessageCreationStepDetails, RunStep, RunStepDelta, RunStepDeltaEvent, RunStepDeltaMessageDelta, RunStepInclude, RunStepsPage, StepListParams, StepRetrieveParams, Steps, ToolCall, ToolCallDelta, ToolCallDeltaObject, ToolCallsStepDetails } from "./steps.js";
 import { CursorPage, type CursorPageParams } from "../../../../pagination.js";
 import { Stream } from "../../../../streaming.js";
 export declare class Runs extends APIResource {
@@ -203,7 +204,7 @@ export interface Run {
     object: 'thread.run';
     /**
      * Whether to enable
-     * [parallel function calling](https://platform.openai.com/docs/guides/function-calling/parallel-function-calling)
+     * [parallel function calling](https://platform.openai.com/docs/guides/function-calling#configuring-parallel-function-calling)
      * during tool use.
      */
     parallel_tool_calls: boolean;
@@ -214,8 +215,8 @@ export interface Run {
     required_action: Run.RequiredAction | null;
     /**
      * Specifies the format that the model must output. Compatible with
-     * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
-     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
+     * [GPT-4o](https://platform.openai.com/docs/models#gpt-4o),
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models#gpt-4-turbo-and-gpt-4),
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
@@ -393,7 +394,7 @@ export interface RunCreateParamsBase {
      * search result content.
      *
      * See the
-     * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search/customizing-file-search-settings)
+     * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search#customizing-file-search-settings)
      * for more information.
      */
     include?: Array<StepsAPI.RunStepInclude>;
@@ -446,14 +447,14 @@ export interface RunCreateParamsBase {
     model?: (string & {}) | ChatAPI.ChatModel | null;
     /**
      * Body param: Whether to enable
-     * [parallel function calling](https://platform.openai.com/docs/guides/function-calling/parallel-function-calling)
+     * [parallel function calling](https://platform.openai.com/docs/guides/function-calling#configuring-parallel-function-calling)
      * during tool use.
      */
     parallel_tool_calls?: boolean;
     /**
      * Body param: Specifies the format that the model must output. Compatible with
-     * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
-     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
+     * [GPT-4o](https://platform.openai.com/docs/models#gpt-4o),
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models#gpt-4-turbo-and-gpt-4),
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
@@ -613,8 +614,8 @@ export interface RunListParams extends CursorPageParams {
     /**
      * A cursor for use in pagination. `before` is an object ID that defines your place
      * in the list. For instance, if you make a list request and receive 100 objects,
-     * ending with obj_foo, your subsequent call can include before=obj_foo in order to
-     * fetch the previous page of the list.
+     * starting with obj_foo, your subsequent call can include before=obj_foo in order
+     * to fetch the previous page of the list.
      */
     before?: string;
     /**
@@ -1198,44 +1199,7 @@ export declare namespace RunSubmitToolOutputsStreamParams {
     }
 }
 export declare namespace Runs {
-    export import RequiredActionFunctionToolCall = RunsAPI.RequiredActionFunctionToolCall;
-    export import Run = RunsAPI.Run;
-    export import RunStatus = RunsAPI.RunStatus;
-    export import RunsPage = RunsAPI.RunsPage;
-    export import RunCreateParams = RunsAPI.RunCreateParams;
-    export import RunCreateParamsNonStreaming = RunsAPI.RunCreateParamsNonStreaming;
-    export import RunCreateParamsStreaming = RunsAPI.RunCreateParamsStreaming;
-    export import RunUpdateParams = RunsAPI.RunUpdateParams;
-    export import RunListParams = RunsAPI.RunListParams;
-    export import RunCreateAndPollParams = RunsAPI.RunCreateAndPollParams;
-    export import RunCreateAndStreamParams = RunsAPI.RunCreateAndStreamParams;
-    export import RunStreamParams = RunsAPI.RunStreamParams;
-    export import RunSubmitToolOutputsParams = RunsAPI.RunSubmitToolOutputsParams;
-    export import RunSubmitToolOutputsParamsNonStreaming = RunsAPI.RunSubmitToolOutputsParamsNonStreaming;
-    export import RunSubmitToolOutputsParamsStreaming = RunsAPI.RunSubmitToolOutputsParamsStreaming;
-    export import RunSubmitToolOutputsAndPollParams = RunsAPI.RunSubmitToolOutputsAndPollParams;
-    export import RunSubmitToolOutputsStreamParams = RunsAPI.RunSubmitToolOutputsStreamParams;
-    export import Steps = StepsAPI.Steps;
-    export import CodeInterpreterLogs = StepsAPI.CodeInterpreterLogs;
-    export import CodeInterpreterOutputImage = StepsAPI.CodeInterpreterOutputImage;
-    export import CodeInterpreterToolCall = StepsAPI.CodeInterpreterToolCall;
-    export import CodeInterpreterToolCallDelta = StepsAPI.CodeInterpreterToolCallDelta;
-    export import FileSearchToolCall = StepsAPI.FileSearchToolCall;
-    export import FileSearchToolCallDelta = StepsAPI.FileSearchToolCallDelta;
-    export import FunctionToolCall = StepsAPI.FunctionToolCall;
-    export import FunctionToolCallDelta = StepsAPI.FunctionToolCallDelta;
-    export import MessageCreationStepDetails = StepsAPI.MessageCreationStepDetails;
-    export import RunStep = StepsAPI.RunStep;
-    export import RunStepDelta = StepsAPI.RunStepDelta;
-    export import RunStepDeltaEvent = StepsAPI.RunStepDeltaEvent;
-    export import RunStepDeltaMessageDelta = StepsAPI.RunStepDeltaMessageDelta;
-    export import RunStepInclude = StepsAPI.RunStepInclude;
-    export import ToolCall = StepsAPI.ToolCall;
-    export import ToolCallDelta = StepsAPI.ToolCallDelta;
-    export import ToolCallDeltaObject = StepsAPI.ToolCallDeltaObject;
-    export import ToolCallsStepDetails = StepsAPI.ToolCallsStepDetails;
-    export import RunStepsPage = StepsAPI.RunStepsPage;
-    export import StepRetrieveParams = StepsAPI.StepRetrieveParams;
-    export import StepListParams = StepsAPI.StepListParams;
+    export { type RequiredActionFunctionToolCall as RequiredActionFunctionToolCall, type Run as Run, type RunStatus as RunStatus, RunsPage as RunsPage, type RunCreateParams as RunCreateParams, type RunCreateParamsNonStreaming as RunCreateParamsNonStreaming, type RunCreateParamsStreaming as RunCreateParamsStreaming, type RunUpdateParams as RunUpdateParams, type RunListParams as RunListParams, type RunCreateAndPollParams, type RunCreateAndStreamParams, type RunStreamParams, type RunSubmitToolOutputsParams as RunSubmitToolOutputsParams, type RunSubmitToolOutputsParamsNonStreaming as RunSubmitToolOutputsParamsNonStreaming, type RunSubmitToolOutputsParamsStreaming as RunSubmitToolOutputsParamsStreaming, type RunSubmitToolOutputsAndPollParams, type RunSubmitToolOutputsStreamParams, };
+    export { Steps as Steps, type CodeInterpreterLogs as CodeInterpreterLogs, type CodeInterpreterOutputImage as CodeInterpreterOutputImage, type CodeInterpreterToolCall as CodeInterpreterToolCall, type CodeInterpreterToolCallDelta as CodeInterpreterToolCallDelta, type FileSearchToolCall as FileSearchToolCall, type FileSearchToolCallDelta as FileSearchToolCallDelta, type FunctionToolCall as FunctionToolCall, type FunctionToolCallDelta as FunctionToolCallDelta, type MessageCreationStepDetails as MessageCreationStepDetails, type RunStep as RunStep, type RunStepDelta as RunStepDelta, type RunStepDeltaEvent as RunStepDeltaEvent, type RunStepDeltaMessageDelta as RunStepDeltaMessageDelta, type RunStepInclude as RunStepInclude, type ToolCall as ToolCall, type ToolCallDelta as ToolCallDelta, type ToolCallDeltaObject as ToolCallDeltaObject, type ToolCallsStepDetails as ToolCallsStepDetails, RunStepsPage as RunStepsPage, type StepRetrieveParams as StepRetrieveParams, type StepListParams as StepListParams, };
 }
 //# sourceMappingURL=runs.d.ts.map

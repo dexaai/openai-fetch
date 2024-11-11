@@ -1,8 +1,10 @@
 import { APIResource } from "../../resource.js";
-import * as AudioAPI from "./audio.js";
 import * as SpeechAPI from "./speech.js";
+import { Speech, SpeechCreateParams, SpeechModel } from "./speech.js";
 import * as TranscriptionsAPI from "./transcriptions.js";
+import { Transcription, TranscriptionCreateParams, TranscriptionCreateResponse, TranscriptionSegment, TranscriptionVerbose, TranscriptionWord, Transcriptions } from "./transcriptions.js";
 import * as TranslationsAPI from "./translations.js";
+import { Translation, TranslationCreateParams, TranslationCreateResponse, TranslationVerbose, Translations } from "./translations.js";
 export declare class Audio extends APIResource {
     transcriptions: TranscriptionsAPI.Transcriptions;
     translations: TranslationsAPI.Translations;
@@ -15,22 +17,9 @@ export type AudioModel = 'whisper-1';
  */
 export type AudioResponseFormat = 'json' | 'text' | 'srt' | 'verbose_json' | 'vtt';
 export declare namespace Audio {
-    export import AudioModel = AudioAPI.AudioModel;
-    export import AudioResponseFormat = AudioAPI.AudioResponseFormat;
-    export import Transcriptions = TranscriptionsAPI.Transcriptions;
-    export import Transcription = TranscriptionsAPI.Transcription;
-    export import TranscriptionSegment = TranscriptionsAPI.TranscriptionSegment;
-    export import TranscriptionVerbose = TranscriptionsAPI.TranscriptionVerbose;
-    export import TranscriptionWord = TranscriptionsAPI.TranscriptionWord;
-    export import TranscriptionCreateResponse = TranscriptionsAPI.TranscriptionCreateResponse;
-    type TranscriptionCreateParams<ResponseFormat extends AudioAPI.AudioResponseFormat | undefined = AudioAPI.AudioResponseFormat | undefined> = TranscriptionsAPI.TranscriptionCreateParams<ResponseFormat>;
-    export import Translations = TranslationsAPI.Translations;
-    export import Translation = TranslationsAPI.Translation;
-    export import TranslationVerbose = TranslationsAPI.TranslationVerbose;
-    export import TranslationCreateResponse = TranslationsAPI.TranslationCreateResponse;
-    type TranslationCreateParams<ResponseFormat extends AudioAPI.AudioResponseFormat | undefined = AudioAPI.AudioResponseFormat | undefined> = TranslationsAPI.TranslationCreateParams<ResponseFormat>;
-    export import Speech = SpeechAPI.Speech;
-    export import SpeechModel = SpeechAPI.SpeechModel;
-    export import SpeechCreateParams = SpeechAPI.SpeechCreateParams;
+    export { type AudioModel as AudioModel, type AudioResponseFormat as AudioResponseFormat };
+    export { Transcriptions as Transcriptions, type Transcription as Transcription, type TranscriptionSegment as TranscriptionSegment, type TranscriptionVerbose as TranscriptionVerbose, type TranscriptionWord as TranscriptionWord, type TranscriptionCreateResponse as TranscriptionCreateResponse, type TranscriptionCreateParams as TranscriptionCreateParams, };
+    export { Translations as Translations, type Translation as Translation, type TranslationVerbose as TranslationVerbose, type TranslationCreateResponse as TranslationCreateResponse, type TranslationCreateParams as TranslationCreateParams, };
+    export { Speech as Speech, type SpeechModel as SpeechModel, type SpeechCreateParams as SpeechCreateParams };
 }
 //# sourceMappingURL=audio.d.ts.map

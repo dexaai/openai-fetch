@@ -1,7 +1,6 @@
 import { APIResource } from "../../../resource.js";
 import { Uploadable } from "../../../core.js";
 import * as Core from "../../../core.js";
-import * as FilesAPI from "./files.js";
 import * as VectorStoresAPI from "./vector-stores.js";
 import { CursorPage, type CursorPageParams } from "../../../pagination.js";
 export declare class Files extends APIResource {
@@ -140,8 +139,8 @@ export interface FileListParams extends CursorPageParams {
     /**
      * A cursor for use in pagination. `before` is an object ID that defines your place
      * in the list. For instance, if you make a list request and receive 100 objects,
-     * ending with obj_foo, your subsequent call can include before=obj_foo in order to
-     * fetch the previous page of the list.
+     * starting with obj_foo, your subsequent call can include before=obj_foo in order
+     * to fetch the previous page of the list.
      */
     before?: string;
     /**
@@ -155,10 +154,6 @@ export interface FileListParams extends CursorPageParams {
     order?: 'asc' | 'desc';
 }
 export declare namespace Files {
-    export import VectorStoreFile = FilesAPI.VectorStoreFile;
-    export import VectorStoreFileDeleted = FilesAPI.VectorStoreFileDeleted;
-    export import VectorStoreFilesPage = FilesAPI.VectorStoreFilesPage;
-    export import FileCreateParams = FilesAPI.FileCreateParams;
-    export import FileListParams = FilesAPI.FileListParams;
+    export { type VectorStoreFile as VectorStoreFile, type VectorStoreFileDeleted as VectorStoreFileDeleted, VectorStoreFilesPage as VectorStoreFilesPage, type FileCreateParams as FileCreateParams, type FileListParams as FileListParams, };
 }
 //# sourceMappingURL=files.d.ts.map

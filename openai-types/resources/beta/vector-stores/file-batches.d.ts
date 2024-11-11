@@ -1,7 +1,6 @@
 import { APIResource } from "../../../resource.js";
 import { Uploadable } from "../../../core.js";
 import * as Core from "../../../core.js";
-import * as FileBatchesAPI from "./file-batches.js";
 import * as FilesAPI from "./files.js";
 import { VectorStoreFilesPage } from "./files.js";
 import * as VectorStoresAPI from "./vector-stores.js";
@@ -125,8 +124,8 @@ export interface FileBatchListFilesParams extends CursorPageParams {
     /**
      * A cursor for use in pagination. `before` is an object ID that defines your place
      * in the list. For instance, if you make a list request and receive 100 objects,
-     * ending with obj_foo, your subsequent call can include before=obj_foo in order to
-     * fetch the previous page of the list.
+     * starting with obj_foo, your subsequent call can include before=obj_foo in order
+     * to fetch the previous page of the list.
      */
     before?: string;
     /**
@@ -140,9 +139,7 @@ export interface FileBatchListFilesParams extends CursorPageParams {
     order?: 'asc' | 'desc';
 }
 export declare namespace FileBatches {
-    export import VectorStoreFileBatch = FileBatchesAPI.VectorStoreFileBatch;
-    export import FileBatchCreateParams = FileBatchesAPI.FileBatchCreateParams;
-    export import FileBatchListFilesParams = FileBatchesAPI.FileBatchListFilesParams;
+    export { type VectorStoreFileBatch as VectorStoreFileBatch, type FileBatchCreateParams as FileBatchCreateParams, type FileBatchListFilesParams as FileBatchListFilesParams, };
 }
 export { VectorStoreFilesPage };
 //# sourceMappingURL=file-batches.d.ts.map

@@ -1,10 +1,10 @@
-import { type ChatCompletionChunk, type ChatCompletionCreateParamsStreaming } from '../resources/chat/completions.js';
+import { type ChatCompletionChunk, type ChatCompletionCreateParamsStreaming } from "../resources/chat/completions.js";
 import { RunnerOptions, type AbstractChatCompletionRunnerEvents } from "./AbstractChatCompletionRunner.js";
-import { type ReadableStream } from '../_shims/index.js';
+import { type ReadableStream } from "../_shims/index.js";
 import { RunnableTools, type BaseFunctionsArgs, type RunnableFunctions } from "./RunnableFunction.js";
 import { ChatCompletionSnapshot, ChatCompletionStream } from "./ChatCompletionStream.js";
-import OpenAI from '../index.js';
-import { AutoParseableTool } from '../lib/parser.js';
+import OpenAI from "../index.js";
+import { AutoParseableTool } from "../lib/parser.js";
 export interface ChatCompletionStreamEvents extends AbstractChatCompletionRunnerEvents {
     content: (contentDelta: string, contentSnapshot: string) => void;
     chunk: (chunk: ChatCompletionChunk, snapshot: ChatCompletionSnapshot) => void;
