@@ -1,13 +1,12 @@
-import { Message, Text, ImageFile, TextDelta, Messages } from '../resources/beta/threads/messages.js';
-import * as Core from '../core.js';
-import { RequestOptions } from '../core.js';
-import { Run, RunCreateParamsBase, Runs, RunSubmitToolOutputsParamsBase } from '../resources/beta/threads/runs/runs.js';
-import { type ReadableStream } from '../_shims/index.js';
-import { AssistantStreamEvent } from '../resources/beta/assistants.js';
-import { RunStep, RunStepDelta, ToolCall, ToolCallDelta } from '../resources/beta/threads/runs/steps.js';
-import { ThreadCreateAndRunParamsBase, Threads } from '../resources/beta/threads/threads.js';
+import { Message, Text, ImageFile, TextDelta, MessageDelta } from "../resources/beta/threads/messages.js";
+import * as Core from "../core.js";
+import { RequestOptions } from "../core.js";
+import { Run, RunCreateParamsBase, Runs, RunSubmitToolOutputsParamsBase } from "../resources/beta/threads/runs/runs.js";
+import { type ReadableStream } from "../_shims/index.js";
+import { AssistantStreamEvent } from "../resources/beta/assistants.js";
+import { RunStep, RunStepDelta, ToolCall, ToolCallDelta } from "../resources/beta/threads/runs/steps.js";
+import { ThreadCreateAndRunParamsBase, Threads } from "../resources/beta/threads/threads.js";
 import { BaseEvents, EventStream } from "./EventStream.js";
-import MessageDelta = Messages.MessageDelta;
 export interface AssistantStreamEvents extends BaseEvents {
     run: (run: Run) => void;
     messageCreated: (message: Message) => void;

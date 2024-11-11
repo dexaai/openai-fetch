@@ -1,7 +1,7 @@
 import { APIResource } from "../../../resource.js";
 import * as Core from "../../../core.js";
-import * as JobsAPI from "./jobs.js";
 import * as CheckpointsAPI from "./checkpoints.js";
+import { CheckpointListParams, Checkpoints, FineTuningJobCheckpoint, FineTuningJobCheckpointsPage } from "./checkpoints.js";
 import { CursorPage, type CursorPageParams } from "../../../pagination.js";
 export declare class Jobs extends APIResource {
     checkpoints: CheckpointsAPI.Checkpoints;
@@ -218,7 +218,7 @@ export interface FineTuningJobWandbIntegrationObject {
 export interface JobCreateParams {
     /**
      * The name of the model to fine-tune. You can select one of the
-     * [supported models](https://platform.openai.com/docs/guides/fine-tuning/which-models-can-be-fine-tuned).
+     * [supported models](https://platform.openai.com/docs/guides/fine-tuning#which-models-can-be-fine-tuned).
      */
     model: (string & {}) | 'babbage-002' | 'davinci-002' | 'gpt-3.5-turbo' | 'gpt-4o-mini';
     /**
@@ -349,19 +349,7 @@ export interface JobListParams extends CursorPageParams {
 export interface JobListEventsParams extends CursorPageParams {
 }
 export declare namespace Jobs {
-    export import FineTuningJob = JobsAPI.FineTuningJob;
-    export import FineTuningJobEvent = JobsAPI.FineTuningJobEvent;
-    export import FineTuningJobIntegration = JobsAPI.FineTuningJobIntegration;
-    export import FineTuningJobWandbIntegration = JobsAPI.FineTuningJobWandbIntegration;
-    export import FineTuningJobWandbIntegrationObject = JobsAPI.FineTuningJobWandbIntegrationObject;
-    export import FineTuningJobsPage = JobsAPI.FineTuningJobsPage;
-    export import FineTuningJobEventsPage = JobsAPI.FineTuningJobEventsPage;
-    export import JobCreateParams = JobsAPI.JobCreateParams;
-    export import JobListParams = JobsAPI.JobListParams;
-    export import JobListEventsParams = JobsAPI.JobListEventsParams;
-    export import Checkpoints = CheckpointsAPI.Checkpoints;
-    export import FineTuningJobCheckpoint = CheckpointsAPI.FineTuningJobCheckpoint;
-    export import FineTuningJobCheckpointsPage = CheckpointsAPI.FineTuningJobCheckpointsPage;
-    export import CheckpointListParams = CheckpointsAPI.CheckpointListParams;
+    export { type FineTuningJob as FineTuningJob, type FineTuningJobEvent as FineTuningJobEvent, type FineTuningJobIntegration as FineTuningJobIntegration, type FineTuningJobWandbIntegration as FineTuningJobWandbIntegration, type FineTuningJobWandbIntegrationObject as FineTuningJobWandbIntegrationObject, FineTuningJobsPage as FineTuningJobsPage, FineTuningJobEventsPage as FineTuningJobEventsPage, type JobCreateParams as JobCreateParams, type JobListParams as JobListParams, type JobListEventsParams as JobListEventsParams, };
+    export { Checkpoints as Checkpoints, type FineTuningJobCheckpoint as FineTuningJobCheckpoint, FineTuningJobCheckpointsPage as FineTuningJobCheckpointsPage, type CheckpointListParams as CheckpointListParams, };
 }
 //# sourceMappingURL=jobs.d.ts.map

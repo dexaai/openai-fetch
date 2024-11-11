@@ -1,7 +1,6 @@
 import { APIResource } from "../resource.js";
 import * as Core from "../core.js";
-import * as FilesAPI from "./files.js";
-import { Page } from "../pagination.js";
+import { CursorPage, type CursorPageParams } from "../pagination.js";
 import { type Response } from "../_shims/index.js";
 export declare class Files extends APIResource {
     /**
@@ -33,7 +32,7 @@ export declare class Files extends APIResource {
      */
     retrieve(fileId: string, options?: Core.RequestOptions): Core.APIPromise<FileObject>;
     /**
-     * Returns a list of files that belong to the user's organization.
+     * Returns a list of files.
      */
     list(query?: FileListParams, options?: Core.RequestOptions): Core.PagePromise<FileObjectsPage, FileObject>;
     list(options?: Core.RequestOptions): Core.PagePromise<FileObjectsPage, FileObject>;
@@ -59,10 +58,7 @@ export declare class Files extends APIResource {
         maxWait?: number;
     }): Promise<FileObject>;
 }
-/**
- * Note: no pagination actually occurs yet, this is for forwards-compatibility.
- */
-export declare class FileObjectsPage extends Page<FileObject> {
+export declare class FileObjectsPage extends CursorPage<FileObject> {
 }
 export type FileContent = string;
 export interface FileDeleted {
@@ -139,19 +135,18 @@ export interface FileCreateParams {
      */
     purpose: FilePurpose;
 }
-export interface FileListParams {
+export interface FileListParams extends CursorPageParams {
+    /**
+     * Sort order by the `created_at` timestamp of the objects. `asc` for ascending
+     * order and `desc` for descending order.
+     */
+    order?: 'asc' | 'desc';
     /**
      * Only return files with the given purpose.
      */
     purpose?: string;
 }
 export declare namespace Files {
-    export import FileContent = FilesAPI.FileContent;
-    export import FileDeleted = FilesAPI.FileDeleted;
-    export import FileObject = FilesAPI.FileObject;
-    export import FilePurpose = FilesAPI.FilePurpose;
-    export import FileObjectsPage = FilesAPI.FileObjectsPage;
-    export import FileCreateParams = FilesAPI.FileCreateParams;
-    export import FileListParams = FilesAPI.FileListParams;
+    export { type FileContent as FileContent, type FileDeleted as FileDeleted, type FileObject as FileObject, type FilePurpose as FilePurpose, FileObjectsPage as FileObjectsPage, type FileCreateParams as FileCreateParams, type FileListParams as FileListParams, };
 }
 //# sourceMappingURL=files.d.ts.map

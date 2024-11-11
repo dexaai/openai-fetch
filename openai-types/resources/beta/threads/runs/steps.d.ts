@@ -557,7 +557,7 @@ export interface StepRetrieveParams {
      * to fetch the file search result content.
      *
      * See the
-     * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search/customizing-file-search-settings)
+     * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search#customizing-file-search-settings)
      * for more information.
      */
     include?: Array<RunStepInclude>;
@@ -566,8 +566,8 @@ export interface StepListParams extends CursorPageParams {
     /**
      * A cursor for use in pagination. `before` is an object ID that defines your place
      * in the list. For instance, if you make a list request and receive 100 objects,
-     * ending with obj_foo, your subsequent call can include before=obj_foo in order to
-     * fetch the previous page of the list.
+     * starting with obj_foo, your subsequent call can include before=obj_foo in order
+     * to fetch the previous page of the list.
      */
     before?: string;
     /**
@@ -576,7 +576,7 @@ export interface StepListParams extends CursorPageParams {
      * to fetch the file search result content.
      *
      * See the
-     * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search/customizing-file-search-settings)
+     * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search#customizing-file-search-settings)
      * for more information.
      */
     include?: Array<RunStepInclude>;
@@ -587,26 +587,6 @@ export interface StepListParams extends CursorPageParams {
     order?: 'asc' | 'desc';
 }
 export declare namespace Steps {
-    export import CodeInterpreterLogs = StepsAPI.CodeInterpreterLogs;
-    export import CodeInterpreterOutputImage = StepsAPI.CodeInterpreterOutputImage;
-    export import CodeInterpreterToolCall = StepsAPI.CodeInterpreterToolCall;
-    export import CodeInterpreterToolCallDelta = StepsAPI.CodeInterpreterToolCallDelta;
-    export import FileSearchToolCall = StepsAPI.FileSearchToolCall;
-    export import FileSearchToolCallDelta = StepsAPI.FileSearchToolCallDelta;
-    export import FunctionToolCall = StepsAPI.FunctionToolCall;
-    export import FunctionToolCallDelta = StepsAPI.FunctionToolCallDelta;
-    export import MessageCreationStepDetails = StepsAPI.MessageCreationStepDetails;
-    export import RunStep = StepsAPI.RunStep;
-    export import RunStepDelta = StepsAPI.RunStepDelta;
-    export import RunStepDeltaEvent = StepsAPI.RunStepDeltaEvent;
-    export import RunStepDeltaMessageDelta = StepsAPI.RunStepDeltaMessageDelta;
-    export import RunStepInclude = StepsAPI.RunStepInclude;
-    export import ToolCall = StepsAPI.ToolCall;
-    export import ToolCallDelta = StepsAPI.ToolCallDelta;
-    export import ToolCallDeltaObject = StepsAPI.ToolCallDeltaObject;
-    export import ToolCallsStepDetails = StepsAPI.ToolCallsStepDetails;
-    export import RunStepsPage = StepsAPI.RunStepsPage;
-    export import StepRetrieveParams = StepsAPI.StepRetrieveParams;
-    export import StepListParams = StepsAPI.StepListParams;
+    export { type CodeInterpreterLogs as CodeInterpreterLogs, type CodeInterpreterOutputImage as CodeInterpreterOutputImage, type CodeInterpreterToolCall as CodeInterpreterToolCall, type CodeInterpreterToolCallDelta as CodeInterpreterToolCallDelta, type FileSearchToolCall as FileSearchToolCall, type FileSearchToolCallDelta as FileSearchToolCallDelta, type FunctionToolCall as FunctionToolCall, type FunctionToolCallDelta as FunctionToolCallDelta, type MessageCreationStepDetails as MessageCreationStepDetails, type RunStep as RunStep, type RunStepDelta as RunStepDelta, type RunStepDeltaEvent as RunStepDeltaEvent, type RunStepDeltaMessageDelta as RunStepDeltaMessageDelta, type RunStepInclude as RunStepInclude, type ToolCall as ToolCall, type ToolCallDelta as ToolCallDelta, type ToolCallDeltaObject as ToolCallDeltaObject, type ToolCallsStepDetails as ToolCallsStepDetails, RunStepsPage as RunStepsPage, type StepRetrieveParams as StepRetrieveParams, type StepListParams as StepListParams, };
 }
 //# sourceMappingURL=steps.d.ts.map

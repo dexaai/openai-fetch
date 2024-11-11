@@ -1,6 +1,5 @@
 import { APIResource } from "../resource.js";
 import * as Core from "../core.js";
-import * as ModerationsAPI from "./moderations.js";
 export declare class Moderations extends APIResource {
     /**
      * Classifies if text and/or image inputs are potentially harmful. Learn more in
@@ -285,17 +284,11 @@ export interface ModerationCreateParams {
      * The content moderation model you would like to use. Learn more in
      * [the moderation guide](https://platform.openai.com/docs/guides/moderation), and
      * learn about available models
-     * [here](https://platform.openai.com/docs/models/moderation).
+     * [here](https://platform.openai.com/docs/models#moderation).
      */
     model?: (string & {}) | ModerationModel;
 }
 export declare namespace Moderations {
-    export import Moderation = ModerationsAPI.Moderation;
-    export import ModerationImageURLInput = ModerationsAPI.ModerationImageURLInput;
-    export import ModerationModel = ModerationsAPI.ModerationModel;
-    export import ModerationMultiModalInput = ModerationsAPI.ModerationMultiModalInput;
-    export import ModerationTextInput = ModerationsAPI.ModerationTextInput;
-    export import ModerationCreateResponse = ModerationsAPI.ModerationCreateResponse;
-    export import ModerationCreateParams = ModerationsAPI.ModerationCreateParams;
+    export { type Moderation as Moderation, type ModerationImageURLInput as ModerationImageURLInput, type ModerationModel as ModerationModel, type ModerationMultiModalInput as ModerationMultiModalInput, type ModerationTextInput as ModerationTextInput, type ModerationCreateResponse as ModerationCreateResponse, type ModerationCreateParams as ModerationCreateParams, };
 }
 //# sourceMappingURL=moderations.d.ts.map

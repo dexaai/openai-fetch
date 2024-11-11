@@ -1,9 +1,9 @@
-import * as Core from '../core.js';
-import { ChatCompletionTokenLogprob, type ChatCompletion, type ChatCompletionChunk, type ChatCompletionCreateParams, type ChatCompletionCreateParamsBase } from '../resources/chat/completions.js';
+import * as Core from "../core.js";
+import { ChatCompletionTokenLogprob, type ChatCompletion, type ChatCompletionChunk, type ChatCompletionCreateParams, type ChatCompletionCreateParamsBase } from "../resources/chat/completions.js";
 import { AbstractChatCompletionRunner, type AbstractChatCompletionRunnerEvents } from "./AbstractChatCompletionRunner.js";
-import { type ReadableStream } from '../_shims/index.js';
-import OpenAI from '../index.js';
-import { ParsedChatCompletion } from '../resources/beta/chat/completions.js';
+import { type ReadableStream } from "../_shims/index.js";
+import OpenAI from "../index.js";
+import { ParsedChatCompletion } from "../resources/beta/chat/completions.js";
 export interface ContentDeltaEvent {
     delta: string;
     snapshot: string;

@@ -1,6 +1,5 @@
 import { APIResource } from "../../resource.js";
 import * as Core from "../../core.js";
-import * as AssistantsAPI from "./assistants.js";
 import * as Shared from "../shared.js";
 import * as ChatAPI from "../chat/chat.js";
 import * as MessagesAPI from "./threads/messages.js";
@@ -66,8 +65,8 @@ export interface Assistant {
      * ID of the model to use. You can use the
      * [List models](https://platform.openai.com/docs/api-reference/models/list) API to
      * see all of your available models, or see our
-     * [Model overview](https://platform.openai.com/docs/models/overview) for
-     * descriptions of them.
+     * [Model overview](https://platform.openai.com/docs/models) for descriptions of
+     * them.
      */
     model: string;
     /**
@@ -86,8 +85,8 @@ export interface Assistant {
     tools: Array<AssistantTool>;
     /**
      * Specifies the format that the model must output. Compatible with
-     * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
-     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
+     * [GPT-4o](https://platform.openai.com/docs/models#gpt-4o),
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models#gpt-4-turbo-and-gpt-4),
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
@@ -201,6 +200,10 @@ export declare namespace AssistantStreamEvent {
          */
         data: ThreadsAPI.Thread;
         event: 'thread.created';
+        /**
+         * Whether to enable input audio transcription.
+         */
+        enabled?: boolean;
     }
     /**
      * Occurs when a new
@@ -474,7 +477,7 @@ export declare namespace AssistantStreamEvent {
     }
     /**
      * Occurs when an
-     * [error](https://platform.openai.com/docs/guides/error-codes/api-errors) occurs.
+     * [error](https://platform.openai.com/docs/guides/error-codes#api-errors) occurs.
      * This can happen due to an internal server error or a timeout.
      */
     interface ErrorEvent {
@@ -511,7 +514,7 @@ export declare namespace FileSearchTool {
          *
          * Note that the file search tool may output fewer than `max_num_results` results.
          * See the
-         * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search/customizing-file-search-settings)
+         * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search#customizing-file-search-settings)
          * for more information.
          */
         max_num_results?: number;
@@ -520,7 +523,7 @@ export declare namespace FileSearchTool {
          * will use the `auto` ranker and a score_threshold of 0.
          *
          * See the
-         * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search/customizing-file-search-settings)
+         * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search#customizing-file-search-settings)
          * for more information.
          */
         ranking_options?: FileSearch.RankingOptions;
@@ -531,7 +534,7 @@ export declare namespace FileSearchTool {
          * will use the `auto` ranker and a score_threshold of 0.
          *
          * See the
-         * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search/customizing-file-search-settings)
+         * [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search#customizing-file-search-settings)
          * for more information.
          */
         interface RankingOptions {
@@ -860,14 +863,18 @@ export interface ThreadStreamEvent {
      */
     data: ThreadsAPI.Thread;
     event: 'thread.created';
+    /**
+     * Whether to enable input audio transcription.
+     */
+    enabled?: boolean;
 }
 export interface AssistantCreateParams {
     /**
      * ID of the model to use. You can use the
      * [List models](https://platform.openai.com/docs/api-reference/models/list) API to
      * see all of your available models, or see our
-     * [Model overview](https://platform.openai.com/docs/models/overview) for
-     * descriptions of them.
+     * [Model overview](https://platform.openai.com/docs/models) for descriptions of
+     * them.
      */
     model: (string & {}) | ChatAPI.ChatModel;
     /**
@@ -892,8 +899,8 @@ export interface AssistantCreateParams {
     name?: string | null;
     /**
      * Specifies the format that the model must output. Compatible with
-     * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
-     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
+     * [GPT-4o](https://platform.openai.com/docs/models#gpt-4o),
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models#gpt-4-turbo-and-gpt-4),
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
@@ -1022,8 +1029,8 @@ export interface AssistantUpdateParams {
      * ID of the model to use. You can use the
      * [List models](https://platform.openai.com/docs/api-reference/models/list) API to
      * see all of your available models, or see our
-     * [Model overview](https://platform.openai.com/docs/models/overview) for
-     * descriptions of them.
+     * [Model overview](https://platform.openai.com/docs/models) for descriptions of
+     * them.
      */
     model?: string;
     /**
@@ -1032,8 +1039,8 @@ export interface AssistantUpdateParams {
     name?: string | null;
     /**
      * Specifies the format that the model must output. Compatible with
-     * [GPT-4o](https://platform.openai.com/docs/models/gpt-4o),
-     * [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4),
+     * [GPT-4o](https://platform.openai.com/docs/models#gpt-4o),
+     * [GPT-4 Turbo](https://platform.openai.com/docs/models#gpt-4-turbo-and-gpt-4),
      * and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
      *
      * Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
@@ -1117,8 +1124,8 @@ export interface AssistantListParams extends CursorPageParams {
     /**
      * A cursor for use in pagination. `before` is an object ID that defines your place
      * in the list. For instance, if you make a list request and receive 100 objects,
-     * ending with obj_foo, your subsequent call can include before=obj_foo in order to
-     * fetch the previous page of the list.
+     * starting with obj_foo, your subsequent call can include before=obj_foo in order
+     * to fetch the previous page of the list.
      */
     before?: string;
     /**
@@ -1128,20 +1135,6 @@ export interface AssistantListParams extends CursorPageParams {
     order?: 'asc' | 'desc';
 }
 export declare namespace Assistants {
-    export import Assistant = AssistantsAPI.Assistant;
-    export import AssistantDeleted = AssistantsAPI.AssistantDeleted;
-    export import AssistantStreamEvent = AssistantsAPI.AssistantStreamEvent;
-    export import AssistantTool = AssistantsAPI.AssistantTool;
-    export import CodeInterpreterTool = AssistantsAPI.CodeInterpreterTool;
-    export import FileSearchTool = AssistantsAPI.FileSearchTool;
-    export import FunctionTool = AssistantsAPI.FunctionTool;
-    export import MessageStreamEvent = AssistantsAPI.MessageStreamEvent;
-    export import RunStepStreamEvent = AssistantsAPI.RunStepStreamEvent;
-    export import RunStreamEvent = AssistantsAPI.RunStreamEvent;
-    export import ThreadStreamEvent = AssistantsAPI.ThreadStreamEvent;
-    export import AssistantsPage = AssistantsAPI.AssistantsPage;
-    export import AssistantCreateParams = AssistantsAPI.AssistantCreateParams;
-    export import AssistantUpdateParams = AssistantsAPI.AssistantUpdateParams;
-    export import AssistantListParams = AssistantsAPI.AssistantListParams;
+    export { type Assistant as Assistant, type AssistantDeleted as AssistantDeleted, type AssistantStreamEvent as AssistantStreamEvent, type AssistantTool as AssistantTool, type CodeInterpreterTool as CodeInterpreterTool, type FileSearchTool as FileSearchTool, type FunctionTool as FunctionTool, type MessageStreamEvent as MessageStreamEvent, type RunStepStreamEvent as RunStepStreamEvent, type RunStreamEvent as RunStreamEvent, type ThreadStreamEvent as ThreadStreamEvent, AssistantsPage as AssistantsPage, type AssistantCreateParams as AssistantCreateParams, type AssistantUpdateParams as AssistantUpdateParams, type AssistantListParams as AssistantListParams, };
 }
 //# sourceMappingURL=assistants.d.ts.map
