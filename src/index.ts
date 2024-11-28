@@ -1,32 +1,34 @@
-export {
+export { type ConfigOpts, OpenAIClient } from './openai-client.js';
+export type {
+  ModerationParams,
+  ModerationResponse,
+  SpeechParams,
+  SpeechResponse,
+} from './types.js';
+export type {
   APIConnectionError,
   APIConnectionTimeoutError,
   APIError,
   APIUserAbortError,
   AuthenticationError,
   BadRequestError,
-  ConflictError,
-  InternalServerError,
-  NotFoundError,
-  OpenAIError,
-  PermissionDeniedError,
-  RateLimitError,
-  UnprocessableEntityError,
-} from './errors.js';
-export type { ConfigOpts } from './openai-client.js';
-export { OpenAIClient } from './openai-client.js';
-export type {
   ChatMessage,
   ChatParams,
   ChatResponse,
+  ChatStreamChunk,
   ChatStreamParams,
   ChatStreamResponse,
   CompletionParams,
   CompletionResponse,
   CompletionStreamParams,
   CompletionStreamResponse,
+  ConflictError,
   EmbeddingParams,
   EmbeddingResponse,
-  SpeechParams,
-  SpeechResponse,
-} from './types.js';
+  InternalServerError,
+  NotFoundError,
+  OpenAIError,
+  PermissionDeniedError,
+  RateLimitError,
+  UnprocessableEntityError,
+} from 'ai-fetch';
