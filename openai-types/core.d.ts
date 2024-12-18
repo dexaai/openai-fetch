@@ -73,7 +73,7 @@ export declare abstract class APIClient {
     private fetch;
     protected idempotencyHeader?: string;
     constructor({ baseURL, maxRetries, timeout, // 10 minutes
-    httpAgent, fetch: overridenFetch, }: {
+    httpAgent, fetch: overriddenFetch, }: {
         baseURL: string;
         maxRetries?: number | undefined;
         timeout: number | undefined;
@@ -134,7 +134,6 @@ export declare abstract class APIClient {
     buildURL<Req>(path: string, query: Req | null | undefined): string;
     protected stringifyQuery(query: Record<string, unknown>): string;
     fetchWithTimeout(url: RequestInfo, init: RequestInit | undefined, ms: number, controller: AbortController): Promise<Response>;
-    protected getRequestClient(): RequestClient;
     private shouldRetry;
     private retryRequest;
     private calculateDefaultRetryTimeoutMillis;
