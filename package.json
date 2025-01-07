@@ -1,7 +1,7 @@
 {
   "name": "openai-fetch",
   "type": "module",
-  "version": "3.4.1",
+  "version": "3.4.2",
   "description": "OpenAI client powered by fetch",
   "repository": "dexaai/openai-fetch",
   "license": "MIT",
