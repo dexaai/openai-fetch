@@ -6,34 +6,49 @@
 
 type Headers = Record<string, string | null | undefined>;
 
-export function castToError(err: any): Error {
+export const castToError = (err: any): Error => {
   if (err instanceof Error) return err;
+  if (typeof err === 'object' && err !== null) {
+    try {
+      return new Error(JSON.stringify(err));
+    } catch {}
+  }
   return new Error(err);
-}
+};
 
 export class OpenAIError extends Error {}
 
-export class APIError extends OpenAIError {
-  readonly status: number | undefined;
-  readonly headers: Headers | undefined;
-  readonly error: object | undefined;
+export class APIError<
+  TStatus extends number | undefined = number | undefined,
+  THeaders extends Headers | undefined = Headers | undefined,
+  TError extends object | undefined = object | undefined,
+> extends OpenAIError {
+  /** HTTP status for the response that caused the error */
+  readonly status: TStatus;
+  /** HTTP headers for the response that caused the error */
+  readonly headers: THeaders;
+  /** JSON body of the response that caused the error */
+  readonly error: TError;
 
   readonly code: string | null | undefined;
   readonly param: string | null | undefined;
   readonly type: string | undefined;
 
+  readonly request_id: string | null | undefined;
+
   constructor(
-    status: number | undefined,
-    error: object | undefined,
+    status: TStatus,
+    error: TError,
     message: string | undefined,
-    headers: Headers | undefined
+    headers: THeaders
   ) {
     super(`${APIError.makeMessage(status, error, message)}`);
     this.status = status;
     this.headers = headers;
+    this.request_id = headers?.['x-request-id'];
+    this.error = error;
 
     const data = error as Record<string, any>;
-    this.error = data;
     this.code = data?.code;
     this.param = data?.param;
     this.type = data?.type;
@@ -69,9 +84,12 @@ export class APIError extends OpenAIError {
     errorResponse: object | undefined,
     message: string | undefined,
     headers: Headers | undefined
-  ) {
-    if (!status) {
-      return new APIConnectionError({ cause: castToError(errorResponse) });
+  ): APIError {
+    if (!status || !headers) {
+      return new APIConnectionError({
+        message,
+        cause: castToError(errorResponse),
+      });
     }
 
     const error = (errorResponse as Record<string, any>)?.error;
@@ -112,22 +130,26 @@ export class APIError extends OpenAIError {
   }
 }
 
-export class APIUserAbortError extends APIError {
-  override readonly status: undefined = undefined;
-
+export class APIUserAbortError extends APIError<
+  undefined,
+  undefined,
+  undefined
+> {
   constructor({ message }: { message?: string } = {}) {
     super(undefined, undefined, message || 'Request was aborted.', undefined);
   }
 }
 
-export class APIConnectionError extends APIError {
-  override readonly status: undefined = undefined;
-
+export class APIConnectionError extends APIError<
+  undefined,
+  undefined,
+  undefined
+> {
   constructor({
     message,
     cause,
   }: {
-    message?: string;
+    message?: string | undefined;
     cause?: Error | undefined;
   }) {
     super(undefined, undefined, message || 'Connection error.', undefined);
@@ -143,32 +165,32 @@ export class APIConnectionTimeoutError extends APIConnectionError {
   }
 }
 
-export class BadRequestError extends APIError {
-  override readonly status = 400 as const;
+export class BadRequestError extends APIError<400, Headers> {}
+
+export class AuthenticationError extends APIError<401, Headers> {}
+
+export class PermissionDeniedError extends APIError<403, Headers> {}
+
+export class NotFoundError extends APIError<404, Headers> {}
+
+export class ConflictError extends APIError<409, Headers> {}
+
+export class UnprocessableEntityError extends APIError<422, Headers> {}
+
+export class RateLimitError extends APIError<429, Headers> {}
+
+export class InternalServerError extends APIError<number, Headers> {}
+
+export class LengthFinishReasonError extends OpenAIError {
+  constructor() {
+    super(`Could not parse response content as the length limit was reached`);
+  }
 }
 
-export class AuthenticationError extends APIError {
-  override readonly status = 401 as const;
+export class ContentFilterFinishReasonError extends OpenAIError {
+  constructor() {
+    super(
+      `Could not parse response content as the request was rejected by the content filter`
+    );
+  }
 }
-
-export class PermissionDeniedError extends APIError {
-  override readonly status = 403 as const;
-}
-
-export class NotFoundError extends APIError {
-  override readonly status = 404 as const;
-}
-
-export class ConflictError extends APIError {
-  override readonly status = 409 as const;
-}
-
-export class UnprocessableEntityError extends APIError {
-  override readonly status = 422 as const;
-}
-
-export class RateLimitError extends APIError {
-  override readonly status = 429 as const;
-}
-
-export class InternalServerError extends APIError {}
